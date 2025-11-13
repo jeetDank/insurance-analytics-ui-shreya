@@ -1,0 +1,46 @@
+@use '@angular/material' as mat;
+
+:host {
+  // Light theme
+  @include mat.sidenav-overrides((
+    container-background-color: #faffff,
+    container-text-color: #000000,
+  ));
+  @include mat.toolbar-overrides((
+    container-background-color: #00a9a9,
+    container-text-color: #000000,
+  ));
+  
+  // Dark theme
+  &:is(.dark-theme *) {
+    @include mat.sidenav-overrides((
+      container-background-color: #0a0a0c,
+      container-text-color: #ffffff,
+      content-background-color:#0a0a0c,
+      content-text-color:#fff,
+      container-width:400px
+      
+    ));
+    @include mat.toolbar-overrides((
+      container-background-color: #0a0a0c,
+      container-text-color: #ffffff,
+      title-text-size:14px,
+      title-text-line-height:18px
+    ));
+
+    
+    
+  }
+}
+
+
+
+
+.drawer-container{
+height: calc(100% - 64px);
+}
+.large-icon {
+  font-size: 32px; /* Adjust as needed */
+  width: 32px;     /* Match font-size for consistent sizing */
+  height: 32px;    /* Match font-size for consistent sizing */
+}

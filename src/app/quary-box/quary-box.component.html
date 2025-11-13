@@ -1,0 +1,55 @@
+<div class="h-full w-full border-r border-neutral-900 pl-4 pr-4 flex flex-col">
+  <!-- sidebar header starts here (30% space) -->
+  <div class="flex-none pt-5 pb-4">
+    <div class="mb-4">
+      <h1 class="m-0 flex items-center gap-2">
+        <i class="material-icons icon-color">dashboard</i>
+        <span>Financial Assistant</span>
+      </h1>
+      <small class="block mt-2">Ask questions about insurance companies</small>
+    </div>
+  </div>
+  <!-- sidebar header ends here -->
+
+  <!-- chat box and formula editor starts here (70% space) -->
+  <div class="flex-1 overflow-hidden">
+    <mat-tab-group class="h-full w-full overflow-hidden">
+      <mat-tab label="Chat">
+        <div class="flex flex-col h-full">
+          <!-- Chat messages area -->
+          <div class="flex-1 p-4 overflow-y-auto">
+            @for (item of conversation; track $index) {}
+            <app-msg-bubble> 
+               
+
+            </app-msg-bubble>
+          </div>
+
+          <!-- Input area (sticks to bottom) -->
+          <div class="flex items-center gap-2 p-4">
+            <mat-form-field class="flex-1" appearance="outline">
+              <input
+                class="hover:shadow-sm"
+                matInput
+                placeholder="Ask a question"
+              />
+            </mat-form-field>
+
+            <button
+              mat-mini-fab
+              type="submit"
+              class="shrink-0 self-start custom-mini-fab"
+            >
+              <mat-icon>near_me</mat-icon>
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Formula">
+        <div class="p-4">Formulas Content</div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <!-- chat box and formula editor ends here -->
+</div>

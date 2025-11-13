@@ -1,0 +1,88 @@
+@use '@angular/material' as mat;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+// Custom animations
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out;
+}
+
+// Material Card overrides for better theme support
+mat-card {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  
+  .dark-theme & {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+// Button hover effects
+button {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Gradient text support
+.bg-clip-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+// Custom color classes for dark theme
+.text-primary-light {
+  color: #5cd8f4 !important; // Adjust based on your theme
+}
+
+.text-accent-light {
+  color: #b794f6 !important; // Adjust based on your theme
+}
+
+.from-primary-light {
+  --tw-gradient-from: #5cd8f4;
+}
+
+.to-accent-light {
+  --tw-gradient-to: #b794f6;
+}
+
+.dark\:from-primary-light:is(.dark-theme *) {
+  --tw-gradient-from: #5cd8f4;
+}
+
+.dark\:to-accent-light:is(.dark-theme *) {
+  --tw-gradient-to: #b794f6;
+}

@@ -1,0 +1,68 @@
+<div class="w-screen h-screen">
+  <mat-toolbar class="border-r border-neutral-900">
+    <!-- Menu button on the left -->
+
+    <mat-icon class="large-icon icon-color"> insert_chart</mat-icon>
+
+    <!-- App title/logo -->
+    <div class="flex flex-col ms-2">
+      <h4 class="ms-5">FinSight Analytics</h4>
+      <h5 class="ms-5" style="font-size: 12px">
+        Financial Intelligence Dashboard
+      </h5>
+    </div>
+
+    <!-- Spacer to push content to the right -->
+    <span class="spacer"></span>
+
+    <button class="ms-auto" mat-button>
+      <mat-icon class="">history</mat-icon>
+      History
+    </button>
+
+    <mat-icon class="large-icon">account_circle</mat-icon>
+
+    <!-- Theme toggle on the right -->
+    <!-- <div class="ms-auto">
+      <mat-icon (click)="toggleTheme()">{{
+        isDarkTheme ? "dark_mode" : "light_mode"
+      }}</mat-icon>
+    </div> -->
+  </mat-toolbar>
+  <mat-drawer-container class="drawer-container" autosize>
+    <mat-drawer
+      opened="true"
+      class=""
+      #drawer
+      style="border-radius: 0"
+      mode="side"
+    >
+      <div
+        class=" h-full drawer rounded-none"
+      >
+        <app-quary-box></app-quary-box>
+      </div>
+    </mat-drawer>
+
+    <div class="h-full content">
+
+      <div class="flex flex-col items-center justify-center h-full">
+
+        <app-loader-with-insights [loaderMessage]="'Building Dashboard'" [description]="'Analyzing financial data...'" ></app-loader-with-insights>
+      </div>
+
+      <div class="flex flex-col items-center justify-center h-full">
+        <div class="flex flex-row gap-3 mb-3 ">
+          <span class="icon-box border border-neutral-900" ><i class="material-icons large-icon">bar_chart</i></span>
+          <span class="icon-box border border-neutral-900"> <i class="material-icons large-icon">trending_up</i></span>
+        </div>
+
+        <h1 class="mb-3">Start Your Analysis</h1>
+        <p class="w-lg text-center" >
+          Select a sample prompt from the left panel or enter your own query to
+          begin analyzing quarterly financial metrics across insurance companies
+        </p>
+      </div>
+    </div>
+  </mat-drawer-container>
+</div>

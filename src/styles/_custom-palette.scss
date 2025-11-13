@@ -1,0 +1,29 @@
+@use '@angular/material' as mat;
+
+// Define your custom primary color palette
+// Material 3 requires tonal values from 0-100
+$my-brand-primary: (
+  0: #000000,
+  10: #001f25,
+  20: #003640,
+  25: #00424e,
+  30: #004f5c,
+  35: #005c6b,
+  40: #006a7a,
+  50: #008599,
+  60: #00a1b9,
+  70: #2dbdd8,
+  80: #5cd8f4,
+  90: #b8eaff,
+  95: #dff5ff,
+  98: #f3fbff,
+  99: #f9fdff,
+  100: #ffffff,
+);
+
+$my-brand-secondary: (
+  // ... similar structure
+);
+
+// Use Material's palette generator tool to create these values:
+// https://material-foundation.github.io/material-theme-builder/

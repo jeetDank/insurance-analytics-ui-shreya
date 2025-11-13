@@ -1,0 +1,43 @@
+@use "@angular/material" as mat;
+
+:host {
+  // Light theme
+  @include mat.form-field-density(-4);
+  // Dark theme
+  &:is(.dark-theme *) {
+    @include mat.tabs-overrides(
+      (
+        active-indicator-color: rgb(255, 255, 255),
+        divider-color: transparent,
+        active-indicator-shape: "capsule",
+        active-focus-indicator-color: white,
+        active-hover-indicator-color: white,
+      )
+    );
+
+    @include mat.form-field-overrides(
+      (
+        outlined-outline-color: rgba(255, 255, 255, 0.162),
+        outlined-focus-outline-color: rgba(255, 255, 255, 0.288),
+        outlined-hover-outline-color: rgba(255, 255, 255, 0.288),
+      )
+    );
+   
+  }
+}
+
+.custom-mini-fab {
+  background-color: #94a3b8; 
+  color: black;
+}
+
+mat-tab-group {
+  height: 100%;
+  display: flex; /* Make the tab group a flex container */
+  flex-direction: column; /* Arrange header and body in a column */
+}
+
+/* For Angular Material 15+ */
+::ng-deep .mat-mdc-tab-body-wrapper {
+  flex: 1 1 100%; /* Allow the body wrapper to grow and take up remaining space */
+}

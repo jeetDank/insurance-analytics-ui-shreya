@@ -1,0 +1,51 @@
+import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import {MatSidenavModule} from '@angular/material/sidenav';
+
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { QuaryBoxComponent } from '../quary-box/quary-box.component';
+import { LoaderWithInsightsComponent } from '../common/componants/loader-with-insights/loader-with-insights.component';
+
+@Component({
+  selector: 'app-dashboard',
+  imports: [LoaderWithInsightsComponent,QuaryBoxComponent,MatSidenavModule,MatButtonModule,MatToolbarModule,MatIconModule,MatSlideToggleModule],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
+})
+export class DashboardComponent {
+
+  isDarkTheme = false;
+   constructor() {
+    // Check if user has a saved preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      this.isDarkTheme = savedTheme === 'dark';
+    } else {
+      // Check system preference
+      this.isDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    this.applyTheme();
+  }
+
+  toggleTheme(): void {
+    this.isDarkTheme = !this.isDarkTheme;
+    this.applyTheme();
+  }
+
+  private applyTheme(): void {
+    if (this.isDarkTheme) {
+      document.documentElement.classList.add('dark-theme');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark-theme');
+      localStorage.setItem('theme', 'light');
+    }
+  }
+
+  onMenuClick(){
+    
+  }
+
+}

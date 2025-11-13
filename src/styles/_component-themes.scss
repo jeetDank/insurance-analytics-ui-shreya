@@ -1,0 +1,17 @@
+@use '@angular/material' as mat;
+@use './theme' as theme;
+
+// Custom button styling using theme colors
+.custom-button {
+  background-color: mat.get-theme-color(theme.$light-theme, primary, 40);
+  color: mat.get-theme-color(theme.$light-theme, primary, 100);
+  
+  &:hover {
+    background-color: mat.get-theme-color(theme.$light-theme, primary, 50);
+  }
+}
+
+// Override Material component styles
+.mat-mdc-button {
+  border-radius: 20px;
+}
