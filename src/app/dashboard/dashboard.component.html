@@ -37,28 +37,86 @@
       style="border-radius: 0"
       mode="side"
     >
-      <div
-        class=" h-full drawer rounded-none"
-      >
+      <div class="h-full drawer rounded-none">
         <app-quary-box></app-quary-box>
       </div>
     </mat-drawer>
 
     <div class="h-full content">
+      <div>
+        <!-- content -->
 
-      <div class="flex flex-col items-center justify-center h-full">
+        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="end">
+          <mat-tab label="Card">
+            <ng-template mat-tab-label>
+              <i class="material-icons me-2" >dashboard_customize</i>
+              <div>
+                Cards
+              </div>
+            </ng-template>
 
-        <app-loader-with-insights [loaderMessage]="'Building Dashboard'" [description]="'Analyzing financial data...'" ></app-loader-with-insights>
+            <div>
+              <!-- card container -->
+              <app-metric-card></app-metric-card>
+
+
+
+            </div>
+
+
+            </mat-tab
+          >
+          <mat-tab label="Line">
+            <ng-template mat-tab-label>
+              <i class="material-icons me-2">stacked_line_chart</i>
+              <div>
+                line
+              </div>
+            </ng-template>
+            
+            
+            Content 2</mat-tab>
+          <mat-tab label="Bar">
+
+             <ng-template mat-tab-label>
+              <i class="material-icons me-2">bar_chart</i>
+              <div>
+                Bar
+              </div>
+            </ng-template>
+            
+            Content 3</mat-tab>
+          <mat-tab label="Table">
+
+             <ng-template mat-tab-label>
+              <i class="material-icons me-2">table_rows</i>
+              <div>
+                Table
+              </div>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
       </div>
 
       <div class="flex flex-col items-center justify-center h-full">
-        <div class="flex flex-row gap-3 mb-3 ">
-          <span class="icon-box border border-neutral-900" ><i class="material-icons large-icon">bar_chart</i></span>
-          <span class="icon-box border border-neutral-900"> <i class="material-icons large-icon">trending_up</i></span>
+        <app-loader-with-insights
+          [loaderMessage]="'Building Dashboard'"
+          [description]="'Analyzing financial data...'"
+        ></app-loader-with-insights>
+      </div>
+
+      <div class="flex flex-col items-center justify-center h-full">
+        <div class="flex flex-row gap-3 mb-3">
+          <span class="icon-box border border-neutral-900"
+            ><i class="material-icons large-icon">bar_chart</i></span
+          >
+          <span class="icon-box border border-neutral-900">
+            <i class="material-icons large-icon">trending_up</i></span
+          >
         </div>
 
         <h1 class="mb-3">Start Your Analysis</h1>
-        <p class="w-lg text-center" >
+        <p class="w-lg text-center">
           Select a sample prompt from the left panel or enter your own query to
           begin analyzing quarterly financial metrics across insurance companies
         </p>

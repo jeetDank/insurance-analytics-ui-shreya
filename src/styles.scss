@@ -203,6 +203,11 @@ color: rgba(255, 255, 255, 0.95);
 }
 
 
+.card_background{
+  background-color: #101010;
+
+}
+
 
 
 // ============================================================================
@@ -261,4 +266,10 @@ color: rgba(255, 255, 255, 0.95);
 /* Target the placeholder text */
 .mat-mdc-form-field .mat-mdc-input-element::placeholder {
   font-size: 14px !important;
+}
+
+
+
+.metric_value{
+  font-size: 30px;
 }

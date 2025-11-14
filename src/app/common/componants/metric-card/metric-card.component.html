@@ -1,0 +1,36 @@
+<div class="p-8 rounded-lg card_background max-w-xs border border-neutral-900">
+  <div>
+    <div class="flex flex-row items-center">
+      <h5>
+        <i style="font-size: 14px" class="material-icons me-2">home_work </i>
+      </h5>
+      <h5 >
+        {{ CompanyName() }}
+      </h5>
+
+      <div class="ms-auto">
+        <mat-chip> {{ period() }}</mat-chip>
+      </div>
+    </div>
+
+    <div class="metric_value mt-2 mb-2">
+      {{ metric() }}
+    </div>
+
+    <div class="flex flex-row items-center">
+      @if (trend().positive) {
+
+      <i class="material-icons me-2" style="color: rgb(0, 193, 0)"
+        >trending_up</i
+      >
+      } @else{
+
+      <i class="material-icons me-2" style="color: rgb(193, 0, 0)"
+        >trending_down</i
+      >
+      }
+
+      {{ trend().trend }}{{ trend().trendUnit }}
+    </div>
+  </div>
+</div>

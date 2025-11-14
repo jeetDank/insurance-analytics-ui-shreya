@@ -1,16 +1,17 @@
 import { Component } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import {MatSidenavModule} from '@angular/material/sidenav';
-
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { QuaryBoxComponent } from '../quary-box/quary-box.component';
 import { LoaderWithInsightsComponent } from '../common/componants/loader-with-insights/loader-with-insights.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MetricCardComponent } from '../common/componants/metric-card/metric-card.component';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [LoaderWithInsightsComponent,QuaryBoxComponent,MatSidenavModule,MatButtonModule,MatToolbarModule,MatIconModule,MatSlideToggleModule],
+  imports: [MetricCardComponent,MatTabsModule,LoaderWithInsightsComponent,QuaryBoxComponent,MatSidenavModule,MatButtonModule,MatToolbarModule,MatIconModule,MatSlideToggleModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
