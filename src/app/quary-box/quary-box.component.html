@@ -18,11 +18,31 @@
         <div class="flex flex-col h-full">
           <!-- Chat messages area -->
           <div class="flex-1 p-4 overflow-y-auto">
-            @for (item of conversation; track $index) {}
-            <app-msg-bubble> 
-               
+            @for (item of conversation; track $index) { @if (item.processDetail)
+            {
+            <app-msg-bubble [isSystemMsg]="item.systemMsg" [timestamp]="item.timestamp">
+              <div class="flex flex-row justify-between">
+                <h5>Processing Query</h5>
+                <h5>{{ item.processingStatus }}%</h5>
+              </div>
+              <mat-progress-bar
+                mode="determinate"
+                [value]="item.processingStatus"
+              ></mat-progress-bar>
 
+              @for (step of item.processDetailsData; track $index) {
+              <app-step
+                [title]="step.name"
+                [description]="step.description"
+              ></app-step>
+              }
             </app-msg-bubble>
+            } @else{
+            <app-msg-bubble  [isSystemMsg]="item.systemMsg" [timestamp]="item.timestamp">
+              <p class="text-left text-primary">{{ item.message }}</p>
+            </app-msg-bubble>
+
+            } }
           </div>
 
           <!-- Input area (sticks to bottom) -->
@@ -31,7 +51,7 @@
               <input
                 class="hover:shadow-sm"
                 matInput
-                placeholder="Ask a question"
+                placeholder="Add a new metric or ask a question..."
               />
             </mat-form-field>
 

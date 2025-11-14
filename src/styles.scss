@@ -82,7 +82,7 @@ h5{
   font-weight: 500;
   line-height: 1.5;
   color: var(--color-text-secondary, rgba(255, 255, 255, 0.55));
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.3rem 0;
 }
 
 h6{
@@ -194,6 +194,16 @@ hr {
 color: #94a3b8;
 }
 
+.text-primary{
+color: rgba(255, 255, 255, 0.95);
+}
+
+.text-secondary{
+  color: rgba(255, 255, 255, 0.55)
+}
+
+
+
 
 // ============================================================================
 // CUSTOM SCROLLBAR - Dark Theme
@@ -238,50 +248,17 @@ color: #94a3b8;
   background-color: #1d1d1d;
 }
 
-// ============================================================================
-// ALTERNATIVE: Thinner Scrollbar (8px)
-// ============================================================================
+.mat-mdc-form-field input,
+.mat-mdc-input-element {
+  font-size: 14px !important;
+}
 
-// ::-webkit-scrollbar {
-//   width: 8px;
-//   height: 8px;
-// }
+/* Also target textareas if you use them */
+.mat-mdc-form-field textarea {
+  font-size: 14px !important;
+}
 
-// ::-webkit-scrollbar-track {
-//   background: transparent;
-// }
-
-// ::-webkit-scrollbar-thumb {
-//   background: rgba(255, 255, 255, 0.04);
-//   border-radius: 4px;
-  
-//   &:hover {
-//     background: rgba(255, 255, 255, 0.1);
-//   }
-  
-//   &:active {
-//     background: var(--color-primary, #94a3b8);
-//   }
-// }
-
-// ============================================================================
-// ALTERNATIVE: Gradient Scrollbar
-// ============================================================================
-
-// ::-webkit-scrollbar-thumb {
-//   background: linear-gradient(
-//     180deg,
-//     rgba(148, 163, 184, 0.3) 0%,
-//     rgba(203, 213, 225, 0.3) 100%
-//   );
-//   border-radius: 10px;
-//   border: 2px solid var(--color-background, #0a0a0c);
-  
-//   &:hover {
-//     background: linear-gradient(
-//       180deg,
-//       rgba(148, 163, 184, 0.5) 0%,
-//       rgba(203, 213, 225, 0.5) 100%
-//     );
-//   }
-// }
+/* Target the placeholder text */
+.mat-mdc-form-field .mat-mdc-input-element::placeholder {
+  font-size: 14px !important;
+}
