@@ -2,9 +2,8 @@
 
 // Customize the entire app. Change :root to your selector if you want to scope the styles.
 :root {
-  @include mat.progress-spinner-overrides((
-    active-indicator-color: orange,
-    size:20px
+ @include mat.progress-spinner-overrides((
+    active-indicator-color:red
   ));
 }
 
@@ -36,3 +35,4 @@
     transform: translateY(0);
   }
 }
+

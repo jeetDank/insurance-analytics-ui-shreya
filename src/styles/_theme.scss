@@ -1,4 +1,5 @@
 @use '@angular/material' as mat;
+@use 'custom-palette';
 @include mat.core();
 
 // Define your light theme

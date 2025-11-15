@@ -74,32 +74,54 @@
             </ng-template>
 
             <div class="space-y-8">
-  @for (item of cardView; track $index) {
-    <div>
-      <!-- Metric Header -->
-      <h2 class="flex flex-row items-center mb-4 text-lg font-semibold text-gray-900">
-        {{ item.metricName }}
-        <small class="ml-2 cursor-pointer" [title]="item.tooltip">
-          <i class="material-icons text-gray-500 text-base">info</i>
-        </small>
-      </h2>
+              @for (item of cardView; track $index) {
+              <div>
+                <!-- Metric Header -->
+                <h2
+                  class="flex flex-row items-center mb-4 text-lg font-semibold text-gray-900"
+                >
+                  {{ item.metricName }}
+                  <small class="ml-2 cursor-pointer" [title]="item.tooltip">
+                    <i class="material-icons text-gray-500 text-base">info</i>
+                  </small>
+                </h2>
 
-      <!-- Cards Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        @for (card of item.cards; track $index) {
-          <div class="w-full">
-            <app-metric-card
-              [CompanyName]="card.companyName"
-              [period]="card.period"
-              [metric]="card.metric"
-              [trend]="card.trend"
-            ></app-metric-card>
-          </div>
-        }
-      </div>
-    </div>
-  }
-</div>
+                <!-- Cards Grid -->
+                <div
+                  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                >
+                  @for (card of item.cards; track $index) {
+                  <div class="w-full">
+                    <app-metric-card
+                      [CompanyName]="card.companyName"
+                      [period]="card.period"
+                      [metric]="card.metric"
+                      [trend]="card.trend"
+                    ></app-metric-card>
+                  </div>
+                  }
+                </div>
+              </div>
+              }
+            </div>
+
+            <!-- insights section -->
+
+            <div class="flex flex-row align-center mt-5 mb-3">
+              <span class="material-icons me-2"> insights </span>
+              <h2 class="">AI-Powered Insights</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              @for (insight of insightsData; track $index) {
+              <app-insights-card
+                [icon]="insight.icon"
+                [title]="insight.title"
+                [description]="insight.description"
+                [source]="insight.source"
+              />
+              }
+            </div>
           </mat-tab>
           <mat-tab label="Line">
             <ng-template mat-tab-label>
