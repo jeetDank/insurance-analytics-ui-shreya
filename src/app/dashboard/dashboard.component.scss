@@ -38,6 +38,11 @@
       )
     );
 
+     @include mat.button-overrides((
+    filled-container-color: orange,
+    filled-label-text-color: red,
+  ));
+
     
     
   }
@@ -53,4 +58,10 @@ height: calc(100% - 64px);
   font-size: 32px; /* Adjust as needed */
   width: 32px;     /* Match font-size for consistent sizing */
   height: 32px;    /* Match font-size for consistent sizing */
+}
+
+
+.button_color{
+  background-color: #94a3b8;
+  color: #0a0a0c;
 }

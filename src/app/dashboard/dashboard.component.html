@@ -43,56 +43,84 @@
     </mat-drawer>
 
     <div class="h-full content">
-      <div>
+      <div class="p-5">
         <!-- content -->
+
+        <div class="flex flex-row align-center">
+          <div>
+            <h1>Allstate,progressive</h1>
+
+            <p>Quarterly Metric comparison</p>
+          </div>
+
+          <div class="ms-auto">
+            <button class="me-2 button_color" mat-raised-button>
+              <mat-icon class="">add_box</mat-icon>
+              Add Metric
+            </button>
+
+            <button class="button_color" mat-raised-button>
+              <mat-icon class="">download</mat-icon>
+              Export
+            </button>
+          </div>
+        </div>
 
         <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="end">
           <mat-tab label="Card">
             <ng-template mat-tab-label>
-              <i class="material-icons me-2" >dashboard_customize</i>
-              <div>
-                Cards
-              </div>
+              <i class="material-icons me-2">dashboard_customize</i>
+              <div>Cards</div>
             </ng-template>
 
-            <div>
-              <!-- card container -->
-              <app-metric-card></app-metric-card>
+            <div class="space-y-8">
+  @for (item of cardView; track $index) {
+    <div>
+      <!-- Metric Header -->
+      <h2 class="flex flex-row items-center mb-4 text-lg font-semibold text-gray-900">
+        {{ item.metricName }}
+        <small class="ml-2 cursor-pointer" [title]="item.tooltip">
+          <i class="material-icons text-gray-500 text-base">info</i>
+        </small>
+      </h2>
 
-
-
-            </div>
-
-
-            </mat-tab
-          >
+      <!-- Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        @for (card of item.cards; track $index) {
+          <div class="w-full">
+            <app-metric-card
+              [CompanyName]="card.companyName"
+              [period]="card.period"
+              [metric]="card.metric"
+              [trend]="card.trend"
+            ></app-metric-card>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+          </mat-tab>
           <mat-tab label="Line">
             <ng-template mat-tab-label>
               <i class="material-icons me-2">stacked_line_chart</i>
-              <div>
-                line
-              </div>
+              <div>line</div>
             </ng-template>
-            
-            
-            Content 2</mat-tab>
+
+            Content 2</mat-tab
+          >
           <mat-tab label="Bar">
-
-             <ng-template mat-tab-label>
+            <ng-template mat-tab-label>
               <i class="material-icons me-2">bar_chart</i>
-              <div>
-                Bar
-              </div>
+              <div>Bar</div>
             </ng-template>
-            
-            Content 3</mat-tab>
-          <mat-tab label="Table">
 
-             <ng-template mat-tab-label>
-              <i class="material-icons me-2">table_rows</i>
-              <div>
-                Table
-              </div>
+            Content 3</mat-tab
+          >
+          <mat-tab label="Table">
+            <ng-template mat-tab-label>
+              <i class="material-icons me-2">view_list</i>
+              <div>Table</div>
             </ng-template>
           </mat-tab>
         </mat-tab-group>
