@@ -11,6 +11,32 @@ import { MetricCardComponent } from '../common/componants/metric-card/metric-car
 import { InsightsCardComponent } from '../common/componants/insights-card/insights-card.component';
 import { ReferencesComponent } from '../common/componants/references/references.component';
 
+import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
+// import echarts core
+import * as echarts from 'echarts/core';
+// import necessary echarts components
+import { BarChart } from 'echarts/charts';
+import { LineChart } from 'echarts/charts';
+import { SunburstChart } from 'echarts/charts';
+import { PieChart } from 'echarts/charts';
+import {
+  GridComponent,
+  GridSimpleComponent,
+  LegendComponent,
+  TooltipComponent,
+} from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+echarts.use([
+  BarChart,
+  GridComponent,
+  CanvasRenderer,
+  PieChart,
+  LineChart,
+  TooltipComponent,
+  SunburstChart,
+  LegendComponent,
+]);
+
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -24,13 +50,139 @@ import { ReferencesComponent } from '../common/componants/references/references.
     MatIconModule,
     MatSlideToggleModule,
     InsightsCardComponent,
-    ReferencesComponent
+    ReferencesComponent,
+    NgxEchartsDirective,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
+  providers: [provideEchartsCore({ echarts })],
 })
 export class DashboardComponent {
   isDarkTheme = true;
+
+  lineChartOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(50, 50, 50, 0.85)',
+      borderRadius: 8,
+      padding: 10,
+      textStyle: { color: '#fff', fontSize: 12 },
+    },
+
+    legend: {
+      data: ['Allstate', 'Progressive'],
+      bottom: 10,
+      textStyle: { fontSize: 14 },
+    },
+
+    xAxis: {
+      type: 'category',
+      boundaryGap: false,
+      data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
+      axisLabel: { color: '#fff', fontSize: 14 },
+      axisLine: { show: true, color: '#fff' },
+    },
+
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value}%',
+        fontSize: 14,
+        color: '#fff',
+      },
+      axisLine: { show: true, color: '#fff' },
+      splitLine: { show: false }, // remove x grid line
+    },
+
+    // Transparent background
+    backgroundColor: 'transparent',
+
+    series: [
+      {
+        name: 'Allstate',
+        type: 'line',
+        smooth: true, // curved line
+        symbol: 'circle',
+        symbolSize: 9,
+        lineStyle: { width: 3 },
+        data: [104, 99, 101, 98],
+      },
+      {
+        name: 'Progressive',
+        type: 'line',
+        smooth: true, // curved line
+        symbol: 'circle',
+        symbolSize: 9,
+        lineStyle: { width: 3 },
+        data: [96, 94, 95, 93],
+      },
+    ],
+  };
+  barChartOption: echarts.EChartsCoreOption = {
+  tooltip: {
+    trigger: 'axis',
+    backgroundColor: 'rgba(50, 50, 50, 0.85)',
+    borderRadius: 8,
+    padding: 10,
+    textStyle: { color: '#fff', fontSize: 12 },
+  },
+
+  legend: {
+    data: ['Allstate', 'Progressive'],
+    bottom: 10,
+    textStyle: { fontSize: 14, color: '#fff' },
+  },
+
+  xAxis: {
+    type: 'category',
+    data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
+    axisLabel: { color: '#fff', fontSize: 14 },
+
+    // show axis line
+    axisLine: {
+      show: true,
+      lineStyle: { color: '#fff' }
+    },
+
+    // remove vertical grid lines
+    splitLine: { show: false }
+  },
+
+  yAxis: {
+    type: 'value',
+    axisLabel: {
+      formatter: '{value}%',
+      fontSize: 14,
+      color: '#fff',
+    },
+
+    // show axis line
+    axisLine: {
+      show: true,
+      lineStyle: { color: '#fff' }
+    },
+
+    // remove horizontal grid lines
+    splitLine: { show: false }
+  },
+
+  backgroundColor: 'transparent',
+
+  series: [
+    {
+      name: 'Allstate',
+      type: 'bar',
+      barWidth: '35%',
+      data: [104, 99, 101, 98]
+    },
+    {
+      name: 'Progressive',
+      type: 'bar',
+      barWidth: '35%',
+      data: [96, 94, 95, 93]
+    }
+  ]
+};
 
   cardView = [
     {
