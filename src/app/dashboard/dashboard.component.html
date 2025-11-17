@@ -137,7 +137,12 @@
                 Combined Ratio
                 <i [title]="'some text'" class="material-icons">info</i>
               </h2>
-              <div class="card_background rounded-xl" echarts [options]="lineChartOption" style="height: 400px"></div>
+              <div
+                class="card_background rounded-xl"
+                echarts
+                [options]="lineChartOption"
+                style="height: 400px"
+              ></div>
             </div>
           </mat-tab>
           <mat-tab label="Bar">
@@ -146,36 +151,58 @@
               <div>Bar</div>
             </ng-template>
 
-             <div>
+            <div>
               <h2 class="flex flex-row items-center gap-2">
                 Combined Ratio
                 <i [title]="'some text'" class="material-icons">info</i>
               </h2>
-              <div class="card_background rounded-xl" echarts [options]="barChartOption" style="height: 400px"></div>
+              <div
+                class="card_background rounded-xl"
+                echarts
+                [options]="barChartOption"
+                style="height: 400px"
+              ></div>
+              <div
+                class="card_background rounded-xl"
+                echarts
+                [options]="segmentRevenueOption"
+                style="height: 400px"
+              ></div>
             </div>
-
-            </mat-tab
-          >
+          </mat-tab>
           <mat-tab label="Table">
             <ng-template mat-tab-label>
               <i class="material-icons me-2">view_list</i>
               <div>Table</div>
             </ng-template>
           </mat-tab>
+          <mat-tab label="Sunburst">
+            <ng-template mat-tab-label>
+              <i class="material-icons me-2">flare</i>
+              <div>Sunburst</div>
+              
+            </ng-template>
+            <div>
+                <div
+                  class="card_background rounded-xl"
+                  echarts
+                  [options]="sunburstOption"
+                  style="height: 400px"
+                ></div>
+              </div>
+          </mat-tab>
         </mat-tab-group>
       </div>
 
       @if(false){
-          <div class="flex flex-col items-center justify-center h-full">
+      <div class="flex flex-col items-center justify-center h-full">
         <app-loader-with-insights
           [loaderMessage]="'Building Dashboard'"
           [description]="'Analyzing financial data...'"
         ></app-loader-with-insights>
       </div>
-      }
-
-      @if(false){
-        <div class="flex flex-col items-center justify-center h-full">
+      } @if(false){
+      <div class="flex flex-col items-center justify-center h-full">
         <div class="flex flex-row gap-3 mb-3">
           <span class="icon-box border border-neutral-900"
             ><i class="material-icons large-icon">bar_chart</i></span

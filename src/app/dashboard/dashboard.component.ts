@@ -118,71 +118,137 @@ export class DashboardComponent {
       },
     ],
   };
+
+  segmentRevenueOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: { type: 'shadow' },
+      backgroundColor: 'rgba(50, 50, 50, 0.85)',
+      borderRadius: 8,
+      padding: 10,
+      textStyle: { color: '#fff', fontSize: 12 },
+    },
+
+    legend: {
+      bottom: 10,
+      textStyle: { fontSize: 14 },
+    },
+
+    xAxis: {
+      type: 'value',
+      axisLabel: { color: '#fff', fontSize: 14 },
+      axisLine: { show: true, color: '#fff' },
+      splitLine: { show: false }, // remove grid
+    },
+
+    yAxis: {
+      type: 'category',
+      data: ['Revenue'],
+      axisLabel: { color: '#fff', fontSize: 14 },
+      axisLine: { show: true, color: '#fff' },
+    },
+
+    backgroundColor: 'transparent',
+
+    series: [
+      {
+        name: 'Property-Liability',
+        type: 'bar',
+        stack: 'total',
+        data: [42.8],
+      },
+      {
+        name: 'Protection Services',
+        type: 'bar',
+        stack: 'total',
+        data: [6.8],
+      },
+      {
+        name: 'Allstate Health & Benefits',
+        type: 'bar',
+        stack: 'total',
+
+        data: [3.2],
+      },
+      {
+        name: 'Run-off Property-Liability',
+        type: 'bar',
+        stack: 'total',
+        itemStyle: {
+          borderRadius: [0, 8, 8, 0], // rounded start
+        },
+
+        data: [1.4],
+      },
+    ],
+  };
+
   barChartOption: echarts.EChartsCoreOption = {
-  tooltip: {
-    trigger: 'axis',
-    backgroundColor: 'rgba(50, 50, 50, 0.85)',
-    borderRadius: 8,
-    padding: 10,
-    textStyle: { color: '#fff', fontSize: 12 },
-  },
-
-  legend: {
-    data: ['Allstate', 'Progressive'],
-    bottom: 10,
-    textStyle: { fontSize: 14, color: '#fff' },
-  },
-
-  xAxis: {
-    type: 'category',
-    data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
-    axisLabel: { color: '#fff', fontSize: 14 },
-
-    // show axis line
-    axisLine: {
-      show: true,
-      lineStyle: { color: '#fff' }
+    tooltip: {
+      trigger: 'axis',
+      backgroundColor: 'rgba(50, 50, 50, 0.85)',
+      borderRadius: 8,
+      padding: 10,
+      textStyle: { color: '#fff', fontSize: 12 },
     },
 
-    // remove vertical grid lines
-    splitLine: { show: false }
-  },
-
-  yAxis: {
-    type: 'value',
-    axisLabel: {
-      formatter: '{value}%',
-      fontSize: 14,
-      color: '#fff',
+    legend: {
+      data: ['Allstate', 'Progressive'],
+      bottom: 10,
+      textStyle: { fontSize: 14, color: '#fff' },
     },
 
-    // show axis line
-    axisLine: {
-      show: true,
-      lineStyle: { color: '#fff' }
+    xAxis: {
+      type: 'category',
+      data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
+      axisLabel: { color: '#fff', fontSize: 14 },
+
+      // show axis line
+      axisLine: {
+        show: true,
+        lineStyle: { color: '#fff' },
+      },
+
+      // remove vertical grid lines
+      splitLine: { show: false },
     },
 
-    // remove horizontal grid lines
-    splitLine: { show: false }
-  },
+    yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: '{value}%',
+        fontSize: 14,
+        color: '#fff',
+      },
 
-  backgroundColor: 'transparent',
+      // show axis line
+      axisLine: {
+        show: true,
+        lineStyle: { color: '#fff' },
+      },
 
-  series: [
-    {
-      name: 'Allstate',
-      type: 'bar',
-      barWidth: '35%',
-      data: [104, 99, 101, 98]
+      // remove horizontal grid lines
+      splitLine: { show: false },
     },
-    {
-      name: 'Progressive',
-      type: 'bar',
-      barWidth: '35%',
-      data: [96, 94, 95, 93]
-    }
-  ]
-};
+
+    backgroundColor: 'transparent',
+
+    series: [
+      {
+        name: 'Allstate',
+        type: 'bar',
+        barWidth: '35%',
+        data: [104, 99, 101, 98],
+      },
+      {
+        name: 'Progressive',
+        type: 'bar',
+        barWidth: '35%',
+
+        data: [96, 94, 95, 93],
+      },
+    ],
+  };
 
   cardView = [
     {
@@ -239,6 +305,51 @@ export class DashboardComponent {
     },
   ];
 
+  data = [
+  {
+    name: 'Allstate',
+    children: [
+      {
+        name: 'Property-Liability',
+        value: 79.0
+      },
+      {
+        name: 'Protection Services',
+        value: 12.5
+      },
+      {
+        name: 'Allstate Health & Benefits',
+        value: 5.9
+      },
+      {
+        name: 'Run-off Property-Liability',
+        value: 2.6
+      }
+    ]
+  }
+];
+  sunburstOption: echarts.EChartsCoreOption = {
+  tooltip: {
+    trigger: 'item',
+    formatter: '{b}: {c}%',
+  },
+
+  series: [
+    {
+      type: 'sunburst',
+      data: this.data,
+      radius: [0, '90%'],
+
+      label: {
+        rotate: 'radial',
+        fontSize: 14,
+        color:"#fff"
+      },
+
+      
+    }
+  ]
+};
   insightsData = [
     {
       icon: 'trending_down',
