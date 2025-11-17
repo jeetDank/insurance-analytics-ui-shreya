@@ -1,0 +1,23 @@
+<mat-accordion > 
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <div class="flex flex-row items-center">
+          <i class="material-icons self-start me-2">open_in_new</i>
+          <h4>References & Sources</h4>
+        </div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    @for (ref of refData; track $index) {
+    <div class="flex flex-row items-center gap-4">
+      <h4 class="w-48 flex-shrink-0">{{ ref.companyName }}</h4>
+      <div class="mt-2 flex flex-row gap-4 flex-wrap">
+        @for (link of ref.quarterlyLinks; track $index) {
+        <a [href]="link.link" class="hover:underline">{{ link.linkLabel }}</a>
+        }
+      </div>
+    </div>
+    }
+  </mat-expansion-panel>
+</mat-accordion>

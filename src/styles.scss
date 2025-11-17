@@ -63,7 +63,7 @@ small {
 // Additional heading levels for consistency
 h3 {
   font-size: 1rem;        // 16px
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
   margin: 0 0 0.5rem 0;
@@ -71,10 +71,10 @@ h3 {
 
 h4 {
   font-size: 0.875rem;    // 14px
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.5;
   color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
-  margin: 0 0 0.5rem 0;
+  margin:0;
 }
 
 h5{
@@ -99,6 +99,7 @@ a {
   color: var(--color-primary, #94a3b8);
   text-decoration: none;
   transition: color 0.2s ease;
+  font-size: 14px;
   
   &:hover {
     color: var(--color-accent, #cbd5e1);

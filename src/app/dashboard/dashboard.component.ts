@@ -9,6 +9,7 @@ import { LoaderWithInsightsComponent } from '../common/componants/loader-with-in
 import { MatTabsModule } from '@angular/material/tabs';
 import { MetricCardComponent } from '../common/componants/metric-card/metric-card.component';
 import { InsightsCardComponent } from '../common/componants/insights-card/insights-card.component';
+import { ReferencesComponent } from '../common/componants/references/references.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,6 +24,7 @@ import { InsightsCardComponent } from '../common/componants/insights-card/insigh
     MatIconModule,
     MatSlideToggleModule,
     InsightsCardComponent,
+    ReferencesComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
