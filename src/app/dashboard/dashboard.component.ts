@@ -27,6 +27,7 @@ import {
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import { MetricTableComponent } from '../common/componants/metric-table/metric-table.component';
+import { SegmentTableComponent } from '../common/componants/segment-table/segment-table.component';
 echarts.use([
   BarChart,
   GridComponent,
@@ -53,7 +54,8 @@ echarts.use([
     InsightsCardComponent,
     ReferencesComponent,
     NgxEchartsDirective,
-    MetricTableComponent
+    MetricTableComponent,
+    SegmentTableComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
