@@ -1,16 +1,21 @@
 <div class="mt-5 mb-5">
   <h2>
-    {{ tableHeader() }}
-
-    <span> <i class="material-icons">info</i></span>
+    <span class="flex flex-row items-center">
+      <div>
+        {{ tableHeader() }}
+      </div>
+      <i class="material-icons ms-2">info</i></span
+    >
   </h2>
 </div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
   @for(column of displayedColumns; track $index){
   <ng-container [matColumnDef]="column">
-    <th class="font-16 text-secondary"  mat-header-cell *matHeaderCellDef>{{ column }}</th>
-    <td   mat-cell *matCellDef="let element">
+    <th class="font-16 text-secondary" mat-header-cell *matHeaderCellDef>
+      {{ column }}
+    </th>
+    <td  mat-cell *matCellDef="let element">
       @if(column === 'Change') {
       <span class="flex flex-row items-center">
         <i
@@ -23,14 +28,14 @@
         >
           {{ element.isPositive ? "arrow_upward" : "arrow_downward" }}
         </i>
-        <span class="font-16 text-primary">
+        <span class="font-16 text-primary" [class]="element.isPositive ? 'font-16 text-primary text-danger':'font-16 text-primary text-success'">
           {{ element[column] }}
         </span>
       </span>
       } @else {
-     <span class="font-16 text-primary ">
-         {{ element[column] }}
-     </span>
+      <span class="font-16 text-primary ">
+        {{ element[column] }}
+      </span>
       }
     </td>
   </ng-container>

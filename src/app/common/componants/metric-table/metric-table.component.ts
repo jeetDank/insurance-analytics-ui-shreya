@@ -24,7 +24,7 @@ export class MetricTableComponent implements OnInit {
       "Quarter": 'Q1 2025',
       "Value": '$20.50B',
       "Change": '+3.8%',
-      isPositive: true,
+      isPositive: false,
     },
   ]);
 
