@@ -15,6 +15,10 @@
   box-sizing: border-box;
 }
 
+span i{
+  font-size: 18px !important;
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -275,3 +279,7 @@ color: rgba(255, 255, 255, 0.95);
   font-size: 30px;
 }
 
+
+.font-16{
+  font-size: 16px;
+}

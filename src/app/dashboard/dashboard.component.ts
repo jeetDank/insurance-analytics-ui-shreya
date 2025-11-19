@@ -26,6 +26,7 @@ import {
   TooltipComponent,
 } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
+import { MetricTableComponent } from '../common/componants/metric-table/metric-table.component';
 echarts.use([
   BarChart,
   GridComponent,
@@ -52,6 +53,7 @@ echarts.use([
     InsightsCardComponent,
     ReferencesComponent,
     NgxEchartsDirective,
+    MetricTableComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

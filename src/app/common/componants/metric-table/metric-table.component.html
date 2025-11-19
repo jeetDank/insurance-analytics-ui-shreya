@@ -1,0 +1,41 @@
+<div class="mt-5 mb-5">
+  <h2>
+    {{ tableHeader() }}
+
+    <span> <i class="material-icons">info</i></span>
+  </h2>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  @for(column of displayedColumns; track $index){
+  <ng-container [matColumnDef]="column">
+    <th class="font-16 text-secondary"  mat-header-cell *matHeaderCellDef>{{ column }}</th>
+    <td   mat-cell *matCellDef="let element">
+      @if(column === 'Change') {
+      <span class="flex flex-row items-center">
+        <i
+          class="material-icons me-1"
+          [style]="
+            element.isPositive
+              ? 'font-size:18px;color:lightgreen'
+              : 'font-size: 18px;color:red'
+          "
+        >
+          {{ element.isPositive ? "arrow_upward" : "arrow_downward" }}
+        </i>
+        <span class="font-16 text-primary">
+          {{ element[column] }}
+        </span>
+      </span>
+      } @else {
+     <span class="font-16 text-primary ">
+         {{ element[column] }}
+     </span>
+      }
+    </td>
+  </ng-container>
+  }
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+</table>

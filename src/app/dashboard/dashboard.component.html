@@ -154,7 +154,7 @@
             <div>
               <h2 class="flex flex-row items-center gap-2">
                 Combined Ratio
-                <i [title]="'some text'" class="material-icons">info</i>
+               <span> <i [title]="'some text'" class="material-icons">info</i></span>
               </h2>
               <div
                 class="card_background rounded-xl"
@@ -172,24 +172,28 @@
           </mat-tab>
           <mat-tab label="Table">
             <ng-template mat-tab-label>
-              <i class="material-icons me-2">view_list</i>
+              <i class="material-icons me-2">vied_list</i>
               <div>Table</div>
             </ng-template>
+
+            <!-- TABLE CONTENT -->
+            <div>
+               <app-metric-table  ></app-metric-table>
+            </div>
           </mat-tab>
           <mat-tab label="Sunburst">
             <ng-template mat-tab-label>
               <i class="material-icons me-2">flare</i>
               <div>Sunburst</div>
-              
             </ng-template>
             <div>
-                <div
-                  class="card_background rounded-xl"
-                  echarts
-                  [options]="sunburstOption"
-                  style="height: 400px"
-                ></div>
-              </div>
+              <div
+                class="card_background rounded-xl"
+                echarts
+                [options]="sunburstOption"
+                style="height: 400px"
+              ></div>
+            </div>
           </mat-tab>
         </mat-tab-group>
       </div>
