@@ -7,6 +7,7 @@
         Financial Assistant
       </h1>
       <h6 class="block mt-2 text-secondary">Ask questions about insurance companies</h6>
+      <button (click)="recordMsg('msg')" >sysmsg</button>
     </div>
   </div>
   <!-- sidebar header ends here -->
@@ -57,7 +58,7 @@
             </mat-form-field>
 
             <button
-             
+              (click)="parseQuery(msg.value)"
               mat-mini-fab
               type="submit"
               class="shrink-0 self-start custom-mini-fab"
