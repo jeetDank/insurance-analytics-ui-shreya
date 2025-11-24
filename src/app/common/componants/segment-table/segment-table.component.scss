@@ -1,0 +1,27 @@
+.segment-content {
+  display: flex;
+  align-items: center;
+  
+  .indentation-spacer {
+    flex-shrink: 0;
+  }
+  
+.level-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+  
+  .spacer {
+    width: 8px;
+    flex-shrink: 0;
+  }
+  
+  .segment-name {
+    flex: 1;
+  }
+}

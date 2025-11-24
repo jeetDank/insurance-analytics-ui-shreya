@@ -136,7 +136,22 @@ export class SegmentTableComponent implements OnInit {
     return result;
   }
 
-  getIndentation(level: number): string {
+   getIndentation(level: number): string {
     return `${level * 24}px`;
+  }
+
+  getLevelColor(level: number): string {
+  const colors = [
+    '#3B82F6', // Vibrant Blue for level 0
+    '#10B981', // Vibrant Green for level 1
+    '#F59E0B', // Vibrant Yellow for level 2
+    '#F97316', // Vibrant Orange for level 3
+    '#EF4444', // Vibrant Red for level 4
+  ];
+  return colors[level] || '#8B5CF6'; // Purple as fallback
+}
+
+  hasChildren(data: SegmentData): boolean {
+    return !!(data.children && data.children.length > 0);
   }
 }
