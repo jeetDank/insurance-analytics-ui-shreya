@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -28,6 +28,7 @@ import {
 import { CanvasRenderer } from 'echarts/renderers';
 import { MetricTableComponent } from '../common/componants/metric-table/metric-table.component';
 import { SegmentTableComponent } from '../common/componants/segment-table/segment-table.component';
+import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
 echarts.use([
   BarChart,
   GridComponent,
@@ -55,13 +56,13 @@ echarts.use([
     ReferencesComponent,
     NgxEchartsDirective,
     MetricTableComponent,
-    SegmentTableComponent
+    SegmentTableComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   providers: [provideEchartsCore({ echarts })],
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   isDarkTheme = true;
 
   lineChartOption: echarts.EChartsCoreOption = {
@@ -310,50 +311,48 @@ export class DashboardComponent {
   ];
 
   data = [
-  {
-    name: 'Allstate',
-    children: [
-      {
-        name: 'Property-Liability',
-        value: 79.0
-      },
-      {
-        name: 'Protection Services',
-        value: 12.5
-      },
-      {
-        name: 'Allstate Health & Benefits',
-        value: 5.9
-      },
-      {
-        name: 'Run-off Property-Liability',
-        value: 2.6
-      }
-    ]
-  }
-];
-  sunburstOption: echarts.EChartsCoreOption = {
-  tooltip: {
-    trigger: 'item',
-    formatter: '{b}: {c}%',
-  },
-
-  series: [
     {
-      type: 'sunburst',
-      data: this.data,
-      radius: [0, '90%'],
+      name: 'Allstate',
+      children: [
+        {
+          name: 'Property-Liability',
+          value: 79.0,
+        },
+        {
+          name: 'Protection Services',
+          value: 12.5,
+        },
+        {
+          name: 'Allstate Health & Benefits',
+          value: 5.9,
+        },
+        {
+          name: 'Run-off Property-Liability',
+          value: 2.6,
+        },
+      ],
+    },
+  ];
+  sunburstOption: echarts.EChartsCoreOption = {
+    tooltip: {
+      trigger: 'item',
+      formatter: '{b}: {c}%',
+    },
 
-      label: {
-        rotate: 'radial',
-        fontSize: 14,
-        color:"#fff"
+    series: [
+      {
+        type: 'sunburst',
+        data: this.data,
+        radius: [0, '90%'],
+
+        label: {
+          rotate: 'radial',
+          fontSize: 14,
+          color: '#fff',
+        },
       },
-
-      
-    }
-  ]
-};
+    ],
+  };
   insightsData = [
     {
       icon: 'trending_down',
@@ -417,4 +416,5 @@ export class DashboardComponent {
   }
 
   onMenuClick() {}
+  ngOnInit(): void {}
 }

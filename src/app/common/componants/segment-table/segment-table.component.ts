@@ -42,14 +42,14 @@ export class SegmentTableComponent implements OnInit {
             {
               segment_name: 'Digital Ads',
               value: '$2.1M',
-              children: null
+              children: null,
             },
             {
               segment_name: 'Brand Management',
               value: '$3.1M',
-              children: null
-            }
-          ]
+              children: null,
+            },
+          ],
         },
         {
           segment_name: 'Finance',
@@ -58,21 +58,21 @@ export class SegmentTableComponent implements OnInit {
             {
               segment_name: 'Accounting',
               value: '$2.4M',
-              children: null
+              children: null,
             },
             {
               segment_name: 'Audit',
               value: '$2.4M',
-              children: null
-            }
-          ]
+              children: null,
+            },
+          ],
         },
         {
           segment_name: 'Human Resources',
           value: '$2.5M',
-          children: null
-        }
-      ]
+          children: null,
+        },
+      ],
     },
     {
       segment_name: 'Technology',
@@ -85,27 +85,27 @@ export class SegmentTableComponent implements OnInit {
             {
               segment_name: 'Frontend',
               value: '$4.7M',
-              children: null
+              children: null,
             },
             {
               segment_name: 'Backend',
               value: '$7.3M',
-              children: null
-            }
-          ]
+              children: null,
+            },
+          ],
         },
         {
           segment_name: 'IT Support',
           value: '$3.2M',
-          children: null
+          children: null,
         },
         {
           segment_name: 'Security',
           value: '$5.1M',
-          children: null
-        }
-      ]
-    }
+          children: null,
+        },
+      ],
+    },
   ];
 
   ngOnInit() {
@@ -136,20 +136,20 @@ export class SegmentTableComponent implements OnInit {
     return result;
   }
 
-   getIndentation(level: number): string {
+  getIndentation(level: number): string {
     return `${level * 24}px`;
   }
 
   getLevelColor(level: number): string {
-  const colors = [
-    '#3B82F6', // Vibrant Blue for level 0
-    '#10B981', // Vibrant Green for level 1
-    '#F59E0B', // Vibrant Yellow for level 2
-    '#F97316', // Vibrant Orange for level 3
-    '#EF4444', // Vibrant Red for level 4
-  ];
-  return colors[level] || '#8B5CF6'; // Purple as fallback
-}
+    const colors = [
+      '#3B82F6', // Vibrant Blue for level 0
+      '#10B981', // Vibrant Green for level 1
+      '#F59E0B', // Vibrant Yellow for level 2
+      '#F97316', // Vibrant Orange for level 3
+      '#EF4444', // Vibrant Red for level 4
+    ];
+    return colors[level] || '#8B5CF6'; // Purple as fallback
+  }
 
   hasChildren(data: SegmentData): boolean {
     return !!(data.children && data.children.length > 0);

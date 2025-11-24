@@ -1,0 +1,110 @@
+<div class="mt-5 p-4">
+  <!-- Header Section -->
+  <div class="flex items-center justify-between w-full mb-2">
+    <div class="flex items-center gap-2">
+      <span class="flex items-center">
+        <i class="material-icons">calculate</i>
+      </span>
+      <h4 class="">Custom Formulas</h4>
+    </div>
+    <span
+      (click)="toggleAddForm()"
+      class="flex items-center p-2 hover:bg-neutral-800 rounded cursor-pointer transition-colors"
+    >
+      <i class="material-icons">{{ showAddForm ? "close" : "add" }}</i>
+    </span>
+  </div>
+
+  <div class="mb-2">
+    <h5 class="text-secondary">Create and manage custom metrics</h5>
+  </div>
+
+  <!-- Add New Formula Form -->
+  @if(showAddForm){
+  <mat-card class="p-4 shadow-md border border-neutral-200 mb-4">
+
+    <form [formGroup]="formulaForm" class="space-y-4">
+      <!-- Formula Name -->
+
+      <!-- Action Buttons -->
+      <div class="flex gap-2 justify-end pt-2">
+        <button
+        class="w-full"
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="addNewFormula()"
+          [disabled]="!formulaForm.valid"
+        >
+          <span class="flex flex-row items-center"><i class="material-icons me-2" >check</i> Add Formula</span> 
+        </button>
+
+        <span
+          (click)="cancelAdd()"
+          class="flex items-center  p-2 hover:bg-neutral-800 rounded cursor-pointer transition-colors"
+          ><i class="material-icons ">close</i>
+        </span>
+      </div>
+    </form>
+  </mat-card>
+  }
+
+  <!-- Formula List View -->
+  @if(customFormulaList.length > 0){
+  <div class="space-y-3">
+    @for(formula of customFormulaList; track formula.id) {
+    <mat-card class="p-4 shadow-sm border border-neutral-200">
+      <div class="flex items-center justify-between mb-2">
+        <h5 class="font-medium text-neutral-800">{{ formula.name }}</h5>
+        <div class="flex gap-2">
+          <span class="cursor-pointer" >
+            <i (click)="editFormula(formula.id)" class="material-icons text-sm"
+              >edit</i
+            >
+          </span>
+
+          <span class="cursor-pointer" >
+            <i
+              (click)="deleteFormula(formula.id)"
+              class="material-icons text-sm"
+              >delete</i
+            >
+          </span>
+        </div>
+      </div>
+
+      <!-- Formula -->
+      <div class="mt-2">
+        <p class="text-sm text-neutral-600 p-3 rounded font-mono border">
+          {{ formula.formula }}
+        </p>
+      </div>
+
+      <!-- Description -->
+      @if(formula.description){
+      <div class="mt-2">
+        <p class="text-sm text-neutral-500">{{ formula.description }}</p>
+      </div>
+      }
+    </mat-card>
+    }
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if(!showAddForm && customFormulaList.length === 0){
+  <div class="mt-6 w-full flex flex-col items-center justify-center py-8">
+    <div class="mb-2">
+      <i class="material-icons !text-neutral-400" style="font-size: 48px"
+        >calculate</i
+      >
+    </div>
+    <div class="mb-1">
+      <h4 class="text-secondary">No custom formulas yet</h4>
+    </div>
+    <div>
+      <h6 class="text-secondary">Click + to create one</h6>
+    </div>
+  </div>
+  }
+</div>

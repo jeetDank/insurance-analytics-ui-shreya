@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MsgBubbleComponent } from '../common/componants/msg-bubble/msg-bubble.component';
 import { StepComponent } from '../common/step/step.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { CustomFormulaComponent } from '../common/custom-formula/custom-formula.component';
 
 interface conversation {
   message: string;
@@ -33,6 +34,7 @@ interface processSteps {
     MatInputModule,
     MatIconModule,
     MatButtonModule,
+    CustomFormulaComponent
   ],
   templateUrl: './quary-box.component.html',
   styleUrl: './quary-box.component.scss',
