@@ -23,5 +23,7 @@ export const API_ENDPOINTS = {
 
   VARIANCE_ANALYSIS: '/analysis/variance',
 
+  VARIANCE_ANALYSIS_LIGHT: '/analysis/variance-lightweight',
+
   FETCH_FORMULAS: '/formulas_list/formulas',
 } as const;

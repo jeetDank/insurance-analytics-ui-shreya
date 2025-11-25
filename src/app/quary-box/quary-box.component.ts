@@ -171,8 +171,6 @@ export class QuaryBoxComponent implements OnInit {
 
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
-        console.log(res);
-
         if (res.success == true) {
           try {
             this._dataService.setParsedQuery(res.parsed);
@@ -189,14 +187,45 @@ export class QuaryBoxComponent implements OnInit {
       .resolveMultipleCompanies({ company_inputs: companies })
       .subscribe({
         next: (res) => {
-          
-            try {
-              this._dataService.setCompanyData(res.results);
-              console.log(this._dataService.API_DATA);
-              
-            } catch {}
+          try {
+            this._dataService.setCompanyData(res.results);
+            this.startBatchAnalysis();
+          } catch {}
+        },
+      });
+  }
+
+  startBatchAnalysis() {
+    let payload = this._dataService.fetchBatchAnalysisPayload();
+
+    this._apiService.batchAnalysis(payload).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          let data = {
+            results: res.results,
+            summary: res.summary,
+          };
+          this._dataService.setAnalysisData(data);
+           this.startVarienceAnalysis() 
+
+          console.log(this._dataService.API_DATA);
+        } else {
+        }
+      },
+    });
+  }
+
+  startVarienceAnalysis() {
+    let payload = this._dataService.fetchVariencePayload();
+
+    if (payload) {
+      this._apiService.varienceAnalysis(payload).subscribe({
+        next: (res: any) => {
+          console.log(res);
           
         },
       });
+    } else {
+    }
   }
 }

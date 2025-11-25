@@ -16,15 +16,26 @@ interface ambiguityResolve {
 }
 
 interface batchAnalysis {
-  companies: companies[];
+  companies: company[];
   time_periods: string[];
   filing_type: string;
   analysis_depth: number;
 }
 
-interface companies {
+interface company {
   cik: string;
   name: string;
+}
+interface companies {
+  cik: string;
+  company_name: string;
+  period: string;
+  requested_metrics: any[];
+  analysis_result: any;
+}
+
+interface varienceAnalysis {
+  companies: companies[];
 }
 
 @Injectable({
@@ -47,5 +58,9 @@ export class InsuranceAnalyticsService {
 
   batchAnalysis(payload: batchAnalysis) {
     return this.http.post(BASE_URL + apis.BATCH_ANALYSIS, payload);
+  }
+
+  varienceAnalysis(payload: varienceAnalysis) {
+    return this.http.post(BASE_URL + apis.VARIANCE_ANALYSIS_LIGHT, payload);
   }
 }
