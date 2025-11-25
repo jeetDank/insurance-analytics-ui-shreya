@@ -93,6 +93,8 @@ export class QuaryBoxComponent implements OnInit {
     },
   ];
 
+  ambiguityData: any[] | null = null;
+
   constructor(
     private _apiService: InsuranceAnalyticsService,
     private snackBar: MatSnackBar,
@@ -173,14 +175,30 @@ export class QuaryBoxComponent implements OnInit {
       next: (res) => {
         if (res.success == true) {
           try {
-            this._dataService.setParsedQuery(res.parsed);
-            this.resolveCompanies(res.parsed.companies);
+            if (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) {
+              this._dataService.setParsedQuery(res.parsed);
+              this.resolveCompanies(res.parsed.companies);
+            } else {
+              this._dataService.setParsedQuery(res.parsed);
+              this._dataService.fetchAmbiguities();
+
+              this.ambiguityData = this._dataService.fetchAmbiguities();
+              console.log(this.ambiguityData);
+            }
           } catch {}
         } else {
         }
       },
     });
   }
+
+  ll = {
+    name: 're',
+    suggestions: ['return_on_equity', 'retained_earnings', 'revenue'],
+    context: null,
+    resolved: false,
+    resolved_to: null,
+  };
 
   resolveCompanies(companies: string[]) {
     this._apiService
@@ -206,7 +224,7 @@ export class QuaryBoxComponent implements OnInit {
             summary: res.summary,
           };
           this._dataService.setAnalysisData(data);
-           this.startVarienceAnalysis() 
+          this.startVarienceAnalysis();
 
           console.log(this._dataService.API_DATA);
         } else {
@@ -222,10 +240,21 @@ export class QuaryBoxComponent implements OnInit {
       this._apiService.varienceAnalysis(payload).subscribe({
         next: (res: any) => {
           console.log(res);
-          
         },
       });
     } else {
     }
   }
+
+  resolveAmbiguity(data:any){
+    let payload = data;
+    this._apiService.resolveAmbiguities(payload).subscribe({
+      next:(res)=>{
+        this._dataService.API_DATA.PARSED_QUERY.metrics.push(res.metric_name); 
+      }
+    })
+
+  }
+
+
 }

@@ -63,4 +63,12 @@ export class InsuranceAnalyticsService {
   varienceAnalysis(payload: varienceAnalysis) {
     return this.http.post(BASE_URL + apis.VARIANCE_ANALYSIS_LIGHT, payload);
   }
+
+
+
+  
+
+
+
+
 }

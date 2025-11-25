@@ -4,6 +4,7 @@ interface apiData {
   PARSED_QUERY: any | null;
   COMPANY_DATA: any[] | null;
   ANALYSIS_DATA: any | null;
+  AMBIGUITY_DATA: any | null;
 }
 
 @Injectable({
@@ -16,6 +17,7 @@ export class DataService {
     PARSED_QUERY: null,
     COMPANY_DATA: null,
     ANALYSIS_DATA: null,
+    AMBIGUITY_DATA: null,
   };
 
   setParsedQuery(data: any) {
@@ -56,6 +58,24 @@ export class DataService {
       payload.time_periods = this.API_DATA.PARSED_QUERY.time_periods;
 
       return payload;
+    } else {
+      return false;
+    }
+  }
+
+  fetchAmbiguities() {
+    if (this.API_DATA.PARSED_QUERY) {
+      let ambiguityData = this.API_DATA.PARSED_QUERY.ambiguities.map(
+        (ambiguity: any) => {
+          return {
+            metric_name: ambiguity.name,
+            context: 'string',
+            suggestions: ambiguity.suggestions,
+            resolution_type: 'select',
+          };
+        }
+      );
+      return ambiguityData;
     } else {
       return false;
     }
@@ -346,7 +366,7 @@ export class DataService {
           },
         ],
       };
-      return payload
+      return payload;
     } else {
       return false;
     }
