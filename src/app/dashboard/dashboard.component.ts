@@ -12,9 +12,7 @@ import { InsightsCardComponent } from '../common/componants/insights-card/insigh
 import { ReferencesComponent } from '../common/componants/references/references.component';
 
 import { NgxEchartsDirective, provideEchartsCore } from 'ngx-echarts';
-// import echarts core
 import * as echarts from 'echarts/core';
-// import necessary echarts components
 import { BarChart } from 'echarts/charts';
 import { LineChart } from 'echarts/charts';
 import { SunburstChart } from 'echarts/charts';
@@ -25,14 +23,16 @@ import {
   LegendComponent,
   TooltipComponent,
 } from 'echarts/components';
-import { CanvasRenderer } from 'echarts/renderers';
+import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
 import { MetricTableComponent } from '../common/componants/metric-table/metric-table.component';
 import { SegmentTableComponent } from '../common/componants/segment-table/segment-table.component';
-import { HttpClient, provideHttpClient, withFetch } from '@angular/common/http';
+
+// Configure ECharts with both renderers
 echarts.use([
   BarChart,
   GridComponent,
   CanvasRenderer,
+  SVGRenderer,
   PieChart,
   LineChart,
   TooltipComponent,
@@ -60,97 +60,200 @@ echarts.use([
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  providers: [provideEchartsCore({ echarts })],
+  providers: [provideEchartsCore({ 
+    echarts,
+    // Configure default renderer here
+  })],
 })
 export class DashboardComponent implements OnInit {
   isDarkTheme = true;
 
+  // Common chart configuration for crisp rendering
+  private getCommonChartConfig() {
+    return {
+      useDirtyRect: true,
+      devicePixelRatio: window.devicePixelRatio || 1,
+    };
+  }
+
   lineChartOption: echarts.EChartsCoreOption = {
+    ...this.getCommonChartConfig(),
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(50, 50, 50, 0.85)',
-      borderRadius: 8,
-      padding: 10,
-      textStyle: { color: '#fff', fontSize: 12 },
+      backgroundColor: 'rgba(15, 15, 25, 0.95)',
+      borderColor: 'rgba(100, 100, 150, 0.3)',
+      borderWidth: 1,
+      borderRadius: 12,
+      padding: 12,
+      textStyle: { 
+        color: '#e0e0ff', 
+        fontSize: 12,
+        fontWeight: 'normal'
+      },
     },
 
     legend: {
       data: ['Allstate', 'Progressive'],
       bottom: 10,
-      textStyle: { fontSize: 14 },
+      textStyle: { 
+        fontSize: 13, 
+        color: '#b0b0ff',
+        fontWeight: '500'
+      },
+      itemGap: 25,
+      itemWidth: 12,
+      itemHeight: 12,
     },
 
     xAxis: {
       type: 'category',
       boundaryGap: false,
       data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
-      axisLabel: { color: '#fff', fontSize: 14 },
-      axisLine: { show: true, color: '#fff' },
+      axisLabel: { 
+        color: '#c0c0ff', 
+        fontSize: 12,
+        fontWeight: '500'
+      },
+      axisLine: { 
+        show: true, 
+        lineStyle: { 
+          color: 'rgba(160, 160, 255, 0.4)',
+          width: 1.5
+        } 
+      },
+      splitLine: { show: false },
     },
 
     yAxis: {
       type: 'value',
       axisLabel: {
         formatter: '{value}%',
-        fontSize: 14,
-        color: '#fff',
+        fontSize: 12,
+        color: '#c0c0ff',
+        fontWeight: '500'
       },
-      axisLine: { show: true, color: '#fff' },
-      splitLine: { show: false }, // remove x grid line
+      axisLine: { 
+        show: true, 
+        lineStyle: { 
+          color: 'rgba(160, 160, 255, 0.4)',
+          width: 1.5
+        } 
+      },
+      splitLine: { 
+        show: true,
+        lineStyle: {
+          color: 'rgba(80, 80, 120, 0.2)',
+          type: 'dashed',
+          width: 1
+        }
+      },
     },
 
-    // Transparent background
     backgroundColor: 'transparent',
 
     series: [
       {
         name: 'Allstate',
         type: 'line',
-        smooth: true, // curved line
+        smooth: true,
         symbol: 'circle',
-        symbolSize: 9,
-        lineStyle: { width: 3 },
+        symbolSize: 8,
+        lineStyle: { 
+          width: 4,
+          shadowColor: 'rgba(52, 152, 219, 0.5)',
+          shadowBlur: 10,
+          shadowOffsetY: 3
+        },
+        itemStyle: {
+          color: '#3498db',
+          borderWidth: 2,
+          borderColor: '#1a1a2e'
+        },
         data: [104, 99, 101, 98],
       },
       {
         name: 'Progressive',
         type: 'line',
-        smooth: true, // curved line
+        smooth: true,
         symbol: 'circle',
-        symbolSize: 9,
-        lineStyle: { width: 3 },
+        symbolSize: 8,
+        lineStyle: { 
+          width: 4,
+          shadowColor: 'rgba(231, 76, 60, 0.5)',
+          shadowBlur: 10,
+          shadowOffsetY: 3
+        },
+        itemStyle: {
+          color: '#e74c3c',
+          borderWidth: 2,
+          borderColor: '#1a1a2e'
+        },
         data: [96, 94, 95, 93],
       },
     ],
   };
 
   segmentRevenueOption: echarts.EChartsCoreOption = {
+    ...this.getCommonChartConfig(),
     tooltip: {
       trigger: 'axis',
       axisPointer: { type: 'shadow' },
-      backgroundColor: 'rgba(50, 50, 50, 0.85)',
-      borderRadius: 8,
-      padding: 10,
-      textStyle: { color: '#fff', fontSize: 12 },
+      backgroundColor: 'rgba(15, 15, 25, 0.95)',
+      borderColor: 'rgba(100, 100, 150, 0.3)',
+      borderWidth: 1,
+      borderRadius: 12,
+      padding: 12,
+      textStyle: {
+        color: '#d7d7d7ff',
+        fontSize: 12,
+        fontWeight: 'normal',
+      },
     },
 
     legend: {
       bottom: 10,
-      textStyle: { fontSize: 14 },
+      textStyle: {
+        fontSize: 13,
+        color: '#d7d7d7ff',
+        fontWeight: '500',
+      },
+      itemGap: 20,
+      itemWidth: 12,
+      itemHeight: 12,
     },
 
     xAxis: {
       type: 'value',
-      axisLabel: { color: '#fff', fontSize: 14 },
-      axisLine: { show: true, color: '#fff' },
-      splitLine: { show: false }, // remove grid
+      axisLabel: {
+        color: '#d7d7d7ff',
+        fontSize: 12,
+        fontWeight: '500',
+      },
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: 'rgba(160, 160, 255, 0.4)',
+          width: 1.5,
+        },
+      },
+      splitLine: { show: false },
     },
 
     yAxis: {
       type: 'category',
       data: ['Revenue'],
-      axisLabel: { color: '#fff', fontSize: 14 },
-      axisLine: { show: true, color: '#fff' },
+      axisLabel: {
+        color: '#c0c0ff',
+        fontSize: 13,
+        fontWeight: '600',
+      },
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: 'rgba(160, 160, 255, 0.4)',
+          width: 1.5,
+        },
+      },
     },
 
     backgroundColor: 'transparent',
@@ -160,19 +263,88 @@ export class DashboardComponent implements OnInit {
         name: 'Property-Liability',
         type: 'bar',
         stack: 'total',
+        itemStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 0,
+            colorStops: [
+              { offset: 0, color: 'rgba(74, 144, 226, 0.95)' },
+              { offset: 1, color: 'rgba(74, 144, 226, 0.7)' },
+            ],
+          },
+          borderRadius: [8, 0, 0, 8],
+          // shadowColor: 'rgba(74, 144, 226, 0.5)',
+          // shadowBlur: 12,
+          shadowOffsetX: 2,
+          borderWidth: 0,
+        },
+        emphasis: {
+          itemStyle: {
+            shadowColor: 'rgba(74, 144, 226, 0.8)',
+            // shadowBlur: 20,
+          },
+        },
         data: [42.8],
       },
       {
         name: 'Protection Services',
         type: 'bar',
         stack: 'total',
+        itemStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 0,
+            colorStops: [
+              { offset: 0, color: 'rgba(46, 204, 113, 0.95)' },
+              { offset: 1, color: 'rgba(46, 204, 113, 0.7)' },
+            ],
+          },
+          shadowColor: 'rgba(46, 204, 113, 0.5)',
+          shadowBlur: 12,
+          shadowOffsetX: 2,
+          borderWidth: 0,
+        },
+        emphasis: {
+          itemStyle: {
+            shadowColor: 'rgba(46, 204, 113, 0.8)',
+            // shadowBlur: 20,
+          },
+        },
         data: [6.8],
       },
       {
         name: 'Allstate Health & Benefits',
         type: 'bar',
         stack: 'total',
-
+        itemStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 0,
+            colorStops: [
+              { offset: 0, color: 'rgba(155, 89, 182, 0.95)' },
+              { offset: 1, color: 'rgba(155, 89, 182, 0.7)' },
+            ],
+          },
+          shadowColor: 'rgba(155, 89, 182, 0.5)',
+          shadowBlur: 12,
+          shadowOffsetX: 2,
+          borderWidth: 0,
+        },
+        emphasis: {
+          itemStyle: {
+            shadowColor: 'rgba(155, 89, 182, 0.8)',
+            shadowBlur: 20,
+          },
+        },
         data: [3.2],
       },
       {
@@ -180,41 +352,78 @@ export class DashboardComponent implements OnInit {
         type: 'bar',
         stack: 'total',
         itemStyle: {
-          borderRadius: [0, 8, 8, 0], // rounded start
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 1,
+            y2: 0,
+            colorStops: [
+              { offset: 0, color: 'rgba(241, 196, 15, 0.95)' },
+              { offset: 1, color: 'rgba(241, 196, 15, 0.7)' },
+            ],
+          },
+          borderRadius: [0, 8, 8, 0],
+          shadowColor: 'rgba(241, 196, 15, 0.5)',
+          shadowBlur: 12,
+          shadowOffsetX: 2,
+          borderWidth: 0,
         },
-
+        emphasis: {
+          itemStyle: {
+            shadowColor: 'rgba(241, 196, 15, 0.8)',
+            shadowBlur: 20,
+          },
+        },
         data: [1.4],
       },
     ],
   };
 
   barChartOption: echarts.EChartsCoreOption = {
+    ...this.getCommonChartConfig(),
     tooltip: {
       trigger: 'axis',
-      backgroundColor: 'rgba(50, 50, 50, 0.85)',
-      borderRadius: 8,
-      padding: 10,
-      textStyle: { color: '#fff', fontSize: 12 },
+      backgroundColor: 'rgba(15, 15, 25, 0.95)',
+      borderColor: 'rgba(100, 100, 150, 0.3)',
+      borderWidth: 1,
+      borderRadius: 12,
+      padding: 12,
+      textStyle: {
+        color: '#e0e0ff',
+        fontSize: 12,
+        fontWeight: 'normal',
+      },
     },
 
     legend: {
       data: ['Allstate', 'Progressive'],
       bottom: 10,
-      textStyle: { fontSize: 14, color: '#fff' },
+      textStyle: {
+        fontSize: 13,
+        color: '#b0b0ff',
+        fontWeight: '500',
+      },
+      itemGap: 25,
+      itemWidth: 12,
+      itemHeight: 12,
     },
 
     xAxis: {
       type: 'category',
       data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
-      axisLabel: { color: '#fff', fontSize: 14 },
-
-      // show axis line
+      axisLabel: {
+        color: '#c0c0ff',
+        fontSize: 12,
+        fontWeight: '500',
+      },
       axisLine: {
         show: true,
-        lineStyle: { color: '#fff' },
+        lineStyle: {
+          color: 'rgba(160, 160, 255, 0.4)',
+          width: 1.5,
+        },
       },
-
-      // remove vertical grid lines
       splitLine: { show: false },
     },
 
@@ -222,18 +431,24 @@ export class DashboardComponent implements OnInit {
       type: 'value',
       axisLabel: {
         formatter: '{value}%',
-        fontSize: 14,
-        color: '#fff',
+        fontSize: 12,
+        color: '#c0c0ff',
+        fontWeight: '500',
       },
-
-      // show axis line
       axisLine: {
         show: true,
-        lineStyle: { color: '#fff' },
+        lineStyle: {
+          color: 'rgba(160, 160, 255, 0.4)',
+          width: 1.5,
+        },
       },
-
-      // remove horizontal grid lines
-      splitLine: { show: false },
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: 'rgba(80, 80, 120, 0.2)',
+          type: 'dashed',
+        },
+      },
     },
 
     backgroundColor: 'transparent',
@@ -242,14 +457,61 @@ export class DashboardComponent implements OnInit {
       {
         name: 'Allstate',
         type: 'bar',
-        barWidth: '35%',
+        barWidth: '40%',
+        itemStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(52, 152, 219, 0.95)' },
+              { offset: 1, color: 'rgba(41, 128, 185, 0.8)' },
+            ],
+          },
+          borderRadius: [6, 6, 0, 0],
+          shadowColor: 'rgba(52, 152, 219, 0.4)',
+          // shadowBlur: 15,
+          shadowOffsetY: 3,
+          borderWidth: 0,
+        },
+        emphasis: {
+          itemStyle: {
+            shadowColor: 'rgba(52, 152, 219, 0.7)',
+            shadowBlur: 25,
+          },
+        },
         data: [104, 99, 101, 98],
       },
       {
         name: 'Progressive',
         type: 'bar',
-        barWidth: '35%',
-
+        barWidth: '40%',
+        itemStyle: {
+          color: {
+            type: 'linear',
+            x: 0,
+            y: 0,
+            x2: 0,
+            y2: 1,
+            colorStops: [
+              { offset: 0, color: 'rgba(231, 76, 60, 0.95)' },
+              { offset: 1, color: 'rgba(192, 57, 43, 0.8)' },
+            ],
+          },
+          borderRadius: [6, 6, 0, 0],
+          shadowColor: 'rgba(231, 76, 60, 0.4)',
+          shadowBlur: 15,
+          shadowOffsetY: 3,
+          borderWidth: 0,
+        },
+        emphasis: {
+          itemStyle: {
+            shadowColor: 'rgba(231, 76, 60, 0.7)',
+            shadowBlur: 25,
+          },
+        },
         data: [96, 94, 95, 93],
       },
     ],
@@ -333,26 +595,76 @@ export class DashboardComponent implements OnInit {
       ],
     },
   ];
+
   sunburstOption: echarts.EChartsCoreOption = {
+    ...this.getCommonChartConfig(),
     tooltip: {
       trigger: 'item',
       formatter: '{b}: {c}%',
+      backgroundColor: 'rgba(15, 15, 25, 0.95)',
+      borderColor: 'rgba(100, 100, 150, 0.3)',
+      borderWidth: 1,
+      borderRadius: 8,
+      textStyle: { 
+        color: '#e0e0ff',
+        fontSize: 12
+      },
     },
-
     series: [
       {
         type: 'sunburst',
         data: this.data,
-        radius: [0, '90%'],
-
+        radius: [0, '85%'],
         label: {
           rotate: 'radial',
-          fontSize: 14,
-          color: '#fff',
+          fontSize: 12,
+          color: '#ffffff',
+          fontWeight: '500',
+          textBorderColor: 'transparent',
         },
+        itemStyle: {
+          borderWidth: 2,
+          borderColor: '#1a1a2e',
+        },
+        levels: [
+          {},
+          {
+            r0: '0%',
+            r: '35%',
+            itemStyle: {
+              borderWidth: 2,
+            },
+            label: {
+              rotate: 'tangential',
+              fontSize: 13,
+            }
+          },
+          {
+            r0: '35%',
+            r: '70%',
+            label: {
+              align: 'right',
+              fontSize: 12,
+            }
+          },
+          {
+            r0: '70%',
+            r: '85%',
+            label: {
+              position: 'outside',
+              padding: 3,
+              silent: false,
+              fontSize: 11,
+            },
+            itemStyle: {
+              borderWidth: 1,
+            }
+          }
+        ]
       },
     ],
   };
+
   insightsData = [
     {
       icon: 'trending_down',

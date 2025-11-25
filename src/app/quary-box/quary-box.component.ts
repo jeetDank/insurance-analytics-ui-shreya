@@ -9,7 +9,13 @@ import { StepComponent } from '../common/step/step.component';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { CustomFormulaComponent } from '../common/custom-formula/custom-formula.component';
 import { InsuranceAnalyticsService } from '../common/services/insurance-analytics.service';
-import { MatSnackBar, MatSnackBarHorizontalPosition, MatSnackBarModule, MatSnackBarVerticalPosition } from '@angular/material/snack-bar';
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarModule,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
+import { DataService } from '../common/services/data.service';
 
 interface conversation {
   message: string;
@@ -87,7 +93,11 @@ export class QuaryBoxComponent implements OnInit {
     },
   ];
 
-  constructor(private _apiService: InsuranceAnalyticsService,private snackBar:MatSnackBar) {}
+  constructor(
+    private _apiService: InsuranceAnalyticsService,
+    private snackBar: MatSnackBar,
+    private _dataService: DataService
+  ) {}
   getFormattedTime() {
     const now = new Date();
     let hours = now.getHours();
@@ -151,43 +161,42 @@ export class QuaryBoxComponent implements OnInit {
   ngOnInit(): void {}
 
   parseQuery(userQuery: string) {
-
-    if(userQuery.trim().length <= 3){
-      this.snackBar.open("Please enter a valid request to continue.",'',{
-      horizontalPosition: this.horizontalPosition,
-      verticalPosition: this.verticalPosition,
-    })
-      return 
+    if (userQuery.trim().length <= 3) {
+      this.snackBar.open('Please enter a valid request to continue.', '', {
+        horizontalPosition: this.horizontalPosition,
+        verticalPosition: this.verticalPosition,
+      });
+      return;
     }
 
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
         console.log(res);
 
-        if(res.success == true){
-          try{
+        if (res.success == true) {
+          try {
+            this._dataService.setParsedQuery(res.parsed);
             this.resolveCompanies(res.parsed.companies);
-          }
-          catch{
-
-          }
-        }
-        else{
-         
+          } catch {}
+        } else {
         }
       },
     });
   }
 
-  resolveCompanies(companies:string[]){
-    
-    this._apiService.resolveMultipleCompanies({company_inputs:companies}).subscribe({
-      next:(res)=>{
-
-      }
-    })
-
+  resolveCompanies(companies: string[]) {
+    this._apiService
+      .resolveMultipleCompanies({ company_inputs: companies })
+      .subscribe({
+        next: (res) => {
+          
+            try {
+              this._dataService.setCompanyData(res.results);
+              console.log(this._dataService.API_DATA);
+              
+            } catch {}
+          
+        },
+      });
   }
-
-
 }

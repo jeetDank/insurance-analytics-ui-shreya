@@ -207,6 +207,10 @@ color: rgba(255, 255, 255, 0.95);
   color: rgba(255, 255, 255, 0.55)
 }
 
+.text-muted{
+  color: rgba(255, 255, 255, 0.3);
+}
+
 
 .card_background{
   background-color: #101010;
@@ -289,4 +293,9 @@ color: rgb(202, 2, 2);
 
 .font-16{
   font-size: 16px;
+}
+
+
+input::placeholder{
+ color:rgba(255, 255, 255, 0.3) !important;
 }

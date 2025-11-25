@@ -46,9 +46,6 @@
       <div class="p-5">
         <!-- content -->
 
-
-        
-
         <div class="flex flex-row align-center">
           <div>
             <h1>Allstate,progressive</h1>
@@ -157,35 +154,57 @@
             <div>
               <h2 class="flex flex-row items-center gap-2">
                 Combined Ratio
-               <span> <i [title]="'some text'" class="material-icons">info</i></span>
+                <span>
+                  <i [title]="'some text'" class="material-icons">info</i></span
+                >
               </h2>
-              <div
-                class="card_background rounded-xl"
-                echarts
-                [options]="barChartOption"
-                style="height: 400px"
-              ></div>
-              <div
-                class="card_background rounded-xl"
-                echarts
-                [options]="segmentRevenueOption"
-                style="height: 200px"
-              ></div>
+
+              <div class="chart-container" style="height: 400px; width: 100%">
+                <div
+                  echarts
+                  [options]="lineChartOption"
+                  class="echarts-container"
+                ></div>
+              </div>
+
+              <div class="chart-container" style="height: 400px; width: 100%">
+                <div
+                  echarts
+                  [options]="barChartOption"
+                  class="echarts-container"
+                ></div>
+              </div>
+
+              <div class="chart-container" style="height: 400px; width: 100%">
+                <div
+                  echarts
+                  [options]="segmentRevenueOption"
+                  class="echarts-container"
+                ></div>
+              </div>
+
+              <div class="chart-container" style="height: 400px; width: 100%">
+                <div
+                  echarts
+                  [options]="sunburstOption"
+                  class="echarts-container"
+                ></div>
+              </div>
             </div>
           </mat-tab>
           <mat-tab label="Table">
             <ng-template mat-tab-label>
-             <div class="flex flex-row items-center"> 
-               <i class="material-icons me-2">view_list</i>
-              <div>Table</div>
-             </div>
+              <div class="flex flex-row items-center">
+                <i class="material-icons me-2">view_list</i>
+                <div>Table</div>
+              </div>
             </ng-template>
 
             <!-- TABLE CONTENT -->
             <div>
-               <app-metric-table  ></app-metric-table>
+              <app-metric-table></app-metric-table>
 
-               <app-segment-table></app-segment-table>
+              <app-segment-table></app-segment-table>
             </div>
           </mat-tab>
           <mat-tab label="Sunburst">
