@@ -16,6 +16,8 @@ import {
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { DataService } from '../common/services/data.service';
+import { JsonPipe } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
 
 interface conversation {
   message: string;
@@ -24,8 +26,15 @@ interface conversation {
   timestamp: string;
   processingStatus: number;
   systemMsg: boolean;
+  ambiguities: any[] | null;
 }
 
+interface ambiguity {
+  metric_name: string;
+  context: string;
+  suggestions: string[];
+  resolution_type: string;
+}
 interface processSteps {
   name: string;
   description: string;
@@ -44,6 +53,9 @@ interface processSteps {
     MatIconModule,
     MatButtonModule,
     CustomFormulaComponent,
+    JsonPipe,
+    MatSelectModule,
+    MatInputModule,
   ],
   templateUrl: './quary-box.component.html',
   styleUrl: './quary-box.component.scss',
@@ -81,6 +93,7 @@ export class QuaryBoxComponent implements OnInit {
       ],
       timestamp: '6:48 PM',
       systemMsg: true,
+      ambiguities: null,
     },
     {
       message:
@@ -90,6 +103,7 @@ export class QuaryBoxComponent implements OnInit {
       processDetailsData: null,
       timestamp: '6:48 PM',
       systemMsg: false,
+      ambiguities: null,
     },
   ];
 
@@ -124,6 +138,7 @@ export class QuaryBoxComponent implements OnInit {
       processDetailsData: null,
       timestamp: this.getFormattedTime(),
       systemMsg: false,
+      ambiguities: null,
     });
   }
 
@@ -157,6 +172,7 @@ export class QuaryBoxComponent implements OnInit {
       ],
       timestamp: '6:48 PM',
       systemMsg: true,
+      ambiguities: null,
     });
   }
 
@@ -182,8 +198,7 @@ export class QuaryBoxComponent implements OnInit {
               this._dataService.setParsedQuery(res.parsed);
               this._dataService.fetchAmbiguities();
 
-              this.ambiguityData = this._dataService.fetchAmbiguities();
-              console.log(this.ambiguityData);
+              this.addAmbiguitiesToConversation();
             }
           } catch {}
         } else {
@@ -246,15 +261,28 @@ export class QuaryBoxComponent implements OnInit {
     }
   }
 
-  resolveAmbiguity(data:any){
+  resolveAmbiguity(data: any) {
     let payload = data;
     this._apiService.resolveAmbiguities(payload).subscribe({
-      next:(res)=>{
-        this._dataService.API_DATA.PARSED_QUERY.metrics.push(res.metric_name); 
-      }
-    })
-
+      next: (res) => {
+        this._dataService.API_DATA.PARSED_QUERY.metrics.push(res.metric_name);
+      },
+    });
   }
 
+  addAmbiguitiesToConversation() {
+    let ambiguities: any[] = this._dataService.fetchAmbiguities();
 
+    ambiguities.forEach((ambiguity) => {
+      this.conversation.push({
+        message: `I noticed you used "${ambiguity.metric_name}". Did you mean one of these metrics?`,
+        processDetail: false,
+        processingStatus: 10,
+        processDetailsData: null,
+        timestamp: this.getFormattedTime(),
+        systemMsg: true,
+        ambiguities: ambiguity.suggestions,
+      });
+    });
+  }
 }

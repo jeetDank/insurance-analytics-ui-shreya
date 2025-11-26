@@ -4,7 +4,7 @@ import { PageNotFoundComponent } from './common/componants/page-not-found/page-n
 
 export const routes: Routes = [
 
-//   {path:"",redirectTo:"/auth/login",pathMatch:'full'},
+  {path:"",redirectTo:"dashboard",pathMatch:'full'},
   {
     path: 'dashboard',
     loadChildren: () =>

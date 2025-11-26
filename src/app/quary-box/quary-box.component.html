@@ -6,8 +6,10 @@
         <i class="material-icons icon-color">dashboard</i>
         Financial Assistant
       </h1>
-      <h6 class="block mt-2 text-secondary">Ask questions about insurance companies</h6>
-      <button (click)="recordMsg('msg')" >sysmsg</button>
+      <h6 class="block mt-2 text-secondary">
+        Ask questions about insurance companies
+      </h6>
+      <button (click)="recordMsg('msg')">sysmsg</button>
     </div>
   </div>
   <!-- sidebar header ends here -->
@@ -21,7 +23,10 @@
           <div class="flex-1 p-4 overflow-y-auto">
             @for (item of conversation; track $index) { @if (item.processDetail)
             {
-            <app-msg-bubble [isSystemMsg]="item.systemMsg" [timestamp]="item.timestamp">
+            <app-msg-bubble
+              [isSystemMsg]="item.systemMsg"
+              [timestamp]="item.timestamp"
+            >
               <div class="flex flex-row justify-between">
                 <h5>Processing Query</h5>
                 <h5>{{ item.processingStatus }}%</h5>
@@ -38,8 +43,28 @@
               ></app-step>
               }
             </app-msg-bubble>
+            } @else if(item.ambiguities != null){
+
+            <app-msg-bubble
+              [isSystemMsg]="item.systemMsg"
+              [timestamp]="item.timestamp"
+            >
+              <p class="text-left text-primary mb-2">{{ item.message }}</p>
+
+              <mat-form-field>
+                <mat-select>
+                  @for (option of item.ambiguities; track option) {
+                  <mat-option [value]="option">{{ option }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </app-msg-bubble>
+
             } @else{
-            <app-msg-bubble  [isSystemMsg]="item.systemMsg" [timestamp]="item.timestamp">
+            <app-msg-bubble
+              [isSystemMsg]="item.systemMsg"
+              [timestamp]="item.timestamp"
+            >
               <p class="text-left text-primary">{{ item.message }}</p>
             </app-msg-bubble>
 
