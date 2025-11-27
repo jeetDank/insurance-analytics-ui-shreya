@@ -31,7 +31,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       switch (error.status) {
 
         case 400:
-          showSnack(error.error?.message || 'Bad request.');
+          showSnack(error.error?.detail || 'Bad request.');
           break;
 
         case 401:

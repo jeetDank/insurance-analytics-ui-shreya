@@ -4,6 +4,8 @@ import {
   ViewChild,
   ElementRef,
   AfterViewChecked,
+  signal,
+  output
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,7 +24,6 @@ import {
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 import { DataService } from '../common/services/data.service';
-import { JsonPipe } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { forkJoin } from 'rxjs';
 import { TextLoaderComponent } from '../common/componants/text-loader/text-loader.component';
@@ -76,6 +77,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   horizontalPosition: MatSnackBarHorizontalPosition = 'end';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
   private shouldScrollToBottom = false;
+
+  dataReady = output<boolean>();
 
   conversation: conversation[] = [];
 
@@ -301,7 +304,14 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             summary: res.summary,
           };
           this._dataService.setAnalysisData(data);
-          this.startVarienceAnalysis();
+           this.recordProcessMsg(5);
+
+           this.dataReady.emit(true)
+          //  this._dataService.fetchCardsData();
+
+
+           
+          // this.startVarienceAnalysis();
 
           console.log(this._dataService.API_DATA);
         } else {

@@ -371,4 +371,227 @@ export class DataService {
       return false;
     }
   }
+
+getQuarterYear(dateString: string): string {
+  const date = new Date(dateString);
+  const month = date.getMonth(); // 0-11 (June = 5)
+  const year = date.getFullYear(); // 2025
+
+  const quarter = Math.floor(month / 3) + 1; // Math.floor(5/3) + 1 = 1 + 1 = 2
+
+  return `Q${quarter} ${year}`; // Returns "Q2 2025"
+}
+  fetchCardsData() {
+    const requested_metrics = this.API_DATA.PARSED_QUERY.metrics;
+
+    const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
+      (company: any) => ({
+        company_name: company.company_name,
+        cik: company.cik,
+        period: this.getQuarterYear(company?.statements?.metadata?.period_end_date),
+        quarters: company.statements.map((qtr: any) => ({
+          metrics: requested_metrics.reduce((acc: any, metric: any) => {
+            acc[metric] = this.extractMetricData(qtr.all_metrics[metric]) ;
+            return acc;
+          }, {}),
+        })),
+      })
+    );
+
+    return this.populateCardView(companyWiseCardData);
+  }
+
+
+  extractMetricData(metricData: any): { value: string; unit: string; currency: string; trend: string } {
+  // Handle null or undefined
+  if (!metricData) {
+    return {
+      value: 'N/A',
+      unit: '',
+      currency: '',
+      trend: ''
+    };
+  }
+
+  // Extract value
+  const value = this.formatValue(metricData.value, metricData.format_type);
+
+  // Extract unit (from xbrl_unit or unit field)
+  const unit = metricData.xbrl_unit || metricData.unit || '';
+
+  // Extract currency (if format_type is currency, assume USD or extract from unit)
+  const currency = metricData.format_type === 'currency' ? 'USD' : '';
+
+  // Calculate trend from growth rates
+  const trend = this.calculateTrend(metricData);
+
+  return {
+    value,
+    unit,
+    currency,
+    trend
+  };
+}
+
+private formatValue(value: number | null, formatType: string): string {
+  if (value === null || value === undefined) {
+    return 'N/A';
+  }
+
+  if (formatType === 'currency') {
+    // Convert to billions/millions for readability
+    if (Math.abs(value) >= 1_000_000_000) {
+      return `${(value / 1_000_000_000).toFixed(2)}B`;
+    } else if (Math.abs(value) >= 1_000_000) {
+      return `${(value / 1_000_000).toFixed(2)}M`;
+    } else if (Math.abs(value) >= 1_000) {
+      return `${(value / 1_000).toFixed(2)}K`;
+    }
+    return value.toFixed(2);
+  }
+
+  // For other format types, return as is
+  return value.toString();
+}
+
+private calculateTrend(metricData: any): string {
+  // Priority: YoY > QoQ
+  if (metricData.yoy_growth_rate !== null && metricData.yoy_growth_rate !== undefined) {
+    return this.formatTrend(metricData.yoy_growth_rate, 'YoY');
+  }
+  
+  if (metricData.qoq_growth_rate !== null && metricData.qoq_growth_rate !== undefined) {
+    return this.formatTrend(metricData.qoq_growth_rate, 'QoQ');
+  }
+
+  return 'N/A';
+}
+
+private formatTrend(growthRate: number, period: string): string {
+  const percentage = (growthRate * 100).toFixed(2);
+  const sign = growthRate >= 0 ? '+' : '';
+  return `${sign}${percentage}% ${period}`;
+}
+
+
+populateCardView(companyData: any[]): any[] {
+  // First, we need to get all unique metrics across all companies
+  const allMetrics = this.getAllUniqueMetrics(companyData);
+  
+  // Then create a card view entry for each metric
+  return allMetrics.map(metricName => ({
+    metricName: this.formatMetricName(metricName),
+    tooltip: this.getMetricTooltip(metricName),
+    cards: companyData.map(company => {
+      const latestQuarter = company.quarters[0]; // Assuming first quarter is the latest
+      const metricData = latestQuarter.metrics[metricName];
+      
+      return {
+        companyName: this.formatCompanyName(company.company_name),
+        period: company.period !== 'QNaN NaN' ? company.period : this.extractPeriodFromQuarter(latestQuarter),
+        metric: this.formatMetricValue(metricData),
+        trend: this.formatTrendData(metricData.trend, metricData.currency)
+      };
+    })
+  }));
+}
+
+private getAllUniqueMetrics(companyData: any[]): string[] {
+  const metricsSet = new Set<string>();
+  
+  companyData.forEach(company => {
+    company.quarters.forEach((quarter: any) => {
+      Object.keys(quarter.metrics).forEach(metricName => {
+        metricsSet.add(metricName);
+      });
+    });
+  });
+  
+  return Array.from(metricsSet);
+}
+
+private formatMetricName(metricName: string): string {
+  // Convert snake_case to Title Case
+  return metricName
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
+private formatCompanyName(fullName: string): string {
+  // Extract main company name (remove legal suffixes)
+  // "HARTFORD INSURANCE GROUP, INC." -> "Hartford"
+  const name = fullName.split(',')[0].split(' ')[0];
+  return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+}
+
+private formatMetricValue(metricData: any): string {
+  if (!metricData || metricData.value === 'N/A') {
+    return 'N/A';
+  }
+  
+  // If it has currency, prepend $
+  if (metricData.currency) {
+    return `$${metricData.value}`;
+  }
+  
+  return metricData.value;
+}
+
+private formatTrendData(trendString: string, currency?: string): any {
+  // Parse trend string like "+12.50% YoY" or "N/A"
+  if (!trendString || trendString === 'N/A') {
+    return {
+      trend: 'N/A',
+      trendUnit: '',
+      positive: null
+    };
+  }
+  
+  // Extract the percentage value
+  const match = trendString.match(/([+-]?\d+\.?\d*)/);
+  if (!match) {
+    return {
+      trend: 'N/A',
+      trendUnit: '',
+      positive: null
+    };
+  }
+  
+  const trendValue = match[1];
+  const isPositive = !trendString.startsWith('-');
+  
+  // Determine trend unit based on metric type
+  // For currency metrics, use '%', for ratios might use 'pts'
+  const trendUnit = currency ? '%' : 'pts';
+  
+  return {
+    trend: trendValue.replace(/[+-]/, ''), // Remove sign
+    trendUnit: trendUnit,
+    positive: isPositive
+  };
+}
+
+private getMetricTooltip(metricName: string): string {
+  // Define tooltips for known metrics
+  const tooltips: { [key: string]: string } = {
+    'revenue': 'Total revenue generated during the period',
+    'net_income': 'Net profit after all expenses and taxes',
+    'premiums_earned': 'Insurance premiums recognized as revenue',
+    'premiums_written': 'Total premiums from new and renewed policies',
+    'combined_ratio': 'Measure of underwriting profitability (lower is better)',
+    'loss_ratio': 'Claims and loss adjustment expenses divided by earned premiums',
+    'expense_ratio': 'Underwriting expenses divided by written premiums'
+  };
+  
+  return tooltips[metricName] || `${this.formatMetricName(metricName)} metric`;
+}
+
+private extractPeriodFromQuarter(quarter: any): string {
+  // Fallback method if period is not available
+  if (quarter.period && quarter.period !== 'QNaN NaN') {
+    return quarter.period;
+  }
+  return 'N/A';
+}
 }
