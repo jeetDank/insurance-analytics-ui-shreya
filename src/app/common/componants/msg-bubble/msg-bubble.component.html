@@ -1,11 +1,12 @@
 <div
-  class="my-3 p-3 rounded-md card-background border border-neutral-900 w-[85%]"
+  class="my-3 card-background border border-neutral-900 "
+  style="width:284px;border-radius: 18px;padding: 16px;"
   [ngClass]="isSystemMsg() ? 'me-auto' : 'ms-auto'"
 >
-  <div class="p-1">
+  <div class="">
     <ng-content></ng-content>
   </div>
-  <div class="text-left">
+  <div class="text-left" style="margin-top: 6px;">
     <small>{{ timestamp() }}</small>
   </div>
 </div>

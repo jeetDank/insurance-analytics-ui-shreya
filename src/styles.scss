@@ -10,9 +10,25 @@
 // GLOBAL TYPOGRAPHY STYLES
 // ============================================================================
 
+
+@font-face {
+      font-family: 'apple-font'; /* Choose a descriptive name */
+      src: url('assets/fonts/appleFont/SFPRODISPLAYREGULAR.OTF') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'space-mono';
+      src: url('assets/fonts/spaceMono/SpaceMono-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
 * {
-  font-family: 'helvetica', 'Inter', sans-serif;
+  font-family: apple-font;
   box-sizing: border-box;
+  letter-spacing: 0.7px;
 }
 
 span i{
@@ -52,7 +68,6 @@ p {
   font-weight: 400;
   line-height: 1.6;
   color: var(--color-text-primary, #ffffff8c);
-  margin: 0 0 0.75rem 0;
 }
 
 // Small helper text
@@ -83,7 +98,7 @@ h4 {
 
 h5{
   font-size: 0.75rem;     // 12px
-  font-weight: 500;
+  font-weight: normal;
   line-height: 1.5;
   color: var(--color-text-secondary, rgba(255, 255, 255, 0.55));
   margin: 0 0 0.3rem 0;
