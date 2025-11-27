@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -19,6 +19,7 @@ import { DataService } from '../common/services/data.service';
 import { JsonPipe } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { forkJoin } from 'rxjs';
+import { TextLoaderComponent } from '../common/componants/text-loader/text-loader.component';
 
 interface conversation {
   message: string;
@@ -45,6 +46,7 @@ interface processSteps {
 @Component({
   selector: 'app-quary-box',
   imports: [
+    TextLoaderComponent,
     MatSnackBarModule,
     MatProgressBarModule,
     StepComponent,
@@ -61,9 +63,13 @@ interface processSteps {
   templateUrl: './quary-box.component.html',
   styleUrl: './quary-box.component.scss',
 })
-export class QuaryBoxComponent implements OnInit {
+export class QuaryBoxComponent implements OnInit, AfterViewChecked {
+  @ViewChild('chatContainer') private chatContainer!: ElementRef;
+  
   horizontalPosition: MatSnackBarHorizontalPosition = 'end';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
+  private shouldScrollToBottom = false;
+  
   conversation: conversation[] = [
     {
       message:
@@ -115,6 +121,28 @@ export class QuaryBoxComponent implements OnInit {
     private snackBar: MatSnackBar,
     private _dataService: DataService
   ) {}
+  
+  ngAfterViewChecked() {
+    if (this.shouldScrollToBottom) {
+      this.scrollToBottom();
+      this.shouldScrollToBottom = false;
+    }
+  }
+  
+  private scrollToBottom(): void {
+    try {
+      if (this.chatContainer) {
+        this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+      }
+    } catch(err) {
+      console.error('Scroll error:', err);
+    }
+  }
+  
+  private triggerScroll(): void {
+    this.shouldScrollToBottom = true;
+  }
+
   getFormattedTime() {
     const now = new Date();
     let hours = now.getHours();
@@ -141,6 +169,7 @@ export class QuaryBoxComponent implements OnInit {
       systemMsg: false,
       suggestions: null,
     });
+    this.triggerScroll();
   }
 
   recordProcessMsg() {
@@ -175,6 +204,7 @@ export class QuaryBoxComponent implements OnInit {
       systemMsg: true,
       suggestions: null,
     });
+    this.triggerScroll();
   }
 
   ngOnInit(): void {}
@@ -310,6 +340,7 @@ export class QuaryBoxComponent implements OnInit {
         data: ambiguity,
       });
     });
+    this.triggerScroll();
   }
 
   updateAmbiguityObject(data: any, index: number) {
