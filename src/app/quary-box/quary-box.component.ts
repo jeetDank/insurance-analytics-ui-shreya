@@ -18,6 +18,7 @@ import {
 import { DataService } from '../common/services/data.service';
 import { JsonPipe } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
+import { forkJoin } from 'rxjs';
 
 interface conversation {
   message: string;
@@ -26,7 +27,8 @@ interface conversation {
   timestamp: string;
   processingStatus: number;
   systemMsg: boolean;
-  ambiguities: any[] | null;
+  suggestions: any[] | null;
+  data?: any;
 }
 
 interface ambiguity {
@@ -53,7 +55,6 @@ interface processSteps {
     MatIconModule,
     MatButtonModule,
     CustomFormulaComponent,
-    JsonPipe,
     MatSelectModule,
     MatInputModule,
   ],
@@ -93,7 +94,7 @@ export class QuaryBoxComponent implements OnInit {
       ],
       timestamp: '6:48 PM',
       systemMsg: true,
-      ambiguities: null,
+      suggestions: null,
     },
     {
       message:
@@ -103,7 +104,7 @@ export class QuaryBoxComponent implements OnInit {
       processDetailsData: null,
       timestamp: '6:48 PM',
       systemMsg: false,
-      ambiguities: null,
+      suggestions: null,
     },
   ];
 
@@ -138,7 +139,7 @@ export class QuaryBoxComponent implements OnInit {
       processDetailsData: null,
       timestamp: this.getFormattedTime(),
       systemMsg: false,
-      ambiguities: null,
+      suggestions: null,
     });
   }
 
@@ -172,7 +173,7 @@ export class QuaryBoxComponent implements OnInit {
       ],
       timestamp: '6:48 PM',
       systemMsg: true,
-      ambiguities: null,
+      suggestions: null,
     });
   }
 
@@ -181,11 +182,14 @@ export class QuaryBoxComponent implements OnInit {
   parseQuery(userQuery: string) {
     if (userQuery.trim().length <= 3) {
       this.snackBar.open('Please enter a valid request to continue.', '', {
-        horizontalPosition: this.horizontalPosition,
+        horizontalPosition: 'start',
         verticalPosition: this.verticalPosition,
+        duration: 3000,
       });
       return;
     }
+
+    this.recordMsg(userQuery, false);
 
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
@@ -261,12 +265,33 @@ export class QuaryBoxComponent implements OnInit {
     }
   }
 
-  resolveAmbiguity(data: any) {
-    let payload = data;
-    this._apiService.resolveAmbiguities(payload).subscribe({
-      next: (res) => {
-        this._dataService.API_DATA.PARSED_QUERY.metrics.push(res.metric_name);
+  resolveAmbiguity() {
+    let data = this.conversation
+      .filter((item) => item.suggestions != null)
+      .map((item) => ({ ...item.data }));
+
+    if (data.length === 0) {
+      return;
+    }
+
+    const requests = data.map((payload) => 
+      this._apiService.resolveAmbiguities(payload)
+    );
+
+    forkJoin(requests).subscribe({
+      next: (results) => {
+        results.forEach((res) => {
+          this._dataService.API_DATA.PARSED_QUERY.metrics.push(res.metric_name);
+        });
+
+        console.log(this._dataService.API_DATA.PARSED_QUERY.metrics);
+
+        this.resolveCompanies(this._dataService.API_DATA.PARSED_QUERY.companies);
+        
       },
+      error: (error) => {
+        console.error('Error resolving ambiguities:', error);
+      }
     });
   }
 
@@ -281,8 +306,13 @@ export class QuaryBoxComponent implements OnInit {
         processDetailsData: null,
         timestamp: this.getFormattedTime(),
         systemMsg: true,
-        ambiguities: ambiguity.suggestions,
+        suggestions: ambiguity.suggestions,
+        data: ambiguity,
       });
     });
+  }
+
+  updateAmbiguityObject(data: any, index: number) {
+    this.conversation[index].data.metric_name = data.value;
   }
 }

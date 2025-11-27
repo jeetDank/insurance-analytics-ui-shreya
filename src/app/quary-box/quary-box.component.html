@@ -43,7 +43,7 @@
               ></app-step>
               }
             </app-msg-bubble>
-            } @else if(item.ambiguities != null){
+            } @else if(item.suggestions != null){
 
             <app-msg-bubble
               [isSystemMsg]="item.systemMsg"
@@ -52,8 +52,10 @@
               <p class="text-left text-primary mb-2">{{ item.message }}</p>
 
               <mat-form-field>
-                <mat-select>
-                  @for (option of item.ambiguities; track option) {
+                <mat-select
+                  (selectionChange)="updateAmbiguityObject($event, $index)"
+                >
+                  @for (option of item.suggestions; track option) {
                   <mat-option [value]="option">{{ option }}</mat-option>
                   }
                 </mat-select>
@@ -69,6 +71,19 @@
             </app-msg-bubble>
 
             } }
+
+            <app-msg-bubble [isSystemMsg]="true">
+              <p>Click to resolve all</p>
+              <button
+                (click)="resolveAmbiguity()"
+                mat-button
+                type="submit"
+                class="shrink-0 self-start custom-mini-fab"
+              >
+                <mat-icon>done_all</mat-icon>
+                Resolve
+              </button>
+            </app-msg-bubble>
           </div>
 
           <!-- Input area (sticks to bottom) -->
