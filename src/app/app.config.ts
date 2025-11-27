@@ -3,8 +3,10 @@ import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { httpLoaderInterceptorInterceptor } from './interceptors/http-loader-interceptor.interceptor';
+import { errorInterceptor } from './interceptors/error-interceptor.interceptor';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideHttpClient(),provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideAnimations() ]
+  providers: [provideHttpClient(withInterceptors([httpLoaderInterceptorInterceptor,errorInterceptor])),provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideAnimations() ]
 };

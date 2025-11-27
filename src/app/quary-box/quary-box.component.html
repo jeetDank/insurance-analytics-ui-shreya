@@ -9,7 +9,6 @@
       <h6 class="block mt-2 text-secondary">
         Ask questions about insurance companies
       </h6>
-      <button (click)="recordMsg('msg')">sysmsg</button>
     </div>
   </div>
   <!-- sidebar header ends here -->
@@ -21,6 +20,13 @@
         <div class="flex flex-col h-full">
           <!-- Chat messages area -->
           <div #chatContainer class="flex-1 p-4 overflow-y-auto scroll-smooth">
+
+            @if(conversation.length == 0){
+              Sample prompts:
+              <div class="flex flex-col text-left">
+              </div>  
+            }
+
             @for (item of conversation; track $index) {
             <div class="animate-slide-in">
               @if (item.processDetail) {
@@ -28,6 +34,16 @@
                 [isSystemMsg]="item.systemMsg"
                 [timestamp]="item.timestamp"
               >
+                
+
+                @for (step of item.processDetailsData; track $index) {
+                <div class="step-wrapper" [class.step-active]="isActiveStep(item, $index)">
+                  <app-step
+                    [title]="step.name"
+                    [description]="step.description"
+                  ></app-step>
+                </div>
+                }
                 <div class="flex flex-row justify-between">
                   <h5>Processing Query</h5>
                   <h5>{{ item.processingStatus }}%</h5>
@@ -35,14 +51,8 @@
                 <mat-progress-bar
                   mode="determinate"
                   [value]="item.processingStatus"
+                  class="transition-all duration-300"
                 ></mat-progress-bar>
-
-                @for (step of item.processDetailsData; track $index) {
-                <app-step
-                  [title]="step.name"
-                  [description]="step.description"
-                ></app-step>
-                }
               </app-msg-bubble>
               } @else if(item.suggestions != null){
               <app-msg-bubble
@@ -55,8 +65,10 @@
                   <mat-select
                     (selectionChange)="updateAmbiguityObject($event, $index)"
                   >
+                    <mat-option [value]="" selected> select</mat-option>
                     @for (option of item.suggestions; track option) {
-                    <mat-option [value]="option">{{ option }}</mat-option>
+
+                    <mat-option [value]="option"> {{ option }}</mat-option>
                     }
                   </mat-select>
                 </mat-form-field>
@@ -70,7 +82,8 @@
               </app-msg-bubble>
               }
             </div>
-            @if( $index == (conversation.length) -1  &&  item.suggestions != null){
+            @if( $index == (conversation.length) -1 && item.suggestions !=
+            null){
             <div class="animate-slide-in">
               <app-msg-bubble [isSystemMsg]="true">
                 <p class="text-primary">Click to resolve all</p>
@@ -85,9 +98,9 @@
                 </button>
               </app-msg-bubble>
             </div>
-            } }
-
+            } } @if(loaderVisible){
             <app-loader></app-loader>
+            }
           </div>
 
           <!-- Input area (sticks to bottom) -->
@@ -102,7 +115,7 @@
             </mat-form-field>
 
             <button
-              (click)="parseQuery(msg.value)"
+              (click)="parseQuery(msg.value);msg.value =''"
               mat-mini-fab
               type="submit"
               class="shrink-0 self-start custom-mini-fab"

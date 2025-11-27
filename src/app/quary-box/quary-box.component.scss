@@ -68,3 +68,59 @@ mat-tab-group {
 .scroll-smooth {
   scroll-behavior: smooth;
 }
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.step-wrapper {
+  animation: stepSlideIn 0.4s ease-out forwards;
+  opacity: 0;
+  
+  app-step {
+    transition: all 0.3s ease;
+  }
+}
+
+.step-active {
+  app-step::ng-deep .my-3 {
+    border-left-color: white !important;
+    border-left-width: 3px;
+    
+    h5, h6 {
+      color: white !important;
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes stepSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// Smooth scroll behavior
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
+
+// Smooth progress bar transition
+mat-progress-bar {
+  transition: all 0.3s ease-out;
+}
