@@ -73,3 +73,43 @@ height: calc(100% - 64px);
 .mat-drawer{
   width: 385px;
 }
+
+
+
+
+
+.pill-container {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.02);
+  border:1px solid rgba(255, 255, 255, 0.033);
+  display: flex;
+  justify-content: flex-end;
+  gap: 2;
+}
+
+.pill-container button{
+  flex-grow: 0;
+  padding: 4px 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+   
+}
+
+
+
+
+button.active {
+  background-color: #222;
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+button.inactive {
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+button.inactive:hover {
+  color: rgba(255, 255, 255, 0.8);
+}

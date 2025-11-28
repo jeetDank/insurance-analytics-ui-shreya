@@ -28,6 +28,7 @@ import { MetricTableComponent } from '../common/componants/metric-table/metric-t
 import { SegmentTableComponent } from '../common/componants/segment-table/segment-table.component';
 import { DataService } from '../common/services/data.service';
 import { LoaderService } from '../common/services/loader.service';
+import { CommonModule } from '@angular/common';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -59,6 +60,7 @@ echarts.use([
     NgxEchartsDirective,
     MetricTableComponent,
     SegmentTableComponent,
+    CommonModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -598,6 +600,8 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
+  currentTab:string = 'cards';
+
   sunburstOption: echarts.EChartsCoreOption = {
     ...this.getCommonChartConfig(),
     tooltip: {
@@ -753,6 +757,13 @@ export class DashboardComponent implements OnInit {
     });
     console.log(this.cardView);
     
+  }
+  selectOption(option: string): void {
+    this.currentTab = option;
+  }
+
+  isSelected(option: string): boolean {
+    return this.currentTab === option;
   }
 
 

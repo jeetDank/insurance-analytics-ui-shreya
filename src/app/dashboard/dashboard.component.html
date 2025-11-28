@@ -129,7 +129,7 @@
         <!-- content -->
 
         @if( isDataAvailable ){
-        <div class="flex flex-row align-center">
+        <div class="flex flex-row align-center " style="margin-bottom: 32px;">
           <div>
             <h1 class="!text-2xl">
               @for(company of companies; track $index ){
@@ -152,14 +152,129 @@
           </div>
         </div>
 
-        <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="end">
-          <mat-tab label="Card">
-            <ng-template mat-tab-label>
-              <i class="material-icons me-2">dashboard_customize</i>
-              <div>Cards</div>
-            </ng-template>
+        <div
+          style="padding: 0px 10px"
+          class="pill-container rounded-md p-1 flex gap-1 mb-4"
+        >
+          <!-- Option 1 -->
+          <button
+            (click)="selectOption('cards')"
+            [ngClass]="{
+              active: isSelected('cards'),
+              inactive: !isSelected('cards')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-layout-grid h-4 w-4"
+              aria-hidden="true"
+            >
+              <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+              <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+              <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+              <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+            </svg>
+            <div>cards</div>
+          </button>
 
-            <div class="space-y-4">
+          <!-- Option 2 -->
+          <button
+            (click)="selectOption('line')"
+            [ngClass]="{
+              active: isSelected('line'),
+              inactive: !isSelected('line')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-trending-up h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M16 7h6v6"></path>
+              <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+            </svg>
+            <div>line</div>
+          </button>
+
+          <button
+            (click)="selectOption('Bar')"
+            [ngClass]="{
+              active: isSelected('Bar'),
+              inactive: !isSelected('Bar')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-chart-column h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+              <path d="M18 17V9"></path>
+              <path d="M13 17V5"></path>
+              <path d="M8 17v-3"></path>
+            </svg>
+            <div>Bar</div>
+          </button>
+
+          <button
+            (click)="selectOption('Table')"
+            [ngClass]="{
+              active: isSelected('Table'),
+              inactive: !isSelected('Table')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-table h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M12 3v18"></path>
+              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+              <path d="M3 9h18"></path>
+              <path d="M3 15h18"></path>
+            </svg>
+            <div>Table</div>
+          </button>
+        </div>
+
+        @if(currentTab =='cards'){
+<div class="space-y-4">
               @for (item of cardView; track $index) {
               <div>
                 <!-- Metric Header -->
@@ -210,54 +325,12 @@
               }
             </div>
 
-            <!-- insights section -->
 
-            <div class="flex flex-row align-center mt-5 mb-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-sparkles h-5 w-5"
-                aria-hidden="true"
-                style="color: rgb(156, 163, 175)"
-              >
-                <path
-                  d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
-                ></path>
-                <path d="M20 2v4"></path>
-                <path d="M22 4h-4"></path>
-                <circle cx="4" cy="20" r="2"></circle>
-              </svg>
-              <h2 class="">AI-Powered Insights</h2>
-            </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              @for (insight of insightsData; track $index) {
-              <app-insights-card
-                [icon]="insight.icon"
-                [title]="insight.title"
-                [description]="insight.description"
-                [source]="insight.source"
-              />
-              }
-            </div>
+        }
 
-            <div class="mt-5">
-              <app-references></app-references>
-            </div>
-          </mat-tab>
-          <mat-tab label="Line">
-            <ng-template mat-tab-label>
-              <i class="material-icons me-2">stacked_line_chart</i>
-              <div>line</div>
-            </ng-template>
-            <div>
+        @if(currentTab=='line'){
+<div>
               <h2 class="flex flex-row items-center gap-2">
                 Combined Ratio
                 <i [title]="'some text'" class="material-icons">info</i>
@@ -269,14 +342,11 @@
                 style="height: 400px"
               ></div>
             </div>
-          </mat-tab>
-          <mat-tab label="Bar">
-            <ng-template mat-tab-label>
-              <i class="material-icons me-2">bar_chart</i>
-              <div>Bar</div>
-            </ng-template>
+        }
 
-            <div>
+
+        @if(currentTab=='bar'){
+<div>
               <h2 class="flex flex-row items-center gap-2">
                 Combined Ratio
                 <span>
@@ -316,37 +386,68 @@
                 ></div>
               </div>
             </div>
-          </mat-tab>
-          <mat-tab label="Table">
-            <ng-template mat-tab-label>
-              <div class="flex flex-row items-center">
-                <i class="material-icons me-2">view_list</i>
-                <div>Table</div>
-              </div>
-            </ng-template>
+        }
 
-            <!-- TABLE CONTENT -->
-            <div>
+        @if(currentTab == 'table'){
+           <div>
               <app-metric-table></app-metric-table>
 
               <app-segment-table></app-segment-table>
             </div>
-          </mat-tab>
-          <mat-tab label="Sunburst">
-            <ng-template mat-tab-label>
-              <i class="material-icons me-2">flare</i>
-              <div>Sunburst</div>
-            </ng-template>
-            <div>
-              <div
-                class="card_background rounded-xl"
-                echarts
-                [options]="sunburstOption"
-                style="height: 400px"
-              ></div>
+        }
+
+
+        <div class="flex flex-row align-center mt-5 mb-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-sparkles h-5 w-5"
+                aria-hidden="true"
+                style="color: rgb(156, 163, 175)"
+              >
+                <path
+                  d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+                ></path>
+                <path d="M20 2v4"></path>
+                <path d="M22 4h-4"></path>
+                <circle cx="4" cy="20" r="2"></circle>
+              </svg>
+              <h2 class="">AI-Powered Insights</h2>
             </div>
-          </mat-tab>
-        </mat-tab-group>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              @for (insight of insightsData; track $index) {
+              <app-insights-card
+                [icon]="insight.icon"
+                [title]="insight.title"
+                [description]="insight.description"
+                [source]="insight.source"
+              />
+              }
+            </div>
+
+            <div class="mt-5">
+              <app-references></app-references>
+            </div>
+
+
+
+
+
+      
+
+
+
+
+
+        
 
         }
       </div>
