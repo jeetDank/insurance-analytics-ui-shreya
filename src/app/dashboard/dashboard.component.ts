@@ -733,5 +733,7 @@ export class DashboardComponent implements OnInit {
 
   showData(){
     this.cardView =  this._dataService.fetchCardsData();
+    console.log(this.cardView);
+    
   }
 }

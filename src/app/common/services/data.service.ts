@@ -385,17 +385,22 @@ getQuarterYear(dateString: string): string {
     const requested_metrics = this.API_DATA.PARSED_QUERY.metrics;
 
     const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
-      (company: any) => ({
+      
+      (company: any) => (
+        {
         company_name: company.company_name,
         cik: company.cik,
-        period: this.getQuarterYear(company?.statements?.metadata?.period_end_date),
+        period: company?.statements?.context_info?.period_label_text,
         quarters: company.statements.map((qtr: any) => ({
+          period:qtr.context_info.period_label_text,
           metrics: requested_metrics.reduce((acc: any, metric: any) => {
             acc[metric] = this.extractMetricData(qtr.all_metrics[metric]) ;
             return acc;
           }, {}),
         })),
       })
+
+
     );
 
     return this.populateCardView(companyWiseCardData);
@@ -482,18 +487,47 @@ populateCardView(companyData: any[]): any[] {
   return allMetrics.map(metricName => ({
     metricName: this.formatMetricName(metricName),
     tooltip: this.getMetricTooltip(metricName),
-    cards: companyData.map(company => {
-      const latestQuarter = company.quarters[0]; // Assuming first quarter is the latest
-      const metricData = latestQuarter.metrics[metricName];
+    cards: companyData.flatMap(company => {
+      // Sort quarters chronologically for each company
+      const sortedQuarters = [...company.quarters].sort((a: any, b: any) => {
+        return this.compareQuarters(a.period, b.period);
+      });
       
-      return {
-        companyName: this.formatCompanyName(company.company_name),
-        period: company.period !== 'QNaN NaN' ? company.period : this.extractPeriodFromQuarter(latestQuarter),
-        metric: this.formatMetricValue(metricData),
-        trend: this.formatTrendData(metricData.trend, metricData.currency)
-      };
+      // Map through sorted quarters for each company
+      return sortedQuarters.map((quarter: any) => {
+        const metricData = quarter.metrics[metricName];
+        
+        return {
+          companyName: this.formatCompanyName(company.company_name),
+          period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
+          metric: this.formatMetricValue(metricData),
+          trend: this.formatTrendData(metricData?.trend, metricData?.currency)
+        };
+      });
     })
   }));
+}
+
+// Helper function to compare quarters chronologically
+private compareQuarters(periodA: string, periodB: string): number {
+  // Handle invalid periods
+  if (periodA === 'QNaN NaN' || !periodA) return 1;
+  if (periodB === 'QNaN NaN' || !periodB) return -1;
+  
+  // Extract quarter and year from "Q1 2023" format
+  const matchA = periodA.match(/Q(\d+)\s+(\d+)/);
+  const matchB = periodB.match(/Q(\d+)\s+(\d+)/);
+  
+  if (!matchA || !matchB) return 0;
+  
+  const [, quarterA, yearA] = matchA;
+  const [, quarterB, yearB] = matchB;
+  
+  // Compare by year first, then by quarter
+  const yearDiff = parseInt(yearA) - parseInt(yearB);
+  if (yearDiff !== 0) return yearDiff;
+  
+  return parseInt(quarterA) - parseInt(quarterB);
 }
 
 private getAllUniqueMetrics(companyData: any[]): string[] {
@@ -587,11 +621,5 @@ private getMetricTooltip(metricName: string): string {
   return tooltips[metricName] || `${this.formatMetricName(metricName)} metric`;
 }
 
-private extractPeriodFromQuarter(quarter: any): string {
-  // Fallback method if period is not available
-  if (quarter.period && quarter.period !== 'QNaN NaN') {
-    return quarter.period;
-  }
-  return 'N/A';
-}
+
 }

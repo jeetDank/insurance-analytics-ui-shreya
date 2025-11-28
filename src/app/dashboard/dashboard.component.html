@@ -73,7 +73,7 @@
               <div>Cards</div>
             </ng-template>
 
-            <div class="space-y-8">
+            <div class="space-y-4">
               @for (item of cardView; track $index) {
               <div>
                 <!-- Metric Header -->
@@ -90,7 +90,7 @@
 
                 <!-- Cards Grid -->
                 <div
-                  class="grid gap-4 grid-cols-2 max-w-2xl"
+                  class="grid gap-4 grid-cols-3 max-w-7xl"
                 >
                   @for (card of item.cards; track $index) {
                   <div class="w-full">
