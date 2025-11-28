@@ -743,12 +743,17 @@ export class DashboardComponent implements OnInit {
   isLoaderVisible = false;
   isDataAvailable = false;
 
+  companies:any = null;
+
   showData(){
     this.isDataAvailable = true;
     this.cardView =  this._dataService.fetchCardsData();
+    this.companies =  this._dataService.API_DATA.COMPANY_DATA?.map((data:any)=>{
+      return data.company.name
+    });
     console.log(this.cardView);
     
   }
 
-  
+
 }
