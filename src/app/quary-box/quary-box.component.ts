@@ -309,6 +309,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
            this.recordProcessMsg(5);
 
            this.dataReady.emit(true)
+           this.recordMsg("I've updated the dashboard.",true)
           //  this._dataService.fetchCardsData();
 
 
