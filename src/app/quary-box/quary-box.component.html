@@ -64,14 +64,14 @@
       </button>
     </div>
 
-    <div class="h-full">
+    <div class="h-full" >
       @if (currentTab == 'chat') {
-      <div class="flex flex-col h-full">
+      <div class="flex flex-col h-full" >
         <!-- Chat messages area -->
-        <div #chatContainer class="flex-1 overflow-y-auto scroll-smooth">
+        <div #chatContainer class="flex-1 overflow-y-auto scroll-smooth" style="padding: 24px 24px;">
           @if(conversation.length == 0){
 
-          <div style="padding: 32px; gap: 16px">
+          <div >
             <p class="text-white/60 text-sm mb-4">
               Get started with a sample prompt:
             </p>
@@ -117,6 +117,8 @@
           <div class="animate-slide-in">
             @if (item.processDetail) {
             <app-msg-bubble
+              [isProcess]="true"
+              style="background-color:#2c2c2c;"
               [isSystemMsg]="item.systemMsg"
               [timestamp]="item.timestamp"
             >

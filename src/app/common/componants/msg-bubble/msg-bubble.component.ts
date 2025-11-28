@@ -12,5 +12,7 @@ export class MsgBubbleComponent {
 
   timestamp = input<string>("12:00 pm");
   isSystemMsg = input<boolean>(false)
+  isProcess = input<boolean>(false)
+
 
 }

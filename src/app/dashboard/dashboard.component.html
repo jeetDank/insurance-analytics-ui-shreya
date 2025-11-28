@@ -2,10 +2,72 @@
   <mat-toolbar class="border-r border-neutral-900">
     <!-- Menu button on the left -->
 
-    <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="28" width="5" height="14" rx="1" stroke="#94a3b8" stroke-width="1.5"></rect><rect x="13" y="22" width="5" height="20" rx="1" stroke="#94a3b8" stroke-width="1.5"></rect><rect x="20" y="16" width="5" height="26" rx="1" stroke="#94a3b8" stroke-width="1.5"></rect><rect x="27" y="24" width="5" height="18" rx="1" stroke="#94a3b8" stroke-width="1.5"></rect><circle cx="39" cy="18" r="8" stroke="#94a3b8" stroke-width="1.5"></circle><path d="M 39 18 L 39 10 A 8 8 0 0 1 46.66 20 Z" stroke="#94a3b8" stroke-width="1.5" fill="none"></path><path d="M 39 18 L 46.66 20 A 8 8 0 0 1 35.34 24.93 Z" stroke="#94a3b8" stroke-width="1.5" fill="none"></path></svg>
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect
+        x="6"
+        y="28"
+        width="5"
+        height="14"
+        rx="1"
+        stroke="#94a3b8"
+        stroke-width="1.5"
+      ></rect>
+      <rect
+        x="13"
+        y="22"
+        width="5"
+        height="20"
+        rx="1"
+        stroke="#94a3b8"
+        stroke-width="1.5"
+      ></rect>
+      <rect
+        x="20"
+        y="16"
+        width="5"
+        height="26"
+        rx="1"
+        stroke="#94a3b8"
+        stroke-width="1.5"
+      ></rect>
+      <rect
+        x="27"
+        y="24"
+        width="5"
+        height="18"
+        rx="1"
+        stroke="#94a3b8"
+        stroke-width="1.5"
+      ></rect>
+      <circle
+        cx="39"
+        cy="18"
+        r="8"
+        stroke="#94a3b8"
+        stroke-width="1.5"
+      ></circle>
+      <path
+        d="M 39 18 L 39 10 A 8 8 0 0 1 46.66 20 Z"
+        stroke="#94a3b8"
+        stroke-width="1.5"
+        fill="none"
+      ></path>
+      <path
+        d="M 39 18 L 46.66 20 A 8 8 0 0 1 35.34 24.93 Z"
+        stroke="#94a3b8"
+        stroke-width="1.5"
+        fill="none"
+      ></path>
+    </svg>
 
     <!-- App title/logo -->
-    <div class="flex flex-col ms-2">
+    <div class="flex flex-col ms-2 me-auto">
       <h4 class="ms-5">FinSight Analytics</h4>
       <h5 class="ms-5" style="font-size: 12px">
         Financial Intelligence Dashboard
@@ -15,12 +77,9 @@
     <!-- Spacer to push content to the right -->
     <span class="spacer"></span>
 
-    <button class="ms-auto" mat-button>
-      <mat-icon class="">history</mat-icon>
-      History
-    </button>
+    
 
-    <mat-icon class="large-icon">account_circle</mat-icon>
+    <button data-slot="sheet-trigger" class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 text-white/60 hover:text-white hover:bg-white/[0.05]" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-:r0:" data-state="closed"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history h-4 w-4" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path><path d="M12 7v5l4 2"></path></svg><span class="hidden sm:inline">History</span></button>
 
     <!-- Theme toggle on the right -->
     <!-- <div class="ms-auto">
@@ -38,7 +97,7 @@
       mode="side"
     >
       <div class="h-full drawer rounded-none">
-        <app-quary-box (dataReady)="showData()" ></app-quary-box>
+        <app-quary-box (dataReady)="showData()"></app-quary-box>
       </div>
     </mat-drawer>
 
@@ -46,7 +105,7 @@
       <div class="p-5">
         <!-- content -->
 
-      @if( isDataAvailable ){
+        @if( isDataAvailable ){
         <div class="flex flex-row align-center">
           <div>
             <h1 class="!text-2xl">Allstate, Progressive</h1>
@@ -78,21 +137,38 @@
               @for (item of cardView; track $index) {
               <div>
                 <!-- Metric Header -->
-                <h2 style="z-index: 9999;"
+                <h2
+                  style="z-index: 9999"
                   class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
                 >
                   {{ item.metricName }}
 
-                  <small class="ml-2 cursor-pointer tooltip" >
-                    <span class="tooltiptext text-white/60"> {{item.tooltip}} </span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info h-3.5 w-3.5" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+                  <small class="ml-2 cursor-pointer tooltip">
+                    <span class="tooltiptext text-white/60">
+                      {{ item.tooltip }}
+                    </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="lucide lucide-info h-3.5 w-3.5"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="10"></circle>
+                      <path d="M12 16v-4"></path>
+                      <path d="M12 8h.01"></path>
+                    </svg>
                   </small>
                 </h2>
 
                 <!-- Cards Grid -->
-                <div
-                  class="grid gap-4 grid-cols-3 max-w-7xl"
-                >
+                <div class="grid gap-4 grid-cols-3 max-w-7xl">
                   @for (card of item.cards; track $index) {
                   <div class="w-full">
                     <app-metric-card
@@ -225,10 +301,9 @@
             </div>
           </mat-tab>
         </mat-tab-group>
-      
-      }
 
-      </div>  
+        }
+      </div>
 
       @if(isLoaderVisible){
       <div class="flex flex-col items-center justify-center h-full">
@@ -239,13 +314,63 @@
       </div>
       } @if(!isDataAvailable && !isLoaderVisible ){
       <div class="flex flex-col items-center justify-center h-full">
-        <div class="flex flex-row gap-3 mb-3">
-          <span class="icon-box border border-neutral-900"
-            ><i class="material-icons large-icon">bar_chart</i></span
+        <div class="mb-8 flex justify-center gap-3">
+          <div
+            class="w-14 h-14 flex items-center justify-center border"
+            style="
+              border-color: rgba(255, 255, 255, 0.04);
+              background: rgba(255, 255, 255, 0.024);
+              border-radius: 20px;
+              border-width: 1px;
+            "
           >
-          <span class="icon-box border border-neutral-900">
-            <i class="material-icons large-icon">trending_up</i></span
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-chart-column w-6 h-6"
+              aria-hidden="true"
+              style="color: rgb(148, 163, 184)"
+            >
+              <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+              <path d="M18 17V9"></path>
+              <path d="M13 17V5"></path>
+              <path d="M8 17v-3"></path>
+            </svg>
+          </div>
+          <div
+            class="w-14 h-14 flex items-center justify-center border"
+            style="
+              border-color: rgba(255, 255, 255, 0.04);
+              background: rgba(255, 255, 255, 0.024);
+              border-radius: 20px;
+              border-width: 1px;
+            "
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-trending-up w-6 h-6"
+              aria-hidden="true"
+              style="color: rgb(148, 163, 184)"
+            >
+              <path d="M16 7h6v6"></path>
+              <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+            </svg>
+          </div>
         </div>
 
         <h1 class="mb-3">Start Your Analysis</h1>

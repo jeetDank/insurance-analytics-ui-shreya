@@ -1,5 +1,5 @@
 <div
-  class="my-3 card-background border border-neutral-900 "
+  [class]="isProcess()?'my-3 border border-neutral-900':'my-3 card-background border border-neutral-900'"
   style="width:284px;border-radius: 18px;padding: 16px;"
   [ngClass]="isSystemMsg() ? 'me-auto' : 'ms-auto'"
 >
