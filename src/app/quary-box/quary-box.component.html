@@ -1,12 +1,35 @@
-<div class="h-full w-full border-r border-neutral-900 flex flex-col" style="padding: 24px;">
+<div
+  class="h-full w-full border-r border-neutral-900 flex flex-col"
+  style="padding: 24px"
+>
   <!-- sidebar header starts here (30% space) -->
-  <div class="flex-none pt-5 pb-4">
+  <div class="flex-none ">
     <div class="mb-4">
-      <h1 class="m-0 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles h-4 w-4" aria-hidden="true" style="color: rgb(148, 163, 184);"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"></path><path d="M20 2v4"></path><path d="M22 4h-4"></path><circle cx="4" cy="20" r="2"></circle></svg>
+      <h1 class="m-0 flex items-center gap-2 mb-1">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-sparkles h-4 w-4"
+          aria-hidden="true"
+          style="color: rgb(148, 163, 184)"
+        >
+          <path
+            d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+          ></path>
+          <path d="M20 2v4"></path>
+          <path d="M22 4h-4"></path>
+          <circle cx="4" cy="20" r="2"></circle>
+        </svg>
         Financial Assistant
       </h1>
-      <h5 class="block text-secondary">
+      <h5 class="block !text-xs !text-white/40">
         Ask questions about insurance companies
       </h5>
     </div>
@@ -20,24 +43,20 @@
         <div class="flex flex-col h-full">
           <!-- Chat messages area -->
           <div #chatContainer class="flex-1 overflow-y-auto scroll-smooth">
-
-            @if(conversation.length == 0 && false){
-              Sample prompts:
-              <div class="flex flex-col text-left">
-              </div>  
-            }
-
-            @for (item of conversation; track $index) {
+            @if(conversation.length == 0 && false){ Sample prompts:
+            <div class="flex flex-col text-left"></div>
+            } @for (item of conversation; track $index) {
             <div class="animate-slide-in">
               @if (item.processDetail) {
               <app-msg-bubble
                 [isSystemMsg]="item.systemMsg"
                 [timestamp]="item.timestamp"
               >
-                
-
                 @for (step of item.processDetailsData; track $index) {
-                <div class="step-wrapper" [class.step-active]="isActiveStep(item, $index)">
+                <div
+                  class="step-wrapper"
+                  [class.step-active]="isActiveStep(item, $index)"
+                >
                   <app-step
                     [title]="step.name"
                     [description]="step.description"
@@ -104,7 +123,7 @@
           </div>
 
           <!-- Input area (sticks to bottom) -->
-          <div class="flex items-center gap-2" >
+          <div class="flex items-center gap-2">
             <mat-form-field class="flex-1" appearance="outline">
               <input
                 #msg
@@ -115,13 +134,30 @@
             </mat-form-field>
 
             <button
-              (click)="parseQuery(msg.value);msg.value =''"
+              (click)="parseQuery(msg.value); msg.value = ''"
               mat-mini-fab
               type="submit"
               class="shrink-0 self-start custom-mini-fab"
             >
-              <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send h-4 w-4" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"></path><path d="m21.854 2.147-10.94 10.939"></path></svg></span>
-        
+              <span
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-send h-4 w-4"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"
+                  ></path>
+                  <path d="m21.854 2.147-10.94 10.939"></path></svg
+              ></span>
             </button>
           </div>
         </div>

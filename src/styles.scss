@@ -26,7 +26,7 @@
     }
 
 * {
-  font-family: apple-font;
+  
   box-sizing: border-box;
   // letter-spacing: 0.7px;
 }
@@ -42,6 +42,7 @@ body {
   color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
   font-size: 0.875rem;
   line-height: 1.5;
+  font-family: apple-font;
 }
 
 // Dashboard Heading
@@ -314,4 +315,63 @@ color: rgb(202, 2, 2);
 
 input::placeholder{
  color:rgba(255, 255, 255, 0.3) !important;
+}
+
+
+.font-space-mono{
+  font-family: space-mono !important; 
+}
+
+
+
+
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 6px;
+  min-width: 100px;
+  white-space: nowrap;
+  font-family: apple-font;
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 9999;
+  bottom: -300%;
+  left: 300%;
+  transform: translateX(-50%);
+  
+  /* Optional: Add a slight shadow for depth */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  
+  /* Optional: Smooth transition */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Show the tooltip on hover */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Optional: Add a small arrow pointing down */
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+  z-index: 9999;
 }

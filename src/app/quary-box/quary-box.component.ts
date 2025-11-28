@@ -169,7 +169,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       processingStatus: 10,
       processDetailsData: null,
       timestamp: this.getFormattedTime(),
-      systemMsg: false,
+      systemMsg: systemMsg,
       suggestions: null,
     });
     this.triggerScroll();

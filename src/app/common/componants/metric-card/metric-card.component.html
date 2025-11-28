@@ -1,4 +1,10 @@
-<div class="p-8 rounded-xl card_background max-w-xs border border-neutral-900">
+<div
+  class="card-style g-card text-card-foreground flex flex-col gap-6 rounded-xl border h-full transition-all duration-300 hover:bg-white/[0.03] relative overflow-hidden"
+>
+  <div
+    class="absolute top-0 left-0 w-1 h-full"
+    style="background: rgb(156, 163, 175)"
+  ></div>
   <div>
     <div class="flex flex-row items-center">
       <h5>
@@ -9,7 +15,19 @@
       </h5>
 
       <div class="ms-auto">
-        <mat-chip> {{ period() }}</mat-chip>
+        <span
+          data-slot="badge"
+          class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground shrink-0"
+          style="
+            background-color: rgba(156, 163, 175, 0.082);
+            border-color: rgba(156, 163, 175, 0.25);
+            color: rgba(255, 255, 255, 0.835);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+              Inter, sans-serif;
+          "
+        >
+          {{ period() }}</span
+        >
       </div>
     </div>
 
@@ -20,20 +38,14 @@
     <div class="flex flex-row items-center">
       @if (trend().positive) {
 
-      <i class="material-icons me-2" style="color: rgb(0, 193, 0)"
-        >trending_up</i
-      >
+        <div class="flex items-center gap-1 text-xs text-green-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up h-3 w-3" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg><span> {{ trend().trend }}{{ trend().trendUnit }} </span></div>
+
       <span class="text-green-700">
-        {{ trend().trend }}{{ trend().trendUnit }}</span
+        </span
       >
       } @else{
 
-      <i class="material-icons me-2" style="color: rgb(193, 0, 0)"
-        >trending_down</i
-      >
-      <span class="text-red-700">
-        {{ trend().trend }}{{ trend().trendUnit }}</span
-      >
+     <div class="flex items-center gap-1 text-xs text-green-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-down h-3 w-3" aria-hidden="true"><path d="M16 17h6v-6"></path><path d="m22 17-8.5-8.5-5 5L2 7"></path></svg><span>{{ trend().trend }}{{ trend().trendUnit }}</span></div>
       }
     </div>
   </div>
