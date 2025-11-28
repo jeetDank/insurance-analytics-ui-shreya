@@ -124,3 +124,34 @@ mat-tab-group {
 mat-progress-bar {
   transition: all 0.3s ease-out;
 }
+
+
+
+.pill-container {
+  outline: none;
+    background-color: rgba(255, 255, 255, 0.02);
+    border:1px solid rgba(255, 255, 255, 0.033);
+  display: flex;
+  
+}
+
+.pill-container button{
+  flex-grow: 1;
+  padding: 4px 8px;
+}
+
+
+button.active {
+  background-color: #222;
+  color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+button.inactive {
+  background-color: transparent;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+button.inactive:hover {
+  color: rgba(255, 255, 255, 0.8);
+}

@@ -1,9 +1,9 @@
 <div
   class="h-full w-full border-r border-neutral-900 flex flex-col"
-  style="padding: 24px"
+  style="padding:32px 32px 0px 32px"
 >
   <!-- sidebar header starts here (30% space) -->
-  <div class="flex-none ">
+  <div class="flex-none pt-5 pb-4">
     <div class="mb-4">
       <h1 class="m-0 flex items-center gap-2 mb-1">
         <svg
@@ -38,135 +38,160 @@
 
   <!-- chat box and formula editor starts here (70% space) -->
   <div class="flex-1 overflow-hidden">
-    <mat-tab-group class="h-full w-full overflow-hidden">
-      <mat-tab label="Chat">
-        <div class="flex flex-col h-full">
-          <!-- Chat messages area -->
-          <div #chatContainer class="flex-1 overflow-y-auto scroll-smooth">
-            @if(conversation.length == 0 && false){ Sample prompts:
-            <div class="flex flex-col text-left"></div>
-            } @for (item of conversation; track $index) {
-            <div class="animate-slide-in">
-              @if (item.processDetail) {
-              <app-msg-bubble
-                [isSystemMsg]="item.systemMsg"
-                [timestamp]="item.timestamp"
-              >
-                @for (step of item.processDetailsData; track $index) {
-                <div
-                  class="step-wrapper"
-                  [class.step-active]="isActiveStep(item, $index)"
-                >
-                  <app-step
-                    [title]="step.name"
-                    [description]="step.description"
-                  ></app-step>
-                </div>
-                }
-                <div class="flex flex-row justify-between">
-                  <h5>Processing Query</h5>
-                  <h5>{{ item.processingStatus }}%</h5>
-                </div>
-                <mat-progress-bar
-                  mode="determinate"
-                  [value]="item.processingStatus"
-                  class="transition-all duration-300"
-                ></mat-progress-bar>
-              </app-msg-bubble>
-              } @else if(item.suggestions != null){
-              <app-msg-bubble
-                [isSystemMsg]="item.systemMsg"
-                [timestamp]="item.timestamp"
-              >
-                <p class="text-left text-primary mb-2">{{ item.message }}</p>
+    <div class="pill-container rounded-full p-1 flex gap-1">
+      <!-- Option 1 -->
+      <button
+        (click)="selectOption('chat')"
+        [ngClass]="{
+          active: isSelected('chat'),
+          inactive: !isSelected('chat')
+        }"
+        class="px-6 py-2 rounded-full font-medium transition-all duration-300"
+      >
+        Chat
+      </button>
 
-                <mat-form-field>
-                  <mat-select
-                    (selectionChange)="updateAmbiguityObject($event, $index)"
-                  >
-                    <mat-option [value]="" selected> select</mat-option>
-                    @for (option of item.suggestions; track option) {
+      <!-- Option 2 -->
+      <button
+        (click)="selectOption('formula')"
+        [ngClass]="{
+          active: isSelected('formula'),
+          inactive: !isSelected('formula')
+        }"
+        class="px-6 py-2 rounded-full font-medium transition-all duration-300"
+      >
+        Formula
+      </button>
+    </div>
 
-                    <mat-option [value]="option"> {{ option }}</mat-option>
-                    }
-                  </mat-select>
-                </mat-form-field>
-              </app-msg-bubble>
-              } @else{
-              <app-msg-bubble
-                [isSystemMsg]="item.systemMsg"
-                [timestamp]="item.timestamp"
+    <div class="h-full">
+      @if (currentTab == 'chat') {
+      <div class="flex flex-col h-full">
+        <!-- Chat messages area -->
+        <div #chatContainer class="flex-1 overflow-y-auto scroll-smooth">
+          @if(conversation.length == 0 && false){ Sample prompts:
+          <div class="flex flex-col text-left"></div>
+          } @for (item of conversation; track $index) {
+          <div class="animate-slide-in">
+            @if (item.processDetail) {
+            <app-msg-bubble
+              [isSystemMsg]="item.systemMsg"
+              [timestamp]="item.timestamp"
+            >
+              @for (step of item.processDetailsData; track $index) {
+              <div
+                class="step-wrapper"
+                [class.step-active]="isActiveStep(item, $index)"
               >
-                <p class="text-left text-primary">{{ item.message }}</p>
-              </app-msg-bubble>
+                <app-step
+                  [title]="step.name"
+                  [description]="step.description"
+                ></app-step>
+              </div>
               }
-            </div>
-            @if( $index == (conversation.length) -1 && item.suggestions !=
-            null){
-            <div class="animate-slide-in">
-              <app-msg-bubble [isSystemMsg]="true">
-                <p class="text-primary">Click to resolve all</p>
-                <button
-                  (click)="resolveAmbiguity()"
-                  mat-button
-                  type="submit"
-                  class="shrink-0 self-start custom-mini-fab"
+              <div class="flex flex-row justify-between">
+                <h5>Processing Query</h5>
+                <h5>{{ item.processingStatus }}%</h5>
+              </div>
+              <mat-progress-bar
+                mode="determinate"
+                [value]="item.processingStatus"
+                class="transition-all duration-300"
+              ></mat-progress-bar>
+            </app-msg-bubble>
+            } @else if(item.suggestions != null){
+            <app-msg-bubble
+              [isSystemMsg]="item.systemMsg"
+              [timestamp]="item.timestamp"
+            >
+              <p class="text-left text-primary mb-2">{{ item.message }}</p>
+
+              <mat-form-field>
+                <mat-select
+                  (selectionChange)="updateAmbiguityObject($event, $index)"
                 >
-                  <mat-icon>done_all</mat-icon>
-                  Resolve
-                </button>
-              </app-msg-bubble>
-            </div>
-            } } @if(loaderVisible){
-            <app-loader></app-loader>
+                  <mat-option [value]="" selected> select</mat-option>
+                  @for (option of item.suggestions; track option) {
+
+                  <mat-option [value]="option"> {{ option }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </app-msg-bubble>
+            } @else{
+            <app-msg-bubble
+              [isSystemMsg]="item.systemMsg"
+              [timestamp]="item.timestamp"
+            >
+              <p class="text-left text-primary">{{ item.message }}</p>
+            </app-msg-bubble>
             }
           </div>
-
-          <!-- Input area (sticks to bottom) -->
-          <div class="flex items-center gap-2">
-            <mat-form-field class="flex-1" appearance="outline">
-              <input
-                #msg
-                class="hover:shadow-sm"
-                matInput
-                placeholder="Add a new metric or ask a question..."
-              />
-            </mat-form-field>
-
-            <button
-              (click)="parseQuery(msg.value); msg.value = ''"
-              mat-mini-fab
-              type="submit"
-              class="shrink-0 self-start custom-mini-fab"
-            >
-              <span
-                ><svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-send h-4 w-4"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"
-                  ></path>
-                  <path d="m21.854 2.147-10.94 10.939"></path></svg
-              ></span>
-            </button>
+          @if( $index == (conversation.length) -1 && item.suggestions != null){
+          <div class="animate-slide-in">
+            <app-msg-bubble [isSystemMsg]="true">
+              <p class="text-primary">Click to resolve all</p>
+              <button
+                (click)="resolveAmbiguity()"
+                mat-button
+                type="submit"
+                class="shrink-0 self-start custom-mini-fab"
+              >
+                <mat-icon>done_all</mat-icon>
+                Resolve
+              </button>
+            </app-msg-bubble>
           </div>
+          } } @if(loaderVisible){
+          <app-loader></app-loader>
+          }
         </div>
-      </mat-tab>
 
-      <mat-tab label="Formula">
-        <app-custom-formula></app-custom-formula>
-      </mat-tab>
-    </mat-tab-group>
+        <!-- Input area (sticks to bottom) -->
+        <div class="mb-8 flex items-center gap-2">
+          <mat-form-field class="flex-1" appearance="outline">
+            <input
+              #msg
+              class="hover:shadow-sm"
+              matInput
+              placeholder="Add a new metric or ask a question..."
+            />
+          </mat-form-field>
+
+          <button
+            (click)="parseQuery(msg.value); msg.value = ''"
+            mat-mini-fab
+            type="submit"
+            class="shrink-0 self-start custom-mini-fab"
+          >
+            <span
+              ><svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-send h-4 w-4"
+                aria-hidden="true"
+              >
+                <path
+                  d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"
+                ></path>
+                <path d="m21.854 2.147-10.94 10.939"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      }@else{
+      <app-custom-formula></app-custom-formula>
+      }
+    </div>
   </div>
   <!-- chat box and formula editor ends here -->
 </div>

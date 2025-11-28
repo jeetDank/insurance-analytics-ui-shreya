@@ -28,6 +28,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { forkJoin } from 'rxjs';
 import { TextLoaderComponent } from '../common/componants/text-loader/text-loader.component';
 import { LoaderService } from '../common/services/loader.service';
+import { CommonModule } from '@angular/common';
 
 interface conversation {
   message: string;
@@ -67,6 +68,7 @@ interface processSteps {
     CustomFormulaComponent,
     MatSelectModule,
     MatInputModule,
+    CommonModule
   ],
   templateUrl: './quary-box.component.html',
   styleUrl: './quary-box.component.scss',
@@ -77,7 +79,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   horizontalPosition: MatSnackBarHorizontalPosition = 'end';
   verticalPosition: MatSnackBarVerticalPosition = 'bottom';
   private shouldScrollToBottom = false;
-
+  currentTab: string = 'chat';
   dataReady = output<boolean>();
 
   conversation: conversation[] = [];
@@ -397,5 +399,15 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   isActiveStep(item: conversation, stepIndex: number): boolean {
     if (!item.processDetailsData) return false;
     return stepIndex === item.processDetailsData.length - 1;
+  }
+
+ 
+
+  selectOption(option: string): void {
+    this.currentTab = option;
+  }
+
+  isSelected(option: string): boolean {
+    return this.currentTab === option;
   }
 }
