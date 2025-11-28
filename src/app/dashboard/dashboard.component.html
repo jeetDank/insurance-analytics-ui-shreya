@@ -46,6 +46,7 @@
       <div class="p-5">
         <!-- content -->
 
+      @if( isDataAvailable ){
         <div class="flex flex-row align-center">
           <div>
             <h1 class="!text-2xl">Allstate, Progressive</h1>
@@ -224,16 +225,19 @@
             </div>
           </mat-tab>
         </mat-tab-group>
-      </div>
+      
+      }
 
-      @if(false){
+      </div>  
+
+      @if(isLoaderVisible){
       <div class="flex flex-col items-center justify-center h-full">
         <app-loader-with-insights
           [loaderMessage]="'Building Dashboard'"
           [description]="'Analyzing financial data...'"
         ></app-loader-with-insights>
       </div>
-      } @if(false){
+      } @if(!isDataAvailable && !isLoaderVisible ){
       <div class="flex flex-col items-center justify-center h-full">
         <div class="flex flex-row gap-3 mb-3">
           <span class="icon-box border border-neutral-900"

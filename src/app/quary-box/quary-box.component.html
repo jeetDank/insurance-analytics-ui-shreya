@@ -1,10 +1,10 @@
 <div
   class="h-full w-full border-r border-neutral-900 flex flex-col"
-  style="padding: 32px 32px 0px 32px"
+  
 >
   <!-- sidebar header starts here (30% space) -->
   <div class="flex-none pt-5 pb-4">
-    <div class="mb-4">
+    <div class="mb-4" style="padding: 0px 32px">
       <h1 class="m-0 flex items-center gap-2 mb-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +38,7 @@
 
   <!-- chat box and formula editor starts here (70% space) -->
   <div class="flex-1 overflow-hidden">
-    <div class="pill-container rounded-full p-1 flex gap-1">
+    <div  style="padding: 0px 32px" class="pill-container rounded-full p-1 flex gap-1">
       <!-- Option 1 -->
       <button
         (click)="selectOption('chat')"
@@ -69,7 +69,49 @@
       <div class="flex flex-col h-full">
         <!-- Chat messages area -->
         <div #chatContainer class="flex-1 overflow-y-auto scroll-smooth">
-          @if(conversation.length == 0 && false){ Sample prompts:
+          @if(conversation.length == 0){
+
+          <div style="padding: 32px; gap: 16px">
+            <p class="text-white/60 text-sm mb-4">
+              Get started with a sample prompt:
+            </p>
+            <div class="space-y-3">
+              <button
+                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
+                style="border-radius: 20px; border-width: 1px; padding: 20px"
+              >
+                <p class="text-sm text-white/80 group-hover:text-white">
+                  Show premiums written and combined ratio for Allstate and
+                  Progressive
+                </p></button
+              ><button
+                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
+                style="border-radius: 20px; border-width: 1px; padding: 20px"
+              >
+                <p class="text-sm text-white/80 group-hover:text-white">
+                  Display revenue, net income, and operating margin for Liberty
+                  Mutual, State Farm, and GEICO
+                </p></button
+              ><button
+                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
+                style="border-radius: 20px; border-width: 1px; padding: 20px"
+              >
+                <p class="text-sm text-white/80 group-hover:text-white">
+                  Compare revenue, net income, operating margin, combined ratio,
+                  and premiums written for Progressive, Allstate, and Travelers
+                </p></button
+              ><button
+                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
+                style="border-radius: 20px; border-width: 1px; padding: 20px"
+              >
+                <p class="text-sm text-white/80 group-hover:text-white">
+                  Show segment wise distribution of revenue for Progressive and
+                  Allstate
+                </p>
+              </button>
+            </div>
+          </div>
+
           <div class="flex flex-col text-left"></div>
           } @for (item of conversation; track $index) {
           <div class="animate-slide-in">
@@ -148,7 +190,7 @@
         </div>
 
         <!-- Input area (sticks to bottom) -->
-        <div class="mb-16 flex items-center gap-1">
+        <div class="p-4 mb-8 flex items-center gap-1">
           <input
             type="text"
             #msg

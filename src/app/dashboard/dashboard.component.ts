@@ -27,6 +27,7 @@ import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
 import { MetricTableComponent } from '../common/componants/metric-table/metric-table.component';
 import { SegmentTableComponent } from '../common/componants/segment-table/segment-table.component';
 import { DataService } from '../common/services/data.service';
+import { LoaderService } from '../common/services/loader.service';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -697,7 +698,7 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
-  constructor(private _dataService:DataService) {
+  constructor(private _dataService:DataService,private _loader:LoaderService) {
     // Check if user has a saved preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -728,10 +729,22 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+
+
   onMenuClick() {}
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this._loader.isLoading$.subscribe({
+      next:(res)=>{
+        this.isLoaderVisible = res;
+      }
+    })
+  }
+
+  isLoaderVisible = false;
+  isDataAvailable = false;
 
   showData(){
+    this.isDataAvailable = true;
     this.cardView =  this._dataService.fetchCardsData();
     console.log(this.cardView);
     
