@@ -375,3 +375,14 @@ input::placeholder{
   border-color: black transparent transparent transparent;
   z-index: 9999;
 }
+
+
+input{
+  padding: 4px 12px;
+  height: 36px;
+  outline: none;
+}
+
+input:focus-visible{
+   outline: none;
+}

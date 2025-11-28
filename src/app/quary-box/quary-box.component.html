@@ -1,6 +1,6 @@
 <div
   class="h-full w-full border-r border-neutral-900 flex flex-col"
-  style="padding:32px 32px 0px 32px"
+  style="padding: 32px 32px 0px 32px"
 >
   <!-- sidebar header starts here (30% space) -->
   <div class="flex-none pt-5 pb-4">
@@ -148,42 +148,36 @@
         </div>
 
         <!-- Input area (sticks to bottom) -->
-        <div class="mb-8 flex items-center gap-2">
-          <mat-form-field class="flex-1" appearance="outline">
-            <input
-              #msg
-              class="hover:shadow-sm"
-              matInput
-              placeholder="Add a new metric or ask a question..."
-            />
-          </mat-form-field>
+        <div class="mb-16 flex items-center gap-1">
+          <input
+            type="text"
+            #msg
+            class="file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-white/[0.02] border-white/[0.08] text-white placeholder:text-white/30 focus:border-white/[0.15]"
+            placeholder="Add a new metric or ask a question..."
+          />
 
           <button
+            class="custom-mini-fab flex items-center justify-center rounded-md w-9 h-9 flex-shrink-0"
             (click)="parseQuery(msg.value); msg.value = ''"
-            mat-mini-fab
-            type="submit"
-            class="shrink-0 self-start custom-mini-fab"
           >
-            <span
-              ><svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-send h-4 w-4"
-                aria-hidden="true"
-              >
-                <path
-                  d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"
-                ></path>
-                <path d="m21.854 2.147-10.94 10.939"></path>
-              </svg>
-            </span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-send h-4 w-4"
+              aria-hidden="true"
+            >
+              <path
+                d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"
+              ></path>
+              <path d="m21.854 2.147-10.94 10.939"></path>
+            </svg>
           </button>
         </div>
       </div>
