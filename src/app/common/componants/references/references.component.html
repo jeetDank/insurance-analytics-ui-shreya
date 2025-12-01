@@ -9,12 +9,12 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
 
-    @for (ref of refData; track $index) {
+    @for (ref of refData(); track $index) {
     <div class="flex flex-row items-center gap-4">
       <h4 class="w-48 flex-shrink-0">{{ ref.companyName }}</h4>
       <div class="mt-2 flex flex-row gap-4 flex-wrap">
         @for (link of ref.quarterlyLinks; track $index) {
-        <a [href]="link.link" class="hover:underline">{{ link.linkLabel }}</a>
+        <a target="_blank" [href]="link.link" class="hover:underline">{{ link.linkLabel }}</a>
         }
       </div>
     </div>

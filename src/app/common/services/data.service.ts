@@ -1071,4 +1071,47 @@ export class DataService {
 
     return tableData;
   }
+
+
+
+
+  generateReferenceData(){
+
+    if(this.API_DATA.ANALYSIS_DATA != null){
+
+      let finalData:any = [];
+
+
+      this.API_DATA.ANALYSIS_DATA.results.forEach((company:any)=>{
+
+        let referenceObject = {
+          companyName:company.company_name,
+          quarterlyLinks:<any>[]
+        }
+
+        company.statements.forEach((quarter:any) => {
+           referenceObject.quarterlyLinks.push({
+            
+          linkLabel:` ${quarter.context_info.period_label_text} ${quarter.metadata.filing_type} `,
+          link:quarter.metadata.filing_url,
+          icon:"open_in_new"
+
+        
+          })
+        });
+
+        finalData.push(referenceObject);
+
+      })
+
+      return finalData;
+
+
+      
+    }
+    else{
+      return false
+    }
+
+  }
 }

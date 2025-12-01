@@ -1,64 +1,45 @@
-import { Component, signal } from '@angular/core';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { Component, input, signal } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+
+interface QuarterlyLink {
+  linkLabel: string;
+  link: string;
+  icon: string;
+}
+
+interface ReferenceData {
+  companyName: string;
+  quarterlyLinks: QuarterlyLink[];
+}
 
 @Component({
   selector: 'app-references',
+  standalone: true, // ✅ Required
   imports: [MatExpansionModule],
   templateUrl: './references.component.html',
-  styleUrl: './references.component.scss'
+  styleUrl: './references.component.scss',
 })
 export class ReferencesComponent {
-
   readonly panelOpenState = signal(false);
 
-  refData:any = [
-    {
-      companyName:"AllState",
-      quarterlyLinks: [
-        {
-          linkLabel:"10-Q Q3 2024",
-          link:"",
-          icon:"open_in_new"
+  // ✅ Option 1: Using Angular v19 signal-based input (Recommended)
+  refData = input<ReferenceData[]>([]);
 
-        },
-        {
-          linkLabel:"10-Q Q2 2024",
-          link:"",
-          icon:"open_in_new"
+  // If you want to initialize with data:
+  // refData = signal<ReferenceData[]>([
+  //   {
+  //     companyName: 'AllState',
+  //     quarterlyLinks: [
+  //       {
+  //         linkLabel: '10-Q Q3 2024',
+  //         link: '',
+  //         icon: 'open_in_new',
+  //       },
+  //       // ... more links
+  //     ],
+  //   },
+  // ]);
 
-        },
-        {
-          linkLabel:"10-Q Q1 2024",
-          link:"",
-          icon:"open_in_new"
-
-        }
-      ]
-    },
-    {
-      companyName:"Progressive",
-      quarterlyLinks: [
-        {
-          linkLabel:"10-Q Q3 2024",
-          link:"",
-          icon:"open_in_new"
-
-        },
-        {
-          linkLabel:"10-Q Q2 2024",
-          link:"",
-          icon:"open_in_new"
-
-        },
-        {
-          linkLabel:"10-Q Q1 2024",
-          link:"",
-          icon:"open_in_new"
-
-        }
-      ]
-    }
-  ]
-
-
+  // Method to update data
+ 
 }

@@ -178,7 +178,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   }
 
   recordProcessMsg(step_id: number) {
-    if (step_id == 1) {
+    if (step_id == 0) {
       this.conversation.push({
         message:
           "I've updated the dashboard with: Show premiums written and combined ratio for Allstate and Progressive",
@@ -194,6 +194,13 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
         systemMsg: true,
         suggestions: null,
       });
+      this.animateProgress(0);
+      this.triggerScroll();
+    } else if (step_id == 1) {
+      // this.conversation[this.conversation.length - 1].processDetailsData?.push({
+      //   name: 'Parsing user query with financial context',
+      //   description: 'Identifying companies, metrics, and time periods',
+      // });
       this.animateProgress(20);
       this.triggerScroll();
     } else if (step_id == 2) {
@@ -246,14 +253,14 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     }
 
     this.recordMsg(userQuery, false);
-
+     this.recordProcessMsg(0);
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
         if (res.success == true) {
           try {
             if (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) {
               this._dataService.setParsedQuery(res.parsed);
-              this.recordProcessMsg(1);
+               this.recordProcessMsg(1);
               this.resolveCompanies(res.parsed.companies);
             } else {
               this._dataService.setParsedQuery(res.parsed);
@@ -300,19 +307,25 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     this._apiService.batchAnalysis(payload).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.recordProcessMsg(4);
           let data = {
             results: res.results,
             summary: res.summary,
           };
           this._dataService.setAnalysisData(data);
-          this.recordProcessMsg(5);
 
           this.dataReady.emit(true);
-          this.recordMsg("I've updated the dashboard.", true);
-          //  this._dataService.fetchCardsData();
+          
 
-          // this.startVarienceAnalysis();
+          // here check if multiple periods are available if yes then
+          // go for varience analysis other wise just show till batch analysis
+
+          if (this._dataService.API_DATA.PARSED_QUERY.time_periods.length > 1) {
+            this.recordProcessMsg(4);
+            this.startVarienceAnalysis();
+          } else {
+            this.recordProcessMsg(5);
+            this.recordMsg("I've updated the dashboard.", true);
+          }
 
           console.log(this._dataService.API_DATA);
         } else {
@@ -328,7 +341,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       this._apiService.varienceAnalysis(payload).subscribe({
         next: (res: any) => {
           this.recordProcessMsg(5);
-          console.log(res);
+          this.recordMsg("I've updated the dashboard.", true);
+          
         },
       });
     } else {
@@ -356,7 +370,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
 
         if (results.length > 0) {
           this.recordMsg(`Ambiguities resolved: ${results.length}`, true);
-          this.recordProcessMsg(1);
+          this.recordProcessMsg(0);
+          this.recordProcessMsg(1)
           this.resolveCompanies(
             this._dataService.API_DATA.PARSED_QUERY.companies
           );

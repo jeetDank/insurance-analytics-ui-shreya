@@ -59,8 +59,8 @@ echarts.use([
     ReferencesComponent,
     NgxEchartsDirective,
     MetricTableComponent,
-    SegmentTableComponent,
-    CommonModule
+    // SegmentTableComponent,
+    CommonModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -753,6 +753,36 @@ export class DashboardComponent implements OnInit {
 
   metricTableData:any[] = []; 
 
+  referenceData:any = [
+     {
+      companyName:"AllState",
+      quarterlyLinks: [
+        {
+          linkLabel:"10-Q Q3 2024",
+          link:"",
+          icon:"open_in_new"
+
+        },
+        {
+          linkLabel:"10-Q Q2 2024",
+          link:"",
+          icon:"open_in_new"
+
+        },
+        {
+          linkLabel:"10-Q Q1 2024",
+          link:"",
+          icon:"open_in_new"
+
+        }
+      ]
+    }
+  ];
+
+ 
+
+
+
   showData(){
     this.isDataAvailable = true;
     this.cardView =  this._dataService.fetchCardsData();
@@ -763,6 +793,12 @@ export class DashboardComponent implements OnInit {
     this.chartsData = this._dataService.generateChartConfigs(this.cardView);
 
     this.metricTableData = this._dataService.generateMetricTableData(this.cardView);
+
+    this.referenceData = this._dataService.generateReferenceData();
+
+
+
+
 
     console.log(this.cardView, this.chartsData);
     
