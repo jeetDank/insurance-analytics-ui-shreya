@@ -75,8 +75,24 @@
             <p class="text-white/60 text-sm mb-4">
               Get started with a sample prompt:
             </p>
+
+
+            <div class="space-y-3" >
+            @for(sample of sampleQueries; track $index ){
+                <button (click)="fireUpAQueryFromSamples(sample.query)" 
+                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
+                style="border-radius: 20px; border-width: 1px; padding: 20px">
+              
+                <p class="text-sm text-white/80 group-hover:text-white">
+                  {{sample.query}}
+                </p></button>
+              }
+            </div>
+
+           
+
             <div class="space-y-3">
-              <button
+              <button 
                 class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
                 style="border-radius: 20px; border-width: 1px; padding: 20px"
               >

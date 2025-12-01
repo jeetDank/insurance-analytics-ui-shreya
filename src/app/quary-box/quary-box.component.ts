@@ -5,7 +5,7 @@ import {
   ElementRef,
   AfterViewChecked,
   signal,
-  output
+  output,
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -68,7 +68,7 @@ interface processSteps {
     CustomFormulaComponent,
     MatSelectModule,
     MatInputModule,
-    CommonModule
+    CommonModule,
   ],
   templateUrl: './quary-box.component.html',
   styleUrl: './quary-box.component.scss',
@@ -306,14 +306,12 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             summary: res.summary,
           };
           this._dataService.setAnalysisData(data);
-           this.recordProcessMsg(5);
+          this.recordProcessMsg(5);
 
-           this.dataReady.emit(true)
-           this.recordMsg("I've updated the dashboard.",true)
+          this.dataReady.emit(true);
+          this.recordMsg("I've updated the dashboard.", true);
           //  this._dataService.fetchCardsData();
 
-
-           
           // this.startVarienceAnalysis();
 
           console.log(this._dataService.API_DATA);
@@ -402,13 +400,34 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     return stepIndex === item.processDetailsData.length - 1;
   }
 
- 
-
   selectOption(option: string): void {
     this.currentTab = option;
   }
 
   isSelected(option: string): boolean {
     return this.currentTab === option;
+  }
+
+  sampleQueries: any = [
+    {
+      query:
+        'Show premiums written and combined ratio for Allstate and Progressive',
+    },
+    {
+      query:
+        ' Display revenue, net income, and operating margin for Liberty Mutual, State Farm, and GEICO',
+    },
+    {
+      query:
+        'Compare revenue, net income, operating margin, combined ratio and premiums written for Progressive, Allstate, and Travelers',
+    },
+    {
+      query:
+        'Show segment wise distribution of revenue for Progressive and Allstate',
+    },
+  ];
+
+  fireUpAQueryFromSamples(query: string) {
+    this.parseQuery(query);
   }
 }
