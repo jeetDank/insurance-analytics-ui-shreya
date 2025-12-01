@@ -118,9 +118,11 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   }
 
   private animateProgress(targetProgress: number): void {
-    const processingMsgIndex = this.conversation.findIndex(
-      (item) => item.processDetail === true
-    );
+    
+    const processingMsgIndex = this.conversation
+  .map((item, index) => ({ item, index }))
+  .reverse()
+  .find(({ item }) => item.processDetail === true)?.index ?? -1;
 
     if (processingMsgIndex === -1) return;
 

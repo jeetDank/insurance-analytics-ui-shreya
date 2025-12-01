@@ -1092,7 +1092,9 @@ export class DataService {
         company.statements.forEach((quarter:any) => {
            referenceObject.quarterlyLinks.push({
             
-          linkLabel:` ${quarter.context_info.period_label_text} ${quarter.metadata.filing_type} `,
+          linkLabel:quarter.context_info.period_label_text,
+          linkPeriod:quarter.context_info.period_label_text,
+          linkFilingType:quarter.metadata.filing_type,
           link:quarter.metadata.filing_url,
           icon:"open_in_new"
 

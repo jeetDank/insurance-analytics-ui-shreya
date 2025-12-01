@@ -5,6 +5,8 @@ interface QuarterlyLink {
   linkLabel: string;
   link: string;
   icon: string;
+  linkFilingType:string;
+  linkPeriod:string
 }
 
 interface ReferenceData {
