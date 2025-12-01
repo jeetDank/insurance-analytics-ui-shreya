@@ -576,6 +576,8 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
+  chartsData:any = []; 
+
   data = [
     {
       name: 'Allstate',
@@ -755,7 +757,11 @@ export class DashboardComponent implements OnInit {
     this.companies =  this._dataService.API_DATA.COMPANY_DATA?.map((data:any)=>{
       return data.company.name
     });
-    console.log(this.cardView);
+
+    this.chartsData = this._dataService.generateChartConfigs(this.cardView);
+
+
+    console.log(this.cardView, this.chartsData);
     
   }
   selectOption(option: string): void {
