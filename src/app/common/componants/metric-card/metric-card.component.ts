@@ -1,5 +1,6 @@
 import { Component, input } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
+import { TextFormatterPipe } from '../../pipes/text-formatter.pipe';
 
 interface trend {
   trend: string;
@@ -9,7 +10,7 @@ interface trend {
 
 @Component({
   selector: 'app-metric-card',
-  imports: [MatChipsModule],
+  imports: [MatChipsModule,TextFormatterPipe],
   templateUrl: './metric-card.component.html',
   styleUrl: './metric-card.component.scss',
 })

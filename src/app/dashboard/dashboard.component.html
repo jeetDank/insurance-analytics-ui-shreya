@@ -180,7 +180,7 @@
 
             <button
               data-slot="button"
-              class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 border-white/10 text-white/70 hover:text-white hover:bg-white/[0.05]"
+              class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 border-white/10 text-white/70 hover:text-white hover:bg-white/[0.05]"
               style="
                 font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
                   Inter, sans-serif;
@@ -335,7 +335,7 @@
             <!-- Metric Header -->
             <h2
               style="z-index: 9999"
-              class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
+              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900"
             >
               {{ item.metricName }}
 
@@ -504,47 +504,49 @@
         </div> -->
         } @if(currentTab == 'table'){
         <div>
-          @if(metricTableData.length > 0){ @for(table of metricTableData;track
-          $index){
+          @if(metricTableData.length > 0){
+          <div class="space-y-4">
+            @for(table of metricTableData;track $index){
 
-            <div class="space-y-4">
-              <h2
-            style="z-index: 9999"
-            class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
-          >
-            {{ table.metric_name }}
+            <h2
+              style="z-index: 9999"
+              class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
+            >
+              {{ table.metric_name }}
 
-            <small class="ml-2 cursor-pointer tooltip">
-              <span class="tooltiptext text-white/60">
-                {{ table?.tooltip }}
-              </span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-info h-3.5 w-3.5"
-                aria-hidden="true"
-              >
-                <circle cx="12" cy="12" r="10"></circle>
-                <path d="M12 16v-4"></path>
-                <path d="M12 8h.01"></path>
-              </svg>
-            </small>
-          </h2>
+              <small class="ml-2 cursor-pointer tooltip">
+                <span class="tooltiptext text-white/60">
+                  {{ table?.tooltip }}
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-info h-3.5 w-3.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 16v-4"></path>
+                  <path d="M12 8h.01"></path>
+                </svg>
+              </small>
+            </h2>
 
-          <app-metric-table
-            [columns]="tableColumns"
-            [data]="table.tableData"
-          ></app-metric-table>
-            </div>
-          
-          } }
+            <app-metric-table
+             
+              [columns]="tableColumns"
+              [data]="table.tableData"
+            ></app-metric-table>
+
+            }
+          </div>
+          }
 
           <!-- <app-segment-table></app-segment-table> -->
         </div>

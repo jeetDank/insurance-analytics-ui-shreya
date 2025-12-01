@@ -46,6 +46,7 @@
           active: isSelected('chat'),
           inactive: !isSelected('chat')
         }"
+        style="width: 170px;"
         class="px-6 py-2 rounded-full font-medium transition-all duration-300"
       >
         Chat
@@ -58,6 +59,7 @@
           active: isSelected('formula'),
           inactive: !isSelected('formula')
         }"
+        style="width: 170px;"
         class="px-6 py-2 rounded-full font-medium transition-all duration-300"
       >
         Formula
@@ -85,7 +87,7 @@
               <button
                 (click)="fireUpAQueryFromSamples(sample.query)"
                 class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
-                style="border-radius: 20px; border-width: 1px; padding: 20px"
+                style="border-radius: 20px; border-width: 1px; padding: 20px;"
               >
                 <p class="text-sm text-white/80 group-hover:text-white">
                   {{ sample.query }}
