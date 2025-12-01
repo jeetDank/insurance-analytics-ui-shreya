@@ -751,6 +751,8 @@ export class DashboardComponent implements OnInit {
 
   companies:any = null;
 
+  metricTableData:any[] = []; 
+
   showData(){
     this.isDataAvailable = true;
     this.cardView =  this._dataService.fetchCardsData();
@@ -760,6 +762,7 @@ export class DashboardComponent implements OnInit {
 
     this.chartsData = this._dataService.generateChartConfigs(this.cardView);
 
+    this.metricTableData = this._dataService.generateMetricTableData(this.cardView);
 
     console.log(this.cardView, this.chartsData);
     
@@ -772,5 +775,61 @@ export class DashboardComponent implements OnInit {
     return this.currentTab === option;
   }
 
+
+   tableColumns: any[] = [
+    {
+      header: 'Company',
+      field: 'company',
+      align: 'left',
+    },
+    {
+      header: 'Quarter',
+      field: 'quarter',
+      align: 'left',
+      cellColor: 'rgba(255, 255, 255, 0.53)',
+    },
+    {
+      header: 'Value',
+      field: 'value',
+      align: 'right',
+    },
+    {
+      header: 'Change',
+      field: 'change',
+      align: 'right',
+      cellRenderer: (value: any, row: any) => {
+        const isPositive = value >= 0;
+        return {
+          type: 'trend',
+          trend: {
+            direction: isPositive ? 'up' : 'down',
+            value: `${value > 0 ? '+' : ''}${value}%`,
+            color: isPositive ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)'
+          }
+        };
+      }
+    }
+  ];
+
+  tableData = [
+    {
+      company: 'Allstate',
+      quarter: 'Q3 2024',
+      value: '91.2%',
+      change: -1.2
+    },
+    {
+      company: 'Progressive',
+      quarter: 'Q3 2024',
+      value: '90.4%',
+      change: -1.5
+    },
+    {
+      company: 'Hartford',
+      quarter: 'Q3 2024',
+      value: '88.7%',
+      change: 2.3
+    }
+  ];
 
 }

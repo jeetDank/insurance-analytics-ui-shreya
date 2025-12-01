@@ -1,46 +1,80 @@
-<div class="mt-5 mb-5">
-  <h2>
-    <span class="flex flex-row items-center">
-      <div>
-        {{ tableHeader() }}
-      </div>
-      <i class="material-icons ms-2">info</i></span
+<table class="w-full">
+  <thead>
+    <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.024)">
+      <th
+        *ngFor="let column of columns"
+        [ngClass]="getColumnAlignment(column)"
+        class="px-6 py-4"
+        [style.font-family]="'-apple-system, BlinkMacSystemFont, SF Pro Display, Inter, sans-serif'"
+        [style.color]="getHeaderColor(column)"
+      >
+        {{ column.header }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="let row of data; let last = last"
+      [ngClass]="{'hover:bg-white/[0.02] transition-colors': hoverable}"
+      [style.border-bottom]="last ? 'none' : '1px solid rgba(255, 255, 255, 0.01)'"
     >
-  </h2>
-</div>
+      <td
+        *ngFor="let column of columns"
+        [ngClass]="getColumnAlignment(column)"
+        class="px-6 py-4"
+        [style.font-family]="'-apple-system, BlinkMacSystemFont, SF Pro Display, Inter, sans-serif'"
+      >
+        <ng-container [ngSwitch]="getCellContent(column, row).type">
+          <!-- Text Content -->
+          <span
+            *ngSwitchCase="'text'"
+            [style.color]="getCellColor(column)"
+          >
+            {{ getCellContent(column, row).value }}
+          </span>
 
-<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  @for(column of displayedColumns; track $index){
-  <ng-container [matColumnDef]="column">
-    <th class="font-16 text-secondary" mat-header-cell *matHeaderCellDef>
-      {{ column }}
-    </th>
-    <td  mat-cell *matCellDef="let element">
-      @if(column === 'Change') {
-      <span class="flex flex-row items-center">
-        <i
-          class="material-icons me-1"
-          [style]="
-            element.isPositive
-              ? 'font-size:18px;color:lightgreen'
-              : 'font-size: 18px;color:red'
-          "
-        >
-          {{ element.isPositive ? "arrow_upward" : "arrow_downward" }}
-        </i>
-        <span class="font-16 text-primary" [class]="element.isPositive ? 'font-16 text-primary text-danger':'font-16 text-primary text-success'">
-          {{ element[column] }}
-        </span>
-      </span>
-      } @else {
-      <span class="font-16 text-primary ">
-        {{ element[column] }}
-      </span>
-      }
-    </td>
-  </ng-container>
-  }
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <!-- Trend Content with Arrow -->
+          <div
+            *ngSwitchCase="'trend'"
+            class="flex items-center gap-1"
+            [ngClass]="{
+              'justify-end': column.align === 'right',
+              'justify-start': column.align === 'left',
+              'justify-center': column.align === 'center'
+            }"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="h-3.5 w-3.5"
+              [style.color]="getTrendColor(getCellContent(column, row).trend?.color)"
+              aria-hidden="true"
+            >
+              <ng-container *ngIf="getCellContent(column, row).trend?.direction === 'down'">
+                <path d="M12 5v14"></path>
+                <path d="m19 12-7 7-7-7"></path>
+              </ng-container>
+              <ng-container *ngIf="getCellContent(column, row).trend?.direction === 'up'">
+                <path d="M12 19V5"></path>
+                <path d="m5 12 7-7 7 7"></path>
+              </ng-container>
+            </svg>
+            <span
+              [style.font-family]="'-apple-system, BlinkMacSystemFont, SF Pro Display, Inter, sans-serif'"
+              [style.color]="getTrendColor(getCellContent(column, row).trend?.color)"
+            >
+              {{ getCellContent(column, row).trend?.value }}
+            </span>
+          </div>
+        </ng-container>
+      </td>
+    </tr>
+  </tbody>
 </table>

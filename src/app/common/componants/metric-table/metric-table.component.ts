@@ -1,36 +1,66 @@
-import { Component, OnInit, signal } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
+import { Component, Input, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
-interface tableData {
-  "Company Name": string;
-  "Quarter": string;
-  "Value": string;
-  "Change": string;
-  isPositive: boolean;
+export interface TableColumn {
+  header: string;
+  field: string;
+  align?: 'left' | 'center' | 'right';
+  headerColor?: string;
+  cellColor?: string;
+  cellRenderer?: (value: any, row: any) => TableCellContent;
+}
+
+export interface TableCellContent {
+  type: 'text' | 'trend';
+  value?: string;
+  trend?: {
+    direction: 'up' | 'down';
+    value: string;
+    color?: string;
+  };
 }
 
 @Component({
   selector: 'app-metric-table',
-  imports: [MatTableModule],
+  imports: [CommonModule],
   templateUrl: './metric-table.component.html',
   styleUrl: './metric-table.component.scss',
 })
-export class MetricTableComponent implements OnInit {
-  tableHeader = signal<string>('Table Header');
-  displayedColumns: string[] = ['Company Name','Quarter','Value','Change'];
-  tableData = signal<tableData[]>([
-    {
-      "Company Name": 'Allstate',
-      "Quarter": 'Q1 2025',
-      "Value": '$20.50B',
-      "Change": '+3.8%',
-      isPositive: false,
-    },
-  ]);
+export class MetricTableComponent  {
+ @Input() columns: TableColumn[] = [];
+  @Input() data: any[] = [];
+  @Input() hoverable: boolean = true;
 
-  dataSource: tableData[] = [];
+  getColumnAlignment(column: TableColumn): string {
+    return `text-${column.align || 'left'}`;
+  }
 
-  ngOnInit(): void {
-    this.dataSource = this.tableData(); // Access signal value with ()
+  getHeaderColor(column: TableColumn): string {
+    return column.headerColor || 'rgba(255, 255, 255, 0.53)';
+  }
+
+  getCellColor(column: TableColumn): string {
+    return column.cellColor || 'rgba(255, 255, 255, 0.93)';
+  }
+
+  getCellContent(column: TableColumn, row: any): TableCellContent {
+    const value = row[column.field];
+    
+    if (column.cellRenderer) {
+      return column.cellRenderer(value, row);
+    }
+    
+    return {
+      type: 'text',
+      value: value
+    };
+  }
+
+  getTrendColor(color?: string): string {
+    return color || 'rgb(239, 68, 68)';
+  }
+
+  getTrendIconClass(direction: 'up' | 'down'): string {
+    return direction === 'up' ? 'lucide-arrow-up' : 'lucide-arrow-down';
   }
 }

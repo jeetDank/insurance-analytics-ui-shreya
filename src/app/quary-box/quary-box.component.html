@@ -1,7 +1,4 @@
-<div
-  class="h-full w-full border-r border-neutral-900 flex flex-col"
-  
->
+<div class="h-full w-full border-r border-neutral-900 flex flex-col">
   <!-- sidebar header starts here (30% space) -->
   <div class="flex-none pt-5 pb-4">
     <div class="mb-4" style="padding: 0px 32px">
@@ -38,7 +35,10 @@
 
   <!-- chat box and formula editor starts here (70% space) -->
   <div class="flex-1 overflow-hidden">
-    <div  style="padding: 0px 32px" class="pill-container rounded-full p-1 flex gap-1">
+    <div
+      style="padding: 0px 32px"
+      class="pill-container rounded-full p-1 flex gap-1"
+    >
       <!-- Option 1 -->
       <button
         (click)="selectOption('chat')"
@@ -64,67 +64,34 @@
       </button>
     </div>
 
-    <div class="h-full" >
+    <div class="h-full">
       @if (currentTab == 'chat') {
-      <div class="flex flex-col h-full" >
+      <div class="flex flex-col h-full">
         <!-- Chat messages area -->
-        <div #chatContainer class="flex-1 overflow-y-auto scroll-smooth" style="padding: 24px 24px;">
+        <div
+          #chatContainer
+          class="flex-1 overflow-y-auto scroll-smooth"
+          style="padding: 24px 24px"
+        >
           @if(conversation.length == 0){
 
-          <div >
+          <div>
             <p class="text-white/60 text-sm mb-4">
               Get started with a sample prompt:
             </p>
 
-
-            <div class="space-y-3" >
-            @for(sample of sampleQueries; track $index ){
-                <button (click)="fireUpAQueryFromSamples(sample.query)" 
-                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
-                style="border-radius: 20px; border-width: 1px; padding: 20px">
-              
-                <p class="text-sm text-white/80 group-hover:text-white">
-                  {{sample.query}}
-                </p></button>
-              }
-            </div>
-
-           
-
             <div class="space-y-3">
-              <button 
+              @for(sample of sampleQueries; track $index ){
+              <button
+                (click)="fireUpAQueryFromSamples(sample.query)"
                 class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
                 style="border-radius: 20px; border-width: 1px; padding: 20px"
               >
                 <p class="text-sm text-white/80 group-hover:text-white">
-                  Show premiums written and combined ratio for Allstate and
-                  Progressive
-                </p></button
-              ><button
-                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
-                style="border-radius: 20px; border-width: 1px; padding: 20px"
-              >
-                <p class="text-sm text-white/80 group-hover:text-white">
-                  Display revenue, net income, and operating margin for Liberty
-                  Mutual, State Farm, and GEICO
-                </p></button
-              ><button
-                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
-                style="border-radius: 20px; border-width: 1px; padding: 20px"
-              >
-                <p class="text-sm text-white/80 group-hover:text-white">
-                  Compare revenue, net income, operating margin, combined ratio,
-                  and premiums written for Progressive, Allstate, and Travelers
-                </p></button
-              ><button
-                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
-                style="border-radius: 20px; border-width: 1px; padding: 20px"
-              >
-                <p class="text-sm text-white/80 group-hover:text-white">
-                  Show segment wise distribution of revenue for Progressive and
-                  Allstate
+                  {{ sample.query }}
                 </p>
               </button>
+              }
             </div>
           </div>
 
@@ -134,7 +101,7 @@
             @if (item.processDetail) {
             <app-msg-bubble
               [isProcess]="true"
-              style="background-color:#2c2c2c;"
+              style="background-color: #2c2c2c"
               [isSystemMsg]="item.systemMsg"
               [timestamp]="item.timestamp"
             >
