@@ -1,157 +1,152 @@
-import { Component, OnInit } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
+
+
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-interface SegmentData {
-  segment_name: string;
+export interface SegmentData {
+  metric_name: string;
   value: string;
-  children?: SegmentData[] | null;
+  unit?: string;
+  percentage: string;
+  children?: SegmentData[];
 }
 
-interface FlatSegmentData {
-  segment_name: string;
-  value: string;
-  level: number;
-  expandable: boolean;
-  originalData: SegmentData;
-}
+
 
 @Component({
   selector: 'app-segment-table',
   standalone: true,
-  imports: [MatTableModule, MatIconModule, MatButtonModule, CommonModule],
+  imports: [ CommonModule],
   templateUrl: './segment-table.component.html',
   styleUrl: './segment-table.component.scss',
 })
-export class SegmentTableComponent implements OnInit {
-  displayedColumns: string[] = ['segment_name', 'value'];
-  dataSource: FlatSegmentData[] = [];
+export class SegmentTableComponent implements OnInit, OnChanges {
+  @Input() data: SegmentData[] = [];
+  @Input() showTotal: boolean = true;
 
-  // ✅ Dummy Data Structure
-  segmentData: SegmentData[] = [
-    {
-      segment_name: 'Corporate',
-      value: '$12.5M',
-      children: [
-        {
-          segment_name: 'Marketing',
-          value: '$5.2M',
-          children: [
-            {
-              segment_name: 'Digital Ads',
-              value: '$2.1M',
-              children: null,
-            },
-            {
-              segment_name: 'Brand Management',
-              value: '$3.1M',
-              children: null,
-            },
-          ],
-        },
-        {
-          segment_name: 'Finance',
-          value: '$4.8M',
-          children: [
-            {
-              segment_name: 'Accounting',
-              value: '$2.4M',
-              children: null,
-            },
-            {
-              segment_name: 'Audit',
-              value: '$2.4M',
-              children: null,
-            },
-          ],
-        },
-        {
-          segment_name: 'Human Resources',
-          value: '$2.5M',
-          children: null,
-        },
-      ],
-    },
-    {
-      segment_name: 'Technology',
-      value: '$20.3M',
-      children: [
-        {
-          segment_name: 'Engineering',
-          value: '$12.0M',
-          children: [
-            {
-              segment_name: 'Frontend',
-              value: '$4.7M',
-              children: null,
-            },
-            {
-              segment_name: 'Backend',
-              value: '$7.3M',
-              children: null,
-            },
-          ],
-        },
-        {
-          segment_name: 'IT Support',
-          value: '$3.2M',
-          children: null,
-        },
-        {
-          segment_name: 'Security',
-          value: '$5.1M',
-          children: null,
-        },
-      ],
-    },
+  // Color palette for top-level segments
+  colors = [
+    'rgb(59, 130, 246)',   // blue
+    'rgb(16, 185, 129)',   // green
+    'rgb(245, 158, 11)',   // amber
+    'rgb(239, 68, 68)',    // red
+    'rgb(168, 85, 247)',   // purple
+    'rgb(236, 72, 153)',   // pink
+    'rgb(14, 165, 233)',   // sky
+    'rgb(34, 197, 94)',    // lime
   ];
 
+  flattenedData: Array<{
+    item: SegmentData;
+    level: number;
+    color: string;
+    isTopLevel: boolean;
+    isLastChild: boolean;
+  }> = [];
+
   ngOnInit() {
-    this.dataSource = this.flattenAll(this.segmentData, 0);
+    console.log('SegmentTable ngOnInit - data:', this.data);
+    this.flattenData();
   }
 
-  private flattenAll(
-    data: SegmentData[],
-    level: number,
-    result: FlatSegmentData[] = []
-  ): FlatSegmentData[] {
-    data.forEach((item) => {
-      const flatItem: FlatSegmentData = {
-        segment_name: item.segment_name,
-        value: item.value,
-        level: level,
-        expandable: !!item.children,
-        originalData: item,
-      };
-      result.push(flatItem);
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('SegmentTable ngOnChanges - changes:', changes);
+    if (changes['data']) {
+      console.log('Data changed:', changes['data'].currentValue);
+      this.flattenData();
+    }
+  }
 
-      // Always flatten children (no toggle)
-      if (item.children && item.children.length > 0) {
-        this.flattenAll(item.children, level + 1, result);
-      }
+  flattenData() {
+    console.log('Flattening data:', this.data);
+    this.flattenedData = [];
+    
+    if (!this.data || this.data.length === 0) {
+      console.log('No data to flatten');
+      return;
+    }
+
+    let colorIndex = 0;
+
+    const flatten = (
+      items: SegmentData[],
+      level: number = 0,
+      parentColor: string = '',
+      isLastInParent: boolean = false
+    ) => {
+      items.forEach((item, index) => {
+        const isTopLevel = level === 0;
+        const currentColor = isTopLevel 
+          ? this.colors[colorIndex % this.colors.length] 
+          : parentColor;
+        const isLastChild = index === items.length - 1;
+
+        this.flattenedData.push({
+          item,
+          level,
+          color: currentColor,
+          isTopLevel,
+          isLastChild: isLastChild && isLastInParent
+        });
+
+        if (isTopLevel) {
+          colorIndex++;
+        }
+
+        if (item.children && item.children.length > 0) {
+          flatten(item.children, level + 1, currentColor, isLastChild);
+        }
+      });
+    };
+
+    flatten(this.data);
+    console.log('Flattened data:', this.flattenedData);
+  }
+
+  getPaddingLeft(level: number): string {
+    const basePadding = 12;
+    const increment = 16;
+    return `${basePadding + (level * increment)}px`;
+  }
+
+  getBackgroundColor(isTopLevel: boolean, color: string): string {
+    if (isTopLevel) {
+      return `${color.replace('rgb', 'rgba').replace(')', ', 0.03)')}`;
+    }
+    return 'transparent';
+  }
+
+  calculateTotal(): { totalValue: string; totalPercentage: string } {
+    if (!this.data || this.data.length === 0) {
+      return { totalValue: '$0.00', totalPercentage: '0.0%' };
+    }
+
+    // Sum up only top-level items
+    let total = 0;
+    this.data.forEach(item => {
+      const value = parseFloat(item.value.replace(/[$,BMK]/g, ''));
+      const unit = item.value.match(/[BMK]/)?.[0] || '';
+
+      let multiplier = 1;
+      if (unit === 'B') multiplier = 1000000000;
+      else if (unit === 'M') multiplier = 1000000;
+      else if (unit === 'K') multiplier = 1000;
+
+      total += value * multiplier;
     });
 
-    return result;
-  }
+    // Format the total
+    let formattedTotal = '';
+    if (total >= 1000000000) {
+      formattedTotal = `$${(total / 1000000000).toFixed(2)}B`;
+    } else if (total >= 1000000) {
+      formattedTotal = `$${(total / 1000000).toFixed(2)}M`;
+    } else if (total >= 1000) {
+      formattedTotal = `$${(total / 1000).toFixed(2)}K`;
+    } else {
+      formattedTotal = `$${total.toFixed(2)}`;
+    }
 
-  getIndentation(level: number): string {
-    return `${level * 24}px`;
-  }
-
-  getLevelColor(level: number): string {
-    const colors = [
-      '#3B82F6', // Vibrant Blue for level 0
-      '#10B981', // Vibrant Green for level 1
-      '#F59E0B', // Vibrant Yellow for level 2
-      '#F97316', // Vibrant Orange for level 3
-      '#EF4444', // Vibrant Red for level 4
-    ];
-    return colors[level] || '#8B5CF6'; // Purple as fallback
-  }
-
-  hasChildren(data: SegmentData): boolean {
-    return !!(data.children && data.children.length > 0);
+    return { totalValue: formattedTotal, totalPercentage: '100.0%' };
   }
 }

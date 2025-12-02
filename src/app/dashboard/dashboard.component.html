@@ -104,13 +104,6 @@
         <path d="M12 7v5l4 2"></path></svg
       ><span class="hidden sm:inline">History</span>
     </button>
-
-    <!-- Theme toggle on the right -->
-    <!-- <div class="ms-auto">
-      <mat-icon (click)="toggleTheme()">{{
-        isDarkTheme ? "dark_mode" : "light_mode"
-      }}</mat-icon>
-    </div> -->
   </mat-toolbar>
   <mat-drawer-container class="drawer-container" autosize>
     <mat-drawer
@@ -130,6 +123,9 @@
         <!-- content -->
 
         @if( isDataAvailable ){
+
+        <!-- COMPARISON VIEW -->
+        @if(isComparison){
         <div class="flex flex-row align-center" style="margin-bottom: 32px">
           <div>
             <h1 class="!text-2xl">
@@ -211,7 +207,7 @@
           style="padding: 0px 10px"
           class="pill-container rounded-md p-1 flex gap-1 mb-4"
         >
-          <!-- Option 1 -->
+          <!-- Cards Option -->
           <button
             (click)="selectOption('cards')"
             [ngClass]="{
@@ -238,10 +234,10 @@
               <rect width="7" height="7" x="14" y="14" rx="1"></rect>
               <rect width="7" height="7" x="3" y="14" rx="1"></rect>
             </svg>
-            <div>cards</div>
+            <div>Cards</div>
           </button>
 
-          <!-- Option 2 -->
+          <!-- Line Option -->
           <button
             (click)="selectOption('line')"
             [ngClass]="{
@@ -266,9 +262,10 @@
               <path d="M16 7h6v6"></path>
               <path d="m22 7-8.5 8.5-5-5L2 17"></path>
             </svg>
-            <div>line</div>
+            <div>Line</div>
           </button>
 
+          <!-- Bar Option -->
           <button
             (click)="selectOption('bar')"
             [ngClass]="{
@@ -298,6 +295,7 @@
             <div>Bar</div>
           </button>
 
+          <!-- Table Option -->
           <button
             (click)="selectOption('table')"
             [ngClass]="{
@@ -328,65 +326,69 @@
           </button>
         </div>
 
-        @if(currentTab =='cards'){
+        <!-- Cards View -->
+        @if(currentTabComparison =='cards'){
+        <div class="space-y-4">
+          @for (item of cardView; track $index) {
+          <div>
+            <!-- Metric Header -->
+            <h2
+              style="z-index: 9999"
+              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900"
+            >
+              {{ item.metricName }}
 
-          <div class="space-y-4">
-  @for (item of cardView; track $index) {
-  <div>
-    <!-- Metric Header -->
-    <h2
-      style="z-index: 9999"
-      class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900"
-    >
-      {{ item.metricName }}
+              <small class="ml-2 cursor-pointer tooltip">
+                <span class="tooltiptext text-white/60">
+                  {{ item.tooltip }}
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-info h-3.5 w-3.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 16v-4"></path>
+                  <path d="M12 8h.01"></path>
+                </svg>
+              </small>
+            </h2>
 
-      <small class="ml-2 cursor-pointer tooltip">
-        <span class="tooltiptext text-white/60">
-          {{ item.tooltip }}
-        </span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-info h-3.5 w-3.5"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="10"></circle>
-          <path d="M12 16v-4"></path>
-          <path d="M12 8h.01"></path>
-        </svg>
-      </small>
-    </h2>
+            <!-- Cards Grid for THIS metric -->
+            <div
+              class="grid gap-4 max-w-7xl"
+              [ngClass]="getGridClass(item.cards.length)"
+            >
+              @for (card of item.cards; track card.companyName) {
+              <div
+                class="flex flex-col gap-4"
+                [class.max-w-[150px]]="item.cards.length === 1"
+              >
+                <app-metric-card
+                  [CompanyName]="card.companyName"
+                  [period]="card.period"
+                  [metric]="card.metric"
+                  [trend]="card.trend"
+                ></app-metric-card>
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
 
-    <!-- Cards Grid for THIS metric -->
-    <div class="grid gap-4 max-w-7xl" [ngClass]="getGridClass(item.cards.length)">
-      @for (card of item.cards; track card.companyName) {
-      <div
-        class="flex flex-col gap-4"
-        [class.max-w-[150px]]="item.cards.length === 1"
-      >
-        <app-metric-card
-          [CompanyName]="card.companyName"
-          [period]="card.period"
-          [metric]="card.metric"
-          [trend]="card.trend"
-        ></app-metric-card>
-      </div>
-      }
-    </div>
-  </div>
-  }
-</div>
-        
-
-        } @if(currentTab=='line'){ @for(chart of chartsData;track $index ) {
-
+        <!-- Line View -->
+        @if(currentTabComparison=='line'){ @for(chart of chartsData;track $index
+        ) {
         <div>
           <h2
             style="z-index: 9999"
@@ -424,9 +426,11 @@
             style="height: 400px"
           ></div>
         </div>
+        } }
 
-        } } @if(currentTab=='bar'){ @for(chart of chartsData;track $index ) {
-
+        <!-- Bar View -->
+        @if(currentTabComparison=='bar'){ @for(chart of chartsData;track $index
+        ) {
         <div>
           <h2
             style="z-index: 9999"
@@ -464,55 +468,14 @@
             style="height: 400px"
           ></div>
         </div>
+        } }
 
-        }
-
-        <!-- <div>
-          <h2 class="flex flex-row items-center gap-2">
-            Combined Ratio
-            <span>
-              <i [title]="'some text'" class="material-icons">info</i></span
-            >
-          </h2>
-
-          <div class="chart-container" style="height: 400px; width: 100%">
-            <div
-              echarts
-              [options]="lineChartOption"
-              class="echarts-container"
-            ></div>
-          </div>
-
-          <div class="chart-container" style="height: 400px; width: 100%">
-            <div
-              echarts
-              [options]="barChartOption"
-              class="echarts-container"
-            ></div>
-          </div>
-
-          <div class="chart-container" style="height: 400px; width: 100%">
-            <div
-              echarts
-              [options]="segmentRevenueOption"
-              class="echarts-container"
-            ></div>
-          </div>
-
-          <div class="chart-container" style="height: 400px; width: 100%">
-            <div
-              echarts
-              [options]="sunburstOption"
-              class="echarts-container"
-            ></div>
-          </div>
-        </div> -->
-        } @if(currentTab == 'table'){
+        <!-- Table View -->
+        @if(currentTabComparison == 'table'){
         <div>
           @if(metricTableData.length > 0){
           <div class="space-y-4">
             @for(table of metricTableData;track $index){
-
             <h2
               style="z-index: 9999"
               class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
@@ -547,15 +510,258 @@
               [columns]="tableColumns"
               [data]="table.tableData"
             ></app-metric-table>
-
             }
           </div>
           }
+        </div>
+        } }
 
-          <!-- <app-segment-table></app-segment-table> -->
+        <!-- SEGMENT VIEW -->
+        @if(!isComparison){
+        <div class="flex flex-row align-center" style="margin-bottom: 32px">
+          <div>
+            <h1 class="!text-2xl">
+              @for(company of companies; track $index ){
+              {{ company }}@if($index < companies.length-1){ , } }
+            </h1>
+
+            
+
+            
+
+            <p>Segment Analysis</p>
+          </div>
+
+          <div class="ms-auto">
+            <button
+              data-slot="dialog-trigger"
+              class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2"
+              type="button"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              aria-controls="radix-:r9:"
+              data-state="closed"
+              style="
+                background-color: rgb(156, 163, 175);
+                color: rgb(0, 0, 0);
+                border-radius: 8px;
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+                  Inter, sans-serif;
+                font-weight: 500;
+                text-transform: none;
+                letter-spacing: normal;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-plus h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14"></path>
+                <path d="M12 5v14"></path></svg
+              >Add Segment
+            </button>
+
+            <button
+              data-slot="button"
+              class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 border-white/10 text-white/70 hover:text-white hover:bg-white/[0.05]"
+              style="
+                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+                  Inter, sans-serif;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-download h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M12 15V3"></path>
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <path d="m7 10 5 5 5-5"></path></svg
+              >Export to Excel
+            </button>
+          </div>
+        </div>
+
+        <div
+          style="padding: 0px 10px"
+          class="pill-container rounded-md p-1 flex gap-1 mb-4"
+        >
+          <!-- Stacked Option -->
+          <button
+            (click)="selectSegmentOption('stacked')"
+            [ngClass]="{
+              active: isSegmentSelected('stacked'),
+              inactive: !isSegmentSelected('stacked')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-layers h-4 w-4"
+              aria-hidden="true"
+            >
+              <path
+                d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"
+              ></path>
+              <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path>
+              <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path>
+            </svg>
+            <div>Stacked</div>
+          </button>
+
+          <!-- Bar Option -->
+          <button
+            (click)="selectSegmentOption('bar')"
+            [ngClass]="{
+              active: isSegmentSelected('bar'),
+              inactive: !isSegmentSelected('bar')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-chart-column h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+              <path d="M18 17V9"></path>
+              <path d="M13 17V5"></path>
+              <path d="M8 17v-3"></path>
+            </svg>
+            <div>Bar</div>
+          </button>
+
+          <!-- Table Option -->
+          <button
+            (click)="selectSegmentOption('table')"
+            [ngClass]="{
+              active: isSegmentSelected('table'),
+              inactive: !isSegmentSelected('table')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-table h-4 w-4"
+              aria-hidden="true"
+            >
+              <path d="M12 3v18"></path>
+              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+              <path d="M3 9h18"></path>
+              <path d="M3 15h18"></path>
+            </svg>
+            <div>Table</div>
+          </button>
+        </div>
+
+        <!-- Stacked View -->
+        @if(currentTabSegment == 'stacked'){
+        <div class="space-y-4">
+          <div
+            class="card_background rounded-xl p-6 flex items-center justify-center"
+            style="min-height: 400px"
+          >
+        <p class="text-white/60">Stacked Chart View - Coming Soon</p>
+        </div>
         </div>
         }
 
+        <!-- Bar View -->
+        @if(currentTabSegment == 'bar'){
+        <div class="space-y-4">
+          <div
+            class="card_background rounded-xl p-6 flex items-center justify-center"
+            style="min-height: 400px"
+          >
+            <p class="text-white/60">Bar Chart View - Coming Soon</p>
+          </div>
+        </div>
+        }
+
+        <!-- Table View -->
+        @if(currentTabSegment == 'table'){
+        <div class="space-y-6">
+          @if(segmentTableData && segmentTableData.length > 0) { @for(company of
+          segmentTableData; track company.company_name) {
+          <div class="space-y-4">
+            <h2 class="text-xl font-bold text-white/90">
+              {{ company.company_name }}
+            </h2>
+
+            @for(quarter of company.quarters; track quarter.period) {
+            <div class="space-y-4">
+              <h3 class="text-md font-semibold text-white/80">
+                {{ quarter.period }}
+              </h3>
+
+              @for(metric of quarter.metrics; track metric.metric_name) {
+              <div class="card_background rounded-xl p-4">
+                <h4
+                  class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
+                >
+                  {{ metric.metric_name }}
+                </h4>
+
+                <app-segment-table [data]="metric.tableData" [showTotal]="true">
+                </app-segment-table>
+              </div>
+              }
+            </div>
+            }
+          </div>
+          } } @else {
+          <div
+            class="card_background rounded-xl p-6 flex items-center justify-center"
+            style="min-height: 400px"
+          >
+            <p class="text-white/60">No segment data available</p>
+          </div>
+          }
+        </div>
+        } }
+
+        <!-- AI Insights Section (Common for both views) -->
         <div class="flex flex-row align-center mt-5 mb-3 gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -1,62 +1,86 @@
-<div class="segment-table-container">
-  <h2 class="table-title">
-    Revenue by Segment
-    <span class="info-icon">
-      <i class="material-icons">info</i>
-    </span>
-  </h2>
-
-  <table mat-table [dataSource]="dataSource" class="">
-    <!-- Segment Name Column -->
-    <ng-container matColumnDef="segment_name">
-      <th mat-header-cell *matHeaderCellDef class="text-primary">Segment</th>
-
-      <td mat-cell *matCellDef="let element" class="segment-cell">
-        <div class="segment-content">
-          <!-- Indentation spacer -->
-          <span class="indentation-spacer" [style.width]="getIndentation(element.level)"></span>
-          
-          <!-- Colored Dot only for segments that are not the last level -->
-          @if (hasChildren(element.originalData)) {
-            <span 
-              class="level-dot"
-              [style.background-color]="getLevelColor(element.level)"
-            ></span>
-            <span class="spacer"></span>
-          } @else {
-            <span class="spacer"></span>
-          }
-
-          <!-- Segment Name -->
-          <span class="segment-name text-secondary">
-            {{ element.segment_name }}
-          </span>
-        </div>
-      </td>
-    </ng-container>
-
-    <!-- Value Column -->
-    <ng-container matColumnDef="value">
-      <th mat-header-cell *matHeaderCellDef class="text-primary">Revenue</th>
-
-      <td mat-cell *matCellDef="let element" class="value-cell">
-        <span class="text-secondary font-weight-bold">
-          {{ element.value }}
-        </span>
-      </td>
-    </ng-container>
-
-    <!-- Table Rows -->
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+<table class="w-full">
+  <thead>
     <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumns"
-      class="data-row"
-      [class.level-0]="row.level === 0"
-      [class.level-1]="row.level === 1"
-      [class.level-2]="row.level === 2"
-      [class.level-3]="row.level === 3"
-      [class.level-4]="row.level === 4"
-    ></tr>
-  </table>
-</div>
+      class="text-xs"
+      style="border-bottom: 1px solid rgba(255, 255, 255, 0.04)"
+    >
+      <th class="text-left py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
+        Segment
+      </th>
+      <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
+        Value
+      </th>
+      <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
+        %
+      </th>
+    </tr>
+  </thead>
+  <tbody class="text-xs">
+    @for (row of flattenedData; track $index) {
+    <tr
+      style="
+        border-bottom: 1px solid rgba(255, 255, 255, 0.008);
+      "
+      [style.background-color]="getBackgroundColor(row.isTopLevel, row.color)"
+    >
+      <td
+        class="py-1.5 px-3 relative"
+        [style.padding-left]="getPaddingLeft(row.level)"
+        [style.color]="row.isTopLevel ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.55)'"
+        [style.font-weight]="row.isTopLevel ? '600' : '400'"
+      >
+        @if (row.isTopLevel) {
+        <div
+          class="inline-block h-2 w-2 rounded-sm mr-2"
+          [style.background-color]="row.color"
+        ></div>
+        } @else {
+        <span
+          [style.color]="row.color"
+          style="margin-right: 6px; opacity: 0.5"
+          >└</span
+        >
+        }
+        {{ row.item.metric_name }}
+      </td>
+      <td
+        class="text-right py-1.5 px-3"
+        [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
+        [style.font-weight]="row.isTopLevel ? '600' : '400'"
+      >
+        {{ row.item.value }}{{ row.item.unit || '' }}
+      </td>
+      <td
+        class="text-right py-1.5 px-3"
+        [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.44)'"
+        [style.font-weight]="row.isTopLevel ? '600' : '400'"
+      >
+        {{ row.item.percentage }}
+      </td>
+    </tr>
+    }
+
+    @if (showTotal) {
+    <tr class="border-t-2" style="border-color: rgb(148, 163, 184)">
+      <td
+        class="py-2 px-3"
+        style="color: rgba(255, 255, 255, 0.95); font-weight: 600"
+      >
+        Total
+      </td>
+      <td
+        class="text-right py-2 px-3"
+        style="color: rgb(148, 163, 184); font-weight: 600"
+      >
+        {{ calculateTotal().totalValue }}
+      </td>
+      <td
+        class="text-right py-2 px-3"
+        style="color: rgb(148, 163, 184); font-weight: 600"
+      >
+        {{ calculateTotal().totalPercentage }}
+      </td>
+    </tr>
+    }
+  </tbody>
+</table>

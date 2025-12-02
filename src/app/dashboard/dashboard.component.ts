@@ -59,15 +59,17 @@ echarts.use([
     ReferencesComponent,
     NgxEchartsDirective,
     MetricTableComponent,
-    // SegmentTableComponent,
+    SegmentTableComponent,
     CommonModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
-  providers: [provideEchartsCore({ 
-    echarts,
-    // Configure default renderer here
-  })],
+  providers: [
+    provideEchartsCore({
+      echarts,
+      // Configure default renderer here
+    }),
+  ],
 })
 export class DashboardComponent implements OnInit {
   isDarkTheme = true;
@@ -89,20 +91,20 @@ export class DashboardComponent implements OnInit {
       borderWidth: 1,
       borderRadius: 12,
       padding: 12,
-      textStyle: { 
-        color: '#e0e0ff', 
+      textStyle: {
+        color: '#e0e0ff',
         fontSize: 12,
-        fontWeight: 'normal'
+        fontWeight: 'normal',
       },
     },
 
     legend: {
       data: ['Allstate', 'Progressive'],
       bottom: 10,
-      textStyle: { 
-        fontSize: 13, 
+      textStyle: {
+        fontSize: 13,
         color: '#b0b0ff',
-        fontWeight: '500'
+        fontWeight: '500',
       },
       itemGap: 25,
       itemWidth: 12,
@@ -113,17 +115,17 @@ export class DashboardComponent implements OnInit {
       type: 'category',
       boundaryGap: false,
       data: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'],
-      axisLabel: { 
-        color: '#c0c0ff', 
+      axisLabel: {
+        color: '#c0c0ff',
         fontSize: 12,
-        fontWeight: '500'
+        fontWeight: '500',
       },
-      axisLine: { 
-        show: true, 
-        lineStyle: { 
+      axisLine: {
+        show: true,
+        lineStyle: {
           color: 'rgba(160, 160, 255, 0.4)',
-          width: 1.5
-        } 
+          width: 1.5,
+        },
       },
       splitLine: { show: false },
     },
@@ -134,22 +136,22 @@ export class DashboardComponent implements OnInit {
         formatter: '{value}%',
         fontSize: 12,
         color: '#c0c0ff',
-        fontWeight: '500'
+        fontWeight: '500',
       },
-      axisLine: { 
-        show: true, 
-        lineStyle: { 
+      axisLine: {
+        show: true,
+        lineStyle: {
           color: 'rgba(160, 160, 255, 0.4)',
-          width: 1.5
-        } 
+          width: 1.5,
+        },
       },
-      splitLine: { 
+      splitLine: {
         show: true,
         lineStyle: {
           color: 'rgba(80, 80, 120, 0.2)',
           type: 'dashed',
-          width: 1
-        }
+          width: 1,
+        },
       },
     },
 
@@ -162,16 +164,16 @@ export class DashboardComponent implements OnInit {
         smooth: true,
         symbol: 'circle',
         symbolSize: 8,
-        lineStyle: { 
+        lineStyle: {
           width: 4,
           shadowColor: 'rgba(52, 152, 219, 0.5)',
           shadowBlur: 10,
-          shadowOffsetY: 3
+          shadowOffsetY: 3,
         },
         itemStyle: {
           color: '#3498db',
           borderWidth: 2,
-          borderColor: '#1a1a2e'
+          borderColor: '#1a1a2e',
         },
         data: [104, 99, 101, 98],
       },
@@ -181,16 +183,16 @@ export class DashboardComponent implements OnInit {
         smooth: true,
         symbol: 'circle',
         symbolSize: 8,
-        lineStyle: { 
+        lineStyle: {
           width: 4,
           shadowColor: 'rgba(231, 76, 60, 0.5)',
           shadowBlur: 10,
-          shadowOffsetY: 3
+          shadowOffsetY: 3,
         },
         itemStyle: {
           color: '#e74c3c',
           borderWidth: 2,
-          borderColor: '#1a1a2e'
+          borderColor: '#1a1a2e',
         },
         data: [96, 94, 95, 93],
       },
@@ -576,7 +578,7 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
-  chartsData:any = []; 
+  chartsData: any = [];
 
   data = [
     {
@@ -602,7 +604,7 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
-  currentTab:string = 'cards';
+  currentTabComparison: string = 'cards';
 
   sunburstOption: echarts.EChartsCoreOption = {
     ...this.getCommonChartConfig(),
@@ -613,9 +615,9 @@ export class DashboardComponent implements OnInit {
       borderColor: 'rgba(100, 100, 150, 0.3)',
       borderWidth: 1,
       borderRadius: 8,
-      textStyle: { 
+      textStyle: {
         color: '#e0e0ff',
-        fontSize: 12
+        fontSize: 12,
       },
     },
     series: [
@@ -645,7 +647,7 @@ export class DashboardComponent implements OnInit {
             label: {
               rotate: 'tangential',
               fontSize: 13,
-            }
+            },
           },
           {
             r0: '35%',
@@ -653,7 +655,7 @@ export class DashboardComponent implements OnInit {
             label: {
               align: 'right',
               fontSize: 12,
-            }
+            },
           },
           {
             r0: '70%',
@@ -666,9 +668,9 @@ export class DashboardComponent implements OnInit {
             },
             itemStyle: {
               borderWidth: 1,
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
     ],
   };
@@ -704,7 +706,10 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
-  constructor(private _dataService:DataService,private _loader:LoaderService) {
+  constructor(
+    private _dataService: DataService,
+    private _loader: LoaderService
+  ) {
     // Check if user has a saved preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -735,96 +740,111 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-
-
   onMenuClick() {}
   ngOnInit(): void {
     this._loader.isLoading$.subscribe({
-      next:(res)=>{
+      next: (res) => {
         this.isLoaderVisible = res;
-      }
-    })
+      },
+    });
   }
 
   isLoaderVisible = false;
   isDataAvailable = false;
 
-  companies:any = null;
+  companies: any = null;
 
-  metricTableData:any[] = []; 
+  metricTableData: any[] = [];
 
-  referenceData:any = [
-     {
-      companyName:"AllState",
+  referenceData: any = [
+    {
+      companyName: 'AllState',
       quarterlyLinks: [
         {
-          linkLabel:"10-Q Q3 2024",
-          link:"",
-          icon:"open_in_new"
-
+          linkLabel: '10-Q Q3 2024',
+          link: '',
+          icon: 'open_in_new',
         },
         {
-          linkLabel:"10-Q Q2 2024",
-          link:"",
-          icon:"open_in_new"
-
+          linkLabel: '10-Q Q2 2024',
+          link: '',
+          icon: 'open_in_new',
         },
         {
-          linkLabel:"10-Q Q1 2024",
-          link:"",
-          icon:"open_in_new"
-
-        }
-      ]
-    }
+          linkLabel: '10-Q Q1 2024',
+          link: '',
+          icon: 'open_in_new',
+        },
+      ],
+    },
   ];
 
- 
-  companyWiseCards:any=null;
+  companyWiseCards: any = null;
 
+  isComparison: boolean = true;
 
-  showData(){
+  currentTabSegment: string = 'stacked';
+  segmentTableData: any[] = [];
+
+  segmentPeriods: string | null = null;
+
+  selectSegmentOption(option: string) {
+    this.currentTabSegment = option;
+  }
+
+  isSegmentSelected(option: string): boolean {
+    return this.currentTabSegment === option;
+  }
+  showData() {
     this.isDataAvailable = true;
-    this.cardView =  this._dataService.fetchCardsData();
-    this.companies =  this._dataService.API_DATA.COMPANY_DATA?.map((data:any)=>{
-      return data.company.name
-    });
 
-    this.chartsData = this._dataService.generateChartConfigs(this.cardView);
+    this.companies = this._dataService.API_DATA.COMPANY_DATA?.map(
+      (data: any) => {
+        return data.company.name;
+      }
+    );
 
-    this.metricTableData = this._dataService.generateMetricTableData(this.cardView);
+    if (
+      this._dataService.API_DATA.PARSED_QUERY.segment_filter.dimension_type ==
+      null
+    ) {
+      this.cardView = this._dataService.fetchCardsData();
 
-    this.referenceData = this._dataService.generateReferenceData();
+      this.chartsData = this._dataService.generateChartConfigs(this.cardView);
 
-    this.companyWiseCards = this.getCompaniesByColumn();
-    console.log(this.companyWiseCards);
-    
+      this.metricTableData = this._dataService.generateMetricTableData(
+        this.cardView
+      );
 
+      this.referenceData = this._dataService.generateReferenceData();
 
-
-
+      this.companyWiseCards = this.getCompaniesByColumn();
+      this.isComparison = true;
+    } else {
+      this.isComparison = false;
+      this.segmentPeriods = this._dataService.API_DATA.PARSED_QUERY.time_periods;
+      this.segmentTableData = this._dataService.fetchSegmentTableData();
+    } 
 
     console.log(this.cardView, this.chartsData);
-    
   }
   selectOption(option: string): void {
-    this.currentTab = option;
+    this.currentTabComparison = option;
   }
 
-getGridClass(companyCount: number) {
-  if (companyCount >= 5) return 'grid-cols-5';
-  if (companyCount === 4) return 'grid-cols-4';
-  if (companyCount === 3) return 'grid-cols-3';
-  if (companyCount === 2) return 'grid-cols-2';
-  return 'grid-cols-1';
-}
+  getGridClass(companyCount: number) {
+    if (companyCount >= 5) return 'grid-cols-5';
+    if (companyCount === 4) return 'grid-cols-4';
+    if (companyCount === 3) return 'grid-cols-3';
+    if (companyCount === 2) return 'grid-cols-2';
+    return 'grid-cols-1';
+  }
 
   isSelected(option: string): boolean {
-    return this.currentTab === option;
+    return this.currentTabComparison === option;
   }
 
-
-   tableColumns: any[] = [
+  tableColumns: any[] = [
     {
       header: 'Company',
       field: 'company',
@@ -852,11 +872,11 @@ getGridClass(companyCount: number) {
           trend: {
             direction: isPositive ? 'up' : 'down',
             value: `${value > 0 ? '+' : ''}${value}%`,
-            color: isPositive ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)'
-          }
+            color: isPositive ? 'rgb(34, 197, 94)' : 'rgb(239, 68, 68)',
+          },
         };
-      }
-    }
+      },
+    },
   ];
 
   tableData = [
@@ -864,47 +884,46 @@ getGridClass(companyCount: number) {
       company: 'Allstate',
       quarter: 'Q3 2024',
       value: '91.2%',
-      change: -1.2
+      change: -1.2,
     },
     {
       company: 'Progressive',
       quarter: 'Q3 2024',
       value: '90.4%',
-      change: -1.5
+      change: -1.5,
     },
     {
       company: 'Hartford',
       quarter: 'Q3 2024',
       value: '88.7%',
-      change: 2.3
-    }
+      change: 2.3,
+    },
   ];
 
   getCompaniesByColumn() {
-  const companiesMap = new Map();
-  
-  // Group cards by company
-  this.cardView.forEach(metricGroup => {
-    metricGroup.cards.forEach(card => {
-      if (!companiesMap.has(card.companyName)) {
-        companiesMap.set(card.companyName, {
-          companyName: card.companyName,
-          metrics: [],
-          metricName:metricGroup.metricName
+    const companiesMap = new Map();
+
+    // Group cards by company
+    this.cardView.forEach((metricGroup) => {
+      metricGroup.cards.forEach((card) => {
+        if (!companiesMap.has(card.companyName)) {
+          companiesMap.set(card.companyName, {
+            companyName: card.companyName,
+            metrics: [],
+            metricName: metricGroup.metricName,
+          });
+        }
+
+        companiesMap.get(card.companyName).metrics.push({
+          metricName: metricGroup.metricName,
+          tooltip: metricGroup.tooltip,
+          period: card.period,
+          metric: card.metric,
+          trend: card.trend,
         });
-      }
-      
-      companiesMap.get(card.companyName).metrics.push({
-        metricName: metricGroup.metricName,
-        tooltip: metricGroup.tooltip,
-        period: card.period,
-        metric: card.metric,
-        trend: card.trend
       });
     });
-  });
-  
-  return Array.from(companiesMap.values());
-}
 
+    return Array.from(companiesMap.values());
+  }
 }
