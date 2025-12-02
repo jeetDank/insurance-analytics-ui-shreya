@@ -780,7 +780,7 @@ export class DashboardComponent implements OnInit {
   ];
 
  
-  companiesData:any=null;
+  companyWiseCards:any=null;
 
 
   showData(){
@@ -796,7 +796,9 @@ export class DashboardComponent implements OnInit {
 
     this.referenceData = this._dataService.generateReferenceData();
 
-    this.companiesData = this.getCompaniesByColumn();
+    this.companyWiseCards = this.getCompaniesByColumn();
+    console.log(this.companyWiseCards);
+    
 
 
 
@@ -809,14 +811,12 @@ export class DashboardComponent implements OnInit {
     this.currentTab = option;
   }
 
-  getGridClass() {
-  const count = this.companiesData.length;
-  
-  if (count >= 5) return 'grid-cols-5';
-  if (count === 4) return 'grid-cols-4';
-  if (count === 3) return 'grid-cols-3';
-  if (count === 2) return 'grid-cols-2';
-  return 'grid-cols-1'; // single company
+getGridClass(companyCount: number) {
+  if (companyCount >= 5) return 'grid-cols-5';
+  if (companyCount === 4) return 'grid-cols-4';
+  if (companyCount === 3) return 'grid-cols-3';
+  if (companyCount === 2) return 'grid-cols-2';
+  return 'grid-cols-1';
 }
 
   isSelected(option: string): boolean {
@@ -889,7 +889,8 @@ export class DashboardComponent implements OnInit {
       if (!companiesMap.has(card.companyName)) {
         companiesMap.set(card.companyName, {
           companyName: card.companyName,
-          metrics: []
+          metrics: [],
+          metricName:metricGroup.metricName
         });
       }
       
