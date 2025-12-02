@@ -364,7 +364,7 @@
             </h2>
 
             <!-- Cards Grid -->
-            <div class="grid gap-4 grid-cols-3 max-w-7xl">
+            <!-- <div class="grid gap-4 grid-cols-3 max-w-7xl">
               @for (card of item.cards; track $index) {
               <div class="w-full">
                 <app-metric-card
@@ -375,7 +375,26 @@
                 ></app-metric-card>
               </div>
               }
-            </div>
+            </div> -->
+
+            <div class="grid gap-4 max-w-7xl" [ngClass]="getGridClass()">
+  @for (company of companiesData; track company.companyName) {
+    <div class="flex flex-col gap-4" [class.max-w-[150px]]="companiesData.length === 1">
+      <!-- Optional: Company header -->
+      <!-- <h3 class="font-semibold text-lg">{{ company.companyName }}</h3> -->
+      
+      <!-- All metrics for this company -->
+      @for (metric of company.metrics; track metric.metricName) {
+        <app-metric-card
+          [CompanyName]="company.companyName"
+          [period]="metric.period"
+          [metric]="metric.metric"
+          [trend]="metric.trend"
+        ></app-metric-card>
+      }
+    </div>
+  }
+</div>
           </div>
           }
         </div>

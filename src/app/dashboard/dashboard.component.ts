@@ -780,7 +780,7 @@ export class DashboardComponent implements OnInit {
   ];
 
  
-
+  companiesData:any=null;
 
 
   showData(){
@@ -796,6 +796,8 @@ export class DashboardComponent implements OnInit {
 
     this.referenceData = this._dataService.generateReferenceData();
 
+    this.companiesData = this.getCompaniesByColumn();
+
 
 
 
@@ -806,6 +808,16 @@ export class DashboardComponent implements OnInit {
   selectOption(option: string): void {
     this.currentTab = option;
   }
+
+  getGridClass() {
+  const count = this.companiesData.length;
+  
+  if (count >= 5) return 'grid-cols-5';
+  if (count === 4) return 'grid-cols-4';
+  if (count === 3) return 'grid-cols-3';
+  if (count === 2) return 'grid-cols-2';
+  return 'grid-cols-1'; // single company
+}
 
   isSelected(option: string): boolean {
     return this.currentTab === option;
@@ -867,5 +879,31 @@ export class DashboardComponent implements OnInit {
       change: 2.3
     }
   ];
+
+  getCompaniesByColumn() {
+  const companiesMap = new Map();
+  
+  // Group cards by company
+  this.cardView.forEach(metricGroup => {
+    metricGroup.cards.forEach(card => {
+      if (!companiesMap.has(card.companyName)) {
+        companiesMap.set(card.companyName, {
+          companyName: card.companyName,
+          metrics: []
+        });
+      }
+      
+      companiesMap.get(card.companyName).metrics.push({
+        metricName: metricGroup.metricName,
+        tooltip: metricGroup.tooltip,
+        period: card.period,
+        metric: card.metric,
+        trend: card.trend
+      });
+    });
+  });
+  
+  return Array.from(companiesMap.values());
+}
 
 }
