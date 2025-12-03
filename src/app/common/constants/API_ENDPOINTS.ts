@@ -1,6 +1,6 @@
 // API Base URLs
 export const API_BASE_URLS = {
-  DEVELOPMENT: 'http://localhost:8000/api/v1',
+  DEVELOPMENT: 'http://insurance-poc-production.up.railway.app/api/v1',
   STAGING: 'http://localhost:8000/api/v1',
   PRODUCTION: 'http://localhost:8000/api/v1',
 } as const;
