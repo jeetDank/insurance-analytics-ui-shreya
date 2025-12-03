@@ -1,13 +1,13 @@
 // API Base URLs
 export const API_BASE_URLS = {
-  DEVELOPMENT: 'http://insurance-poc-production.up.railway.app/api/v1',
+  DEVELOPMENT: 'http://localhost:8000/api/v1',
   STAGING: 'http://localhost:8000/api/v1',
-  PRODUCTION: 'http://localhost:8000/api/v1',
+  PRODUCTION: 'https://insurance-poc-production.up.railway.app/api/v1',
 } as const;
 
 // Current environment base URL
 
-export const BASE_URL = API_BASE_URLS.DEVELOPMENT;
+export const BASE_URL = API_BASE_URLS.PRODUCTION;
 
 // Authentication Endpoints
 export const API_ENDPOINTS = {

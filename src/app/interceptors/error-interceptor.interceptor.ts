@@ -24,7 +24,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
       // Handle "unknown" or network errors
       if (!error.status) {
         console.error('Network Error:', error);
-        showSnack('Network error — please check your internet connection.');
+        showSnack('Something went wrong. please contact your admin.');
         return throwError(() => error);
       }
 
