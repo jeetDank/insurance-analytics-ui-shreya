@@ -255,11 +255,12 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     }
 
     this.recordMsg(userQuery, false);
-     this.recordProcessMsg(0);
+   
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
-        if (res.success == true) {
+        if (res.success == true && res.validation.is_valid) {
           try {
+             this.recordProcessMsg(0);
             if (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) {
               this._dataService.setParsedQuery(res.parsed);
                this.recordProcessMsg(1);
@@ -272,6 +273,15 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             }
           } catch {}
         } else {
+
+          this.recordMsg(`Could not parse "${userQuery}".Please try again with a different query.`,true)
+          this.snackBar.open('Could not parse the query. please try again with a different query. ', '', {
+           horizontalPosition: 'end',
+            verticalPosition: this.verticalPosition,
+           duration: 3000,
+          });
+
+
         }
       },
     });
@@ -428,19 +438,19 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   sampleQueries: any = [
     {
       query:
-        'Show premiums written and combined ratio for Allstate and Progressive',
+        'Give me segment wise revenue for hartford and travelers for last 2 quarters.',
     },
     {
       query:
-        ' Display revenue, net income, and operating margin for Liberty Mutual, State Farm, and GEICO',
+        'Display revenue, net income, and operating margin for allstate, travelers & hartford',
     },
     {
       query:
-        'Compare revenue, net income, operating margin, combined ratio and premiums written for Progressive, Allstate, and Travelers',
+        'Compare revenue, net income, operating margin, combined ratio and premiums written for Hartford, Allstate, and Travelers',
     },
     {
       query:
-        'Show segment wise distribution of revenue for Progressive and Allstate',
+        'Show segment wise distribution of revenue and net income for Hartford and Allstate',
     },
   ];
 
