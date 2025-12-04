@@ -1,7 +1,7 @@
 
 
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule,TitleCasePipe } from '@angular/common';
 
 export interface SegmentData {
   metric_name: string;
@@ -23,6 +23,7 @@ export interface SegmentData {
 export class SegmentTableComponent implements OnInit, OnChanges {
   @Input() data: SegmentData[] = [];
   @Input() showTotal: boolean = true;
+  @Input() segment_name: string = "Value";
 
   // Color palette for top-level segments
   colors = [

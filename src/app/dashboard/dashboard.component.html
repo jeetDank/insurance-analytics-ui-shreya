@@ -118,66 +118,63 @@
       </div>
     </mat-drawer>
 
-    
-
     <div class="h-full content">
-
       <button
-  (click)="drawer.toggle()"
-  class="fixed left-0 top-1/2 -translate-y-1/2 z-10 transition-all duration-300 ease-in-out"
-  [title]="drawer.opened ? 'Collapse chat panel' : 'Expand chat panel'"
-  [style.left.px]="drawer.opened ? 385 : 0"
-  style="
-    width: 24px;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 0px 8px 8px 0px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: rgba(255, 255, 255, 0.6);
-  "
->
-  <!-- Left chevron when opened -->
-  <svg
-    *ngIf="drawer.opened"
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    class="lucide lucide-chevron-left h-4 w-4"
-    aria-hidden="true"
-  >
-    <path d="m15 18-6-6 6-6"></path>
-  </svg>
+        (click)="drawer.toggle()"
+        class="fixed left-0 top-1/2 -translate-y-1/2 z-10 transition-all duration-300 ease-in-out"
+        [title]="drawer.opened ? 'Collapse chat panel' : 'Expand chat panel'"
+        [style.left.px]="drawer.opened ? 385 : 0"
+        style="
+          width: 24px;
+          height: 48px;
+          background: rgba(255, 255, 255, 0.05);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 0px 8px 8px 0px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          color: rgba(255, 255, 255, 0.6);
+        "
+      >
+        <!-- Left chevron when opened -->
+        <svg
+          *ngIf="drawer.opened"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-chevron-left h-4 w-4"
+          aria-hidden="true"
+        >
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
 
-  <!-- Right chevron when collapsed -->
-  <svg
-    *ngIf="!drawer.opened"
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    class="lucide lucide-chevron-right h-4 w-4"
-    aria-hidden="true"
-  >
-    <path d="m9 18 6-6-6-6"></path>
-  </svg>
-</button>
-      
+        <!-- Right chevron when collapsed -->
+        <svg
+          *ngIf="!drawer.opened"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-chevron-right h-4 w-4"
+          aria-hidden="true"
+        >
+          <path d="m9 18 6-6-6-6"></path>
+        </svg>
+      </button>
+
       <div class="p-5">
         <!-- content -->
 
@@ -780,25 +777,21 @@
           @if(segmentTableData && segmentTableData.length > 0) { @for(company of
           segmentTableData; track company.company_name) {
           <div class="space-y-4">
-            <h2 class="text-xl font-bold text-white/90">
+            <h3 class="text-xl font-bold text-white/90">
               {{ company.company_name }}
-            </h2>
+            </h3>
 
             @for(quarter of company.quarters; track quarter.period) {
             <div class="space-y-4">
-              <h3 class="text-md font-semibold text-white/80">
+              <p class="text-sm font-semibold text-white/80">
                 {{ quarter.period }}
-              </h3>
+              </p>
 
               @for(metric of quarter.metrics; track metric.metric_name) {
               <div class="card_background rounded-xl p-4">
-                <h4
-                  class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
-                >
-                  {{ metric.metric_name }}
-                </h4>
+               
 
-                <app-segment-table [data]="metric.tableData" [showTotal]="true">
+                <app-segment-table [segment_name]="metric.metric_name"  [data]="metric.tableData" [showTotal]="true">
                 </app-segment-table>
               </div>
               }

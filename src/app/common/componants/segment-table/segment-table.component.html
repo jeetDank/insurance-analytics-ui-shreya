@@ -8,7 +8,7 @@
         Segment
       </th>
       <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
-        Value
+        {{segment_name | titlecase }}
       </th>
       <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
         %
@@ -48,7 +48,10 @@
         [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
         [style.font-weight]="row.isTopLevel ? '600' : '400'"
       >
-        {{ row.item.value }}{{ row.item.unit || '' }}
+        @if (row.item.value) {
+          {{ row.item.value }}{{ row.item.unit || '' }}
+        }
+       
       </td>
       <td
         class="text-right py-1.5 px-3"
