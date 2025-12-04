@@ -23,7 +23,7 @@ export class TextFormatterPipe implements PipeTransform {
       
       // If maxLength is provided, check if formatted string exceeds it
       if (maxLength && formatted.length > maxLength) {
-        return formatted.substring(0, maxLength) + '...';
+        return formatted.substring(0, maxLength) + '';
       }
       
       return formatted;
@@ -31,7 +31,7 @@ export class TextFormatterPipe implements PipeTransform {
 
     // It's regular text - apply truncation if maxLength is provided
     if (maxLength && stringValue.length > maxLength) {
-      return stringValue.substring(0, maxLength) + '...';
+      return stringValue.substring(0, maxLength) + '';
     }
 
     return stringValue;

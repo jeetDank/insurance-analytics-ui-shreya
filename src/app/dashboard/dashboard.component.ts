@@ -822,9 +822,10 @@ export class DashboardComponent implements OnInit {
       this.isComparison = true;
     } else {
       this.isComparison = false;
-      this.segmentPeriods = this._dataService.API_DATA.PARSED_QUERY.time_periods;
+      this.segmentPeriods =
+        this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
-    } 
+    }
 
     console.log(this.cardView, this.chartsData);
   }

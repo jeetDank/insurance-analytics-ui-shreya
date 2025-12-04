@@ -32,20 +32,52 @@
     </div>
 
     <div class="metric_value mt-1 mb-1">
-      {{ metric() | textFormatter:8}}
+      {{ metric() | textFormatter : 8 }}
     </div>
 
     <div class="flex flex-row items-center">
       @if (trend().positive) {
 
-        <div class="flex items-center gap-1 text-xs text-green-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-up h-3 w-3" aria-hidden="true"><path d="M16 7h6v6"></path><path d="m22 7-8.5 8.5-5-5L2 17"></path></svg><span> {{ trend().trend }}{{ trend().trendUnit }} </span></div>
+      <div class="flex items-center gap-1 text-xs text-green-400">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-trending-up h-3 w-3"
+          aria-hidden="true"
+        >
+          <path d="M16 7h6v6"></path>
+          <path d="m22 7-8.5 8.5-5-5L2 17"></path></svg
+        ><span> {{ trend().trend | textFormatter:5}}% </span>
+      </div>
 
-      <span class="text-green-700">
-        </span
-      >
+      <span class="text-green-700"> </span>
       } @else{
 
-     <div class="flex items-center gap-1 text-xs text-green-400"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trending-down h-3 w-3" aria-hidden="true"><path d="M16 17h6v-6"></path><path d="m22 17-8.5-8.5-5 5L2 7"></path></svg><span>{{ trend().trend }}{{ trend().trendUnit }}</span></div>
+      <div class="flex items-center gap-1 text-xs text-red-400">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-trending-down h-3 w-3"
+          aria-hidden="true"
+        >
+          <path d="M16 17h6v-6"></path>
+          <path d="m22 17-8.5-8.5-5 5L2 7"></path></svg
+        ><span >{{ trend().trend |textFormatter:5}}%</span>
+      </div>
       }
     </div>
   </div>

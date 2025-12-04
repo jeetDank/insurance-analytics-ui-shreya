@@ -402,6 +402,8 @@ export class DataService {
         quarters: company.statements.map((qtr: any) => ({
           period: qtr.context_info.period_label_text,
           metrics: requested_metrics.reduce((acc: any, metric: any) => {
+            console.log(this.extractMetricData(qtr.all_metrics[metric]));
+            
             acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
             return acc;
           }, {}),
@@ -438,13 +440,16 @@ export class DataService {
     const currency = metricData.format_type === 'currency' ? 'USD' : '';
 
     // Calculate trend from growth rates
-    const trend = this.calculateTrend(metricData);
+    // const trend = this.calculateTrend(metricData);
+
+    const trend  = metricData?.qoq_growth_rate ? metricData?.qoq_growth_rate : "N/A" + "%";
+           
 
     return {
       value,
       unit,
       currency,
-      trend,
+      trend ,
     };
   }
 
@@ -469,30 +474,30 @@ export class DataService {
     return value.toString();
   }
 
-  private calculateTrend(metricData: any): string {
-    // Priority: YoY > QoQ
-    if (
-      metricData.yoy_growth_rate !== null &&
-      metricData.yoy_growth_rate !== undefined
-    ) {
-      return this.formatTrend(metricData.yoy_growth_rate, 'YoY');
-    }
+  // private calculateTrend(metricData: any): string {
+  //   // Priority: YoY > QoQ
+  //   if (
+  //     metricData.yoy_growth_rate !== null &&
+  //     metricData.yoy_growth_rate !== undefined
+  //   ) {
+  //     return this.formatTrend(metricData.yoy_growth_rate, 'YoY');
+  //   }
 
-    if (
-      metricData.qoq_growth_rate !== null &&
-      metricData.qoq_growth_rate !== undefined
-    ) {
-      return this.formatTrend(metricData.qoq_growth_rate, 'QoQ');
-    }
+  //   if (
+  //     metricData.qoq_growth_rate !== null &&
+  //     metricData.qoq_growth_rate !== undefined
+  //   ) {
+  //     return this.formatTrend(metricData.qoq_growth_rate, 'QoQ');
+  //   }
 
-    return 'N/A';
-  }
+  //   return 'N/A';
+  // }
 
-  private formatTrend(growthRate: number, period: string): string {
-    const percentage = (growthRate * 100).toFixed(2);
-    const sign = growthRate >= 0 ? '+' : '';
-    return `${sign}${percentage}% ${period}`;
-  }
+  // private formatTrend(growthRate: number, period: string): string {
+  //   const percentage = (growthRate * 100).toFixed(2);
+  //   const sign = growthRate >= 0 ? '+' : '';
+  //   return `${sign}${percentage}% ${period}`;
+  // }
 
   populateCardView(companyData: any[]): any[] {
     // First, we need to get all unique metrics across all companies
@@ -511,15 +516,20 @@ export class DataService {
         // Map through sorted quarters for each company
         return sortedQuarters.map((quarter: any) => {
           const metricData = quarter.metrics[metricName];
-
+          console.log("metric data",metricData);
+          
           return {
             companyName: this.formatCompanyName(company.company_name),
             period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
             metric: this.formatMetricValue(metricData),
-            trend: this.formatTrendData(
-              metricData?.trend,
-              metricData?.currency
-            ),
+            trend:{
+              trend: metricData?.trend ? metricData?.trend : "N/A",
+              trendUnit: '%',
+              positive: metricData?.trend ? metricData?.trend > 0 ? true:false : null
+       
+            }
+
+           
           };
         });
       }),
