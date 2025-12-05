@@ -808,25 +808,16 @@ export class DashboardComponent implements OnInit {
       this._dataService.API_DATA.PARSED_QUERY.segment_filter.dimension_type ==
       null
     ) {
-      this.cardView = this._dataService.fetchCardsData();
+      this.cardView = this._dataService.fetchCardsData(this.companies);
 
       this.chartsData = this._dataService.generateChartConfigs(this.cardView);
 
       this.metricTableData = this._dataService.generateMetricTableData(
         this.cardView
       );
-
       this.referenceData = this._dataService.generateReferenceData();
 
-      // this.companyWiseCards = null;
-
-      // this.processedCardView = this.cardView.map((item) => ({
-      //   ...item,
-      //   groupedCards: this.groupByCompany(item.cards),
-      // }));
-
-      // console.log(this.processedCardView);
-      
+     
 
       this.isComparison = true;
     } else {

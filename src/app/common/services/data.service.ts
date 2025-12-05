@@ -391,26 +391,43 @@ export class DataService {
 
     return `Q${quarter} ${year}`; // Returns "Q2 2025"
   }
-  fetchCardsData() {
+  fetchCardsData(companies: {name: string, logo: string}[]) {
+    console.log(companies);
+    
     const requested_metrics = this.API_DATA.PARSED_QUERY.metrics;
 
     const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
-      (company: any) => ({
-        company_name: company.company_name,
-        cik: company.cik,
-        period: company?.statements?.context_info?.period_label_text,
-        quarters: company.statements.map((qtr: any) => ({
-          period: qtr.context_info.period_label_text,
-          metrics: requested_metrics.reduce((acc: any, metric: any) => {
-            console.log(this.extractMetricData(qtr.all_metrics[metric]));
-            
-            acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
-            return acc;
-          }, {}),
-        })),
-      })
-    );
+      (company: any) => {
+        // Find matching company logo
+        console.log(company,companies);
+        
+        const matchedCompany = companies.find(c => 
+          c.name.toLowerCase().includes( this.formatCompanyName(company.company_name).toLowerCase()) || c.name.toLowerCase() ==  company.company_name.toLowerCase()
+          
+          
+        );
+        
+        const companyLogo = matchedCompany?.logo || '';
 
+        return {
+          company_name: company.company_name,
+          cik: company.cik,
+          logo: companyLogo, // Add logo at company level
+          period: company?.statements?.context_info?.period_label_text,
+          quarters: company.statements.map((qtr: any) => ({
+            period: qtr.context_info.period_label_text,
+            logo: companyLogo, // Add logo to each quarter
+            metrics: requested_metrics.reduce((acc: any, metric: any) => {
+              
+              acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
+              return acc;
+            }, {}),
+          })),
+        };
+      }
+    );
+    console.log("returning from fetch cards data ",companyWiseCardData);
+    
     return this.populateCardView(companyWiseCardData);
   }
 
@@ -522,6 +539,7 @@ export class DataService {
             companyName: this.formatCompanyName(company.company_name),
             period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
             metric: this.formatMetricValue(metricData),
+            logo:quarter.logo,
             trend:{
               trend: metricData?.trend ? metricData?.trend : "N/A",
               trendUnit: '%',

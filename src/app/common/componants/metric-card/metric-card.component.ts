@@ -18,5 +18,6 @@ export class MetricCardComponent {
   CompanyName = input<string>('State Farm');
   period = input<string>('Q3 2024');
   metric = input<string>('$20.50B');
+  logo = input<string>('');
   trend = input<trend>({ trend: '3.8', trendUnit: '%', positive: false });
 }
