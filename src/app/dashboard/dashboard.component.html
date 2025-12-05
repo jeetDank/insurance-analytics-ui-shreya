@@ -182,11 +182,21 @@
 
         <!-- COMPARISON VIEW -->
         @if(isComparison){
-        <div class="flex flex-row align-center" style="margin-bottom: 32px">
+        <div
+          class="flex flex-row align-center flex-wrap"
+          style="margin-bottom: 32px"
+        >
           <div>
             <h1 class="!text-2xl">
               @for(company of companies; track $index ){
-              {{ company }}@if($index < companies.length-1){ , } }
+              <div class="" style="width: 20px; display: inline-block">
+                <img
+                  style="width: 100%; height: 100%"
+                  [src]="company.logo"
+                  alt=""
+                />
+              </div>
+              {{ company.name }}@if($index < companies.length-1){ , } }
             </h1>
 
             <p>Quarterly Metric comparison</p>
@@ -384,62 +394,62 @@
 
         <!-- Cards View -->
         @if(currentTabComparison =='cards'){
+
         <div class="space-y-4">
-          @for (item of cardView; track $index) {
-          <div>
-            <!-- Metric Header -->
-            <h2
-              style="z-index: 9999"
-              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900"
-            >
-              {{ item.metricName }}
+  @for (item of cardView; track $index) {
+    <div>
+      <!-- Metric Header -->
+      <h2
+        style="z-index: 9999"
+        class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900 mb-4"
+      >
+        {{ item.metricName }}
+        <small class="ml-2 cursor-pointer tooltip">
+          <span class="tooltiptext text-white/60">
+            {{ item.tooltip }}
+          </span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-info h-3.5 w-3.5"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4"></path>
+            <path d="M12 8h.01"></path>
+          </svg>
+        </small>
+      </h2>
 
-              <small class="ml-2 cursor-pointer tooltip">
-                <span class="tooltiptext text-white/60">
-                  {{ item.tooltip }}
-                </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-info h-3.5 w-3.5"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 16v-4"></path>
-                  <path d="M12 8h.01"></path>
-                </svg>
-              </small>
-            </h2>
-
-            <!-- Cards Grid for THIS metric -->
-            <div
-              class="grid gap-4 max-w-7xl"
-              [ngClass]="getGridClass(item.cards.length)"
-            >
-              @for (card of item.cards; track card.companyName) {
-              <div
-                class="flex flex-col gap-4"
-                [class.max-w-[150px]]="item.cards.length === 1"
-              >
-                <app-metric-card
-                  [CompanyName]="card.companyName"
-                  [period]="card.period"
-                  [metric]="card.metric"
-                  [trend]="card.trend"
-                ></app-metric-card>
-              </div>
-              }
-            </div>
+      <!-- Cards Grid - Dynamic Companies -->
+      <div 
+        class="grid gap-4 max-w-7xl" 
+        [ngClass]="getGridClass(getUniqueCompanies(item.cards).length)"
+      >
+        @for (companyName of getUniqueCompanies(item.cards); track companyName) {
+          <div class="flex flex-col gap-4">
+            @for (card of getCardsByCompany(item.cards, companyName); track card.period) {
+              <app-metric-card
+                [CompanyName]="card.companyName"
+                [period]="card.period"
+                [metric]="card.metric"
+                [trend]="card.trend"
+              ></app-metric-card>
+            }
           </div>
-          }
-        </div>
+        }
+      </div>
+    </div>
+  }
+</div>
+
         }
 
         <!-- Line View -->
@@ -578,7 +588,14 @@
           <div>
             <h1 class="!text-2xl">
               @for(company of companies; track $index ){
-              <div class="" style="width: 30px;display: inline-block;"><img style="width: 100%;height: 100%;" [src]="company.logo" alt=""></div>  {{ company.name }}@if($index < companies.length-1){ , } }
+              <div class="" style="width: 20px; display: inline-block">
+                <img
+                  style="width: 100%; height: 100%"
+                  [src]="company.logo"
+                  alt=""
+                />
+              </div>
+              {{ company.name }}@if($index < companies.length-1){ , } }
             </h1>
 
             <p>Segment Analysis</p>
@@ -789,9 +806,11 @@
 
               @for(metric of quarter.metrics; track metric.metric_name) {
               <div class="card_background rounded-xl p-4">
-               
-
-                <app-segment-table [segment_name]="metric.metric_name"  [data]="metric.tableData" [showTotal]="true">
+                <app-segment-table
+                  [segment_name]="metric.metric_name"
+                  [data]="metric.tableData"
+                  [showTotal]="true"
+                >
                 </app-segment-table>
               </div>
               }

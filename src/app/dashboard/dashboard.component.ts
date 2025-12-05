@@ -779,7 +779,7 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
-  companyWiseCards: any = null;
+  processedCardView: any = null;
 
   isComparison: boolean = true;
 
@@ -800,7 +800,7 @@ export class DashboardComponent implements OnInit {
 
     this.companies = this._dataService.API_DATA.COMPANY_DATA?.map(
       (data: any) => {
-        return {name:data.company.name,logo:data.company.logo_url};
+        return { name: data.company.name, logo: data.company.logo_url };
       }
     );
 
@@ -818,7 +818,16 @@ export class DashboardComponent implements OnInit {
 
       this.referenceData = this._dataService.generateReferenceData();
 
-      this.companyWiseCards = this.getCompaniesByColumn();
+      // this.companyWiseCards = null;
+
+      // this.processedCardView = this.cardView.map((item) => ({
+      //   ...item,
+      //   groupedCards: this.groupByCompany(item.cards),
+      // }));
+
+      // console.log(this.processedCardView);
+      
+
       this.isComparison = true;
     } else {
       this.isComparison = false;
@@ -833,14 +842,7 @@ export class DashboardComponent implements OnInit {
     this.currentTabComparison = option;
   }
 
-  getGridClass(companyCount: number) {
-    if (companyCount >= 5) return 'grid-cols-5';
-    if (companyCount === 4) return 'grid-cols-4';
-    if (companyCount === 3) return 'grid-cols-3';
-    if (companyCount === 2) return 'grid-cols-2';
-    return 'grid-cols-1';
-  }
-
+  
   isSelected(option: string): boolean {
     return this.currentTabComparison === option;
   }
@@ -901,30 +903,27 @@ export class DashboardComponent implements OnInit {
     },
   ];
 
-  getCompaniesByColumn() {
-    const companiesMap = new Map();
-
-    // Group cards by company
-    this.cardView.forEach((metricGroup) => {
-      metricGroup.cards.forEach((card) => {
-        if (!companiesMap.has(card.companyName)) {
-          companiesMap.set(card.companyName, {
-            companyName: card.companyName,
-            metrics: [],
-            metricName: metricGroup.metricName,
-          });
-        }
-
-        companiesMap.get(card.companyName).metrics.push({
-          metricName: metricGroup.metricName,
-          tooltip: metricGroup.tooltip,
-          period: card.period,
-          metric: card.metric,
-          trend: card.trend,
-        });
-      });
-    });
-
-    return Array.from(companiesMap.values());
+  getUniqueCompanies(cards: any[]): string[] {
+    return [...new Set(cards.map(card => card.companyName))];
   }
+
+  // Get all cards for a specific company
+  getCardsByCompany(cards: any[], companyName: string): any[] {
+    return cards
+      .filter(card => card.companyName === companyName)
+      .sort((a, b) => a.period.localeCompare(b.period)); // Sort by period
+  }
+
+  // Dynamic grid class based on company count
+  getGridClass(columnCount: number): string {
+    const gridClasses: { [key: number]: string } = {
+      1: 'grid-cols-1',
+      2: 'grid-cols-2',
+      3: 'grid-cols-3',
+      4: 'grid-cols-4',
+    };
+    return gridClasses[columnCount] || 'grid-cols-4';
+  }
+
+  
 }
