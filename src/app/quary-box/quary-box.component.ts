@@ -438,15 +438,15 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   sampleQueries: any = [
     {
       query:
-        'Give me segment wise revenue for hartford and travelers for last 2 quarters.',
+        'Give me segment wise revenue for hartford and allstate for last 2 quarters.',
     },
     {
       query:
-        'Display revenue, net income, and operating margin for allstate, travelers & hartford',
+        'Display revenue, net income, and operating margin for allstate, travelers & hartford for last year',
     },
     {
       query:
-        'Compare revenue, net income, operating margin, combined ratio and premiums written for Hartford, Allstate, and Travelers',
+        'Compare revenue, net income, operating margin, combined ratio and premiums written for Hartford, Allstate, and Travelers for last 4 quarters',
     },
     {
       query:

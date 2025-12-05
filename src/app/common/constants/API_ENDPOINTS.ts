@@ -7,7 +7,7 @@ export const API_BASE_URLS = {
 
 // Current environment base URL
 
-export const BASE_URL = API_BASE_URLS.PRODUCTION;
+export const BASE_URL = API_BASE_URLS.DEVELOPMENT;
 
 // Authentication Endpoints
 export const API_ENDPOINTS = {

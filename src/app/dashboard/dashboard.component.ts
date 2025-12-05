@@ -800,7 +800,7 @@ export class DashboardComponent implements OnInit {
 
     this.companies = this._dataService.API_DATA.COMPANY_DATA?.map(
       (data: any) => {
-        return data.company.name;
+        return {name:data.company.name,logo:data.company.logo_url};
       }
     );
 
