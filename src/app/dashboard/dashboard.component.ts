@@ -29,6 +29,7 @@ import { SegmentTableComponent } from '../common/componants/segment-table/segmen
 import { DataService } from '../common/services/data.service';
 import { LoaderService } from '../common/services/loader.service';
 import { CommonModule } from '@angular/common';
+import { AmbiguityResolverComponent } from '../common/componants/ambiguity-resolver/ambiguity-resolver.component';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -915,6 +916,10 @@ export class DashboardComponent implements OnInit {
     };
     return gridClasses[columnCount] || 'grid-cols-4';
   }
+
+
+   
+
 
   
 }

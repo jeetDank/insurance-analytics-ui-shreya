@@ -29,6 +29,7 @@ import { forkJoin } from 'rxjs';
 import { TextLoaderComponent } from '../common/componants/text-loader/text-loader.component';
 import { LoaderService } from '../common/services/loader.service';
 import { CommonModule } from '@angular/common';
+import { AmbiguityResolverComponent } from '../common/componants/ambiguity-resolver/ambiguity-resolver.component';
 
 interface conversation {
   message: string;
@@ -69,6 +70,7 @@ interface processSteps {
     MatSelectModule,
     MatInputModule,
     CommonModule,
+    AmbiguityResolverComponent
   ],
   templateUrl: './quary-box.component.html',
   styleUrl: './quary-box.component.scss',
@@ -88,6 +90,24 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
 
   loaderVisible: boolean = false;
 
+ ambiguities:any[] = [
+    {
+      query: 're',
+      selected_ambiguity: '',
+      suggestions: ['Return on Equity', 'Revenue', 'Retained Earnings']
+    },
+    {
+      query: 'cap',
+      selected_ambiguity: '',
+      suggestions: ['Capital', 'Capacity', 'Capitalization']
+    },
+    {
+      query: 'op',
+      selected_ambiguity: '',
+      suggestions: ['Operating Profit', 'Operating Expenses', 'Operating Cash Flow']
+    }
+  ];
+
   constructor(
     private _apiService: InsuranceAnalyticsService,
     private snackBar: MatSnackBar,
@@ -100,6 +120,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       this.scrollToBottom();
       this.shouldScrollToBottom = false;
     }
+  }
+    onAmbiguitiesUpdate(updatedAmbiguities: any[]): void {
+    this.ambiguities = updatedAmbiguities;
+    console.log('Updated ambiguities:', updatedAmbiguities);
   }
 
   private scrollToBottom(): void {
@@ -260,15 +284,15 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       next: (res) => {
         if (res.success == true && res.validation.is_valid) {
           try {
-             this.recordProcessMsg(0);
+            
             if (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) {
               this._dataService.setParsedQuery(res.parsed);
+               this.recordProcessMsg(0);
                this.recordProcessMsg(1);
               this.resolveCompanies(res.parsed.companies);
             } else {
               this._dataService.setParsedQuery(res.parsed);
               this._dataService.fetchAmbiguities();
-
               this.addAmbiguitiesToConversation();
             }
           } catch {}
@@ -361,7 +385,18 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  resolveAmbiguity() {
+  resolveAmbiguity(isResolved:boolean = false) {
+    console.log(isResolved);
+    
+
+    if(isResolved == false){
+      this.recordMsg("Please resolve all ambiguities.",true);
+      return 
+    }
+
+
+
+
     let data = this.conversation
       .filter((item) => item.suggestions != null)
       .map((item) => ({ ...item.data }));
@@ -451,6 +486,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     {
       query:
         'Show segment wise distribution of revenue and net income for Hartford and Allstate',
+    },
+    {
+      query:
+        'Give me revenue for progressive for last quarter.',
     },
   ];
 

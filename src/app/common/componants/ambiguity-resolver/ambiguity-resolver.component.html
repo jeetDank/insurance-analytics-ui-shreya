@@ -1,1 +1,125 @@
-<p>ambiguity-resolver works!</p>
+<!-- ambiguity-resolver.component.html -->
+<div *ngIf="ambiguities.length > 0">
+  <!-- Header with Navigation -->
+  <div
+    class="flex items-center justify-between mb-3 gap-3"
+    
+  >
+    <p class="text-sm flex-1" [ngStyle]="{ color: 'rgba(255, 255, 255, 0.9)' }">
+      Resolving
+      <span [ngStyle]="{ color: 'rgb(156, 163, 175)', 'font-weight': '600' }">
+        "{{ currentAmbiguity?.query || "re" }}"
+      </span>
+    </p>
+
+    <!-- Pagination Controls -->
+    <div *ngIf="totalAmbiguities > 1" class="flex items-center gap-2">
+      <button
+        (click)="handlePrevious()"
+        [disabled]="!canGoPrevious"
+        class="p-1 rounded transition-all"
+        [ngStyle]="{
+          color: canGoPrevious
+            ? 'rgb(156, 163, 175)'
+            : 'rgba(156, 163, 175, 0.3)',
+          'background-color': 'transparent',
+          cursor: canGoPrevious ? 'pointer' : 'not-allowed'
+        }"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4"
+        >
+          <path d="m15 18-6-6 6-6"></path>
+        </svg>
+      </button>
+
+      <span
+        class="text-xs min-w-[40px] text-center"
+        [ngStyle]="{ color: 'rgba(255, 255, 255, 0.5)' }"
+      >
+        {{ currentIndex + 1 }} / {{ totalAmbiguities }}
+      </span>
+
+      <button
+        (click)="handleNext()"
+        [disabled]="!canGoNext"
+        class="p-1 rounded transition-all"
+        [ngStyle]="{
+          color: canGoNext ? 'rgb(156, 163, 175)' : 'rgba(156, 163, 175, 0.3)',
+          'background-color': 'transparent',
+          cursor: canGoNext ? 'pointer' : 'not-allowed'
+        }"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="h-4 w-4"
+        >
+          <path d="m9 18 6-6-6-6"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Suggestions -->
+  <div class="flex flex-col gap-2">
+    <button
+      *ngFor="let suggestion of currentAmbiguity?.suggestions"
+      (click)="handleSuggestionClick(suggestion)"
+      class="text-left px-4 py-2 text-sm border rounded-[18px] transition-all"
+      [ngClass]="{
+        'border-white/[0.05] bg-white/[0.05] text-white/90':
+          isSelected(suggestion),
+        'border-white/[0.024] bg-white/[0.02] text-white/85':
+          !isSelected(suggestion)
+      }"
+    >
+      {{ suggestion }}
+    </button>
+
+    
+    <button
+      (click)="notifyAmbiguityResolution()"
+      class="text-left px-4 py-2 text-sm border transition-all flex items-center flex-shrink-1 gap-2"
+      [ngStyle]="{
+        'border-radius': '18px',
+        'border-color': 'rgb(156, 163, 175)',
+        'background-color': 'rgba(156, 163, 175, 0.082)',
+        color: 'rgb(156, 163, 175)'
+      }"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="h-4 w-4"
+      >
+        <path d="M5 12h14"></path>
+        <path d="M12 5v14"></path>
+      </svg>
+      Resolve All
+    </button>
+  </div>
+</div>

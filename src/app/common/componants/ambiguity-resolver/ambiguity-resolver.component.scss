@@ -1,0 +1,11 @@
+button:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+.resolver{
+  width: 250px;
+}
