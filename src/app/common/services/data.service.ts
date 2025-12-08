@@ -8,7 +8,6 @@ interface apiData {
   AMBIGUITY_DATA: any | null;
 }
 
-
 export interface SegmentData {
   metric_name: string;
   value: string;
@@ -73,15 +72,26 @@ export class DataService {
     }
   }
 
+  createAmbiguityPayload(ambiguities: any[]) {
+    let ambiguityData = ambiguities.map((ambiguity: any) => {
+      return {
+        metric_name: ambiguity.selected_ambiguity,
+        context: 'string',
+        suggestions: ambiguity.suggestions,
+        resolution_type: 'select',
+      };
+    });
+    return ambiguityData;
+  }
+
   fetchAmbiguities() {
     if (this.API_DATA.PARSED_QUERY) {
       let ambiguityData = this.API_DATA.PARSED_QUERY.ambiguities.map(
         (ambiguity: any) => {
           return {
-            metric_name: ambiguity.name,
-            context: 'string',
+            query: ambiguity.name,
+            selected_ambiguity: '',
             suggestions: ambiguity.suggestions,
-            resolution_type: 'select',
           };
         }
       );
@@ -391,22 +401,25 @@ export class DataService {
 
     return `Q${quarter} ${year}`; // Returns "Q2 2025"
   }
-  fetchCardsData(companies: {name: string, logo: string}[]) {
+  fetchCardsData(companies: { name: string; logo: string }[]) {
     console.log(companies);
-    
+
     const requested_metrics = this.API_DATA.PARSED_QUERY.metrics;
 
     const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
       (company: any) => {
         // Find matching company logo
-        console.log(company,companies);
-        
-        const matchedCompany = companies.find(c => 
-          c.name.toLowerCase().includes( this.formatCompanyName(company.company_name).toLowerCase()) || c.name.toLowerCase() ==  company.company_name.toLowerCase()
-          
-          
+        console.log(company, companies);
+
+        const matchedCompany = companies.find(
+          (c) =>
+            c.name
+              .toLowerCase()
+              .includes(
+                this.formatCompanyName(company.company_name).toLowerCase()
+              ) || c.name.toLowerCase() == company.company_name.toLowerCase()
         );
-        
+
         const companyLogo = matchedCompany?.logo || '';
 
         return {
@@ -418,7 +431,6 @@ export class DataService {
             period: qtr.context_info.period_label_text,
             logo: companyLogo, // Add logo to each quarter
             metrics: requested_metrics.reduce((acc: any, metric: any) => {
-              
               acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
               return acc;
             }, {}),
@@ -426,8 +438,8 @@ export class DataService {
         };
       }
     );
-    console.log("returning from fetch cards data ",companyWiseCardData);
-    
+    console.log('returning from fetch cards data ', companyWiseCardData);
+
     return this.populateCardView(companyWiseCardData);
   }
 
@@ -459,14 +471,15 @@ export class DataService {
     // Calculate trend from growth rates
     // const trend = this.calculateTrend(metricData);
 
-    const trend  = metricData?.qoq_growth_rate ? metricData?.qoq_growth_rate : "N/A" + "%";
-           
+    const trend = metricData?.qoq_growth_rate
+      ? metricData?.qoq_growth_rate
+      : 'N/A' + '%';
 
     return {
       value,
       unit,
       currency,
-      trend ,
+      trend,
     };
   }
 
@@ -533,21 +546,22 @@ export class DataService {
         // Map through sorted quarters for each company
         return sortedQuarters.map((quarter: any) => {
           const metricData = quarter.metrics[metricName];
-          console.log("metric data",metricData);
-          
+          console.log('metric data', metricData);
+
           return {
             companyName: this.formatCompanyName(company.company_name),
             period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
             metric: this.formatMetricValue(metricData),
-            logo:quarter.logo,
-            trend:{
-              trend: metricData?.trend ? metricData?.trend : "N/A",
+            logo: quarter.logo,
+            trend: {
+              trend: metricData?.trend ? metricData?.trend : 'N/A',
               trendUnit: '%',
-              positive: metricData?.trend ? metricData?.trend > 0 ? true:false : null
-       
-            }
-
-           
+              positive: metricData?.trend
+                ? metricData?.trend > 0
+                  ? true
+                  : false
+                : null,
+            },
           };
         });
       }),
@@ -1109,247 +1123,252 @@ export class DataService {
     return tableData;
   }
 
+  generateReferenceData() {
+    if (this.API_DATA.ANALYSIS_DATA != null) {
+      let finalData: any = [];
 
-
-
-  generateReferenceData(){
-
-    if(this.API_DATA.ANALYSIS_DATA != null){
-
-      let finalData:any = [];
-
-
-      this.API_DATA.ANALYSIS_DATA.results.forEach((company:any)=>{
-
+      this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {
         let referenceObject = {
-          companyName:company.company_name,
-          quarterlyLinks:<any>[]
-        }
+          companyName: company.company_name,
+          quarterlyLinks: <any>[],
+        };
 
-        company.statements.forEach((quarter:any) => {
-           referenceObject.quarterlyLinks.push({
-            
-          linkLabel:quarter.context_info.period_label_text,
-          linkPeriod:quarter.context_info.period_label_text,
-          linkFilingType:quarter.metadata.filing_type,
-          link:quarter.metadata.filing_url,
-          icon:"open_in_new"
-
-        
-          })
+        company.statements.forEach((quarter: any) => {
+          referenceObject.quarterlyLinks.push({
+            linkLabel: quarter.context_info.period_label_text,
+            linkPeriod: quarter.context_info.period_label_text,
+            linkFilingType: quarter.metadata.filing_type,
+            link: quarter.metadata.filing_url,
+            icon: 'open_in_new',
+          });
         });
 
         finalData.push(referenceObject);
-
-      })
+      });
 
       return finalData;
-
-
-      
+    } else {
+      return false;
     }
-    else{
-      return false
-    }
-
   }
-
-
 
   // Add this interface if not already present
 
+  // Main function to fetch segment table data
+  fetchSegmentTableData() {
+    const requested_metrics = this.API_DATA.PARSED_QUERY.metrics;
 
-// Main function to fetch segment table data
-fetchSegmentTableData() {
-  const requested_metrics = this.API_DATA.PARSED_QUERY.metrics;
-  
-  return this.API_DATA.ANALYSIS_DATA.results.map((company: any) => ({
-    company_name: company.company_name,
-    cik: company.cik,
-    quarters: company.statements.map((qtr: any) => ({
-      period: qtr.context_info.period_label_text,
-      metrics: requested_metrics.map((metric: any) => ({
-        metric_name: metric,
-        tableData: this.extractSegmentTableData(qtr.all_metrics[metric])
-      }))
-    }))
-  }));
-}
-
-// Recursive function to extract and format segment data
-
-// Recursive function to extract and format segment data
-extractSegmentTableData(metricData: any): SegmentData[] {
-  if (!metricData || !metricData.children || metricData.children_count === 0) {
-    return [];
+    return this.API_DATA.ANALYSIS_DATA.results.map((company: any) => ({
+      company_name: company.company_name,
+      cik: company.cik,
+      quarters: company.statements.map((qtr: any) => ({
+        period: qtr.context_info.period_label_text,
+        metrics: requested_metrics.map((metric: any) => ({
+          metric_name: metric,
+          tableData: this.extractSegmentTableData(qtr.all_metrics[metric]),
+        })),
+      })),
+    }));
   }
 
-  const children = metricData.children;
-  const childrenArray: SegmentData[] = [];
+  // Recursive function to extract and format segment data
 
-  // Get the parent/total value for percentage calculation
-  const parentValue = metricData.value;
+  // Recursive function to extract and format segment data
+  extractSegmentTableData(metricData: any): SegmentData[] {
+    if (
+      !metricData ||
+      !metricData.children ||
+      metricData.children_count === 0
+    ) {
+      return [];
+    }
 
-  // Convert children object to array
-  Object.keys(children).forEach((childKey) => {
-    const child = children[childKey];
-    
-    // Check if this child has children using children_count
-    const hasChildren = child.children_count && child.children_count > 0;
+    const children = metricData.children;
+    const childrenArray: SegmentData[] = [];
 
-    // Handle dimension categories - keep their structure instead of flattening
-    if (child.is_dimension_category && child.value === null) {
-      // Create a parent entry for the category with its children properly nested
-      if (hasChildren) {
-        const categoryData: SegmentData = {
-          metric_name: this.formatSegmentName(child.name, child.segment_name || childKey),
-          value: '$0.00',
-          percentage: '0.0%',
-          children: this.extractSegmentChildren(
-            child.children,
-            parentValue,
-            1
-          )
+    // Get the parent/total value for percentage calculation
+    const parentValue = metricData.value;
+
+    // Convert children object to array
+    Object.keys(children).forEach((childKey) => {
+      const child = children[childKey];
+
+      // Check if this child has children using children_count
+      const hasChildren = child.children_count && child.children_count > 0;
+
+      // Handle dimension categories - keep their structure instead of flattening
+      if (child.is_dimension_category && child.value === null) {
+        // Create a parent entry for the category with its children properly nested
+        if (hasChildren) {
+          const categoryData: SegmentData = {
+            metric_name: this.formatSegmentName(
+              child.name,
+              child.segment_name || childKey
+            ),
+            value: '$0.00',
+            percentage: '0.0%',
+            children: this.extractSegmentChildren(
+              child.children,
+              parentValue,
+              1
+            ),
+          };
+          childrenArray.push(categoryData);
+        }
+      } else {
+        // This is an actual segment with value
+        const segmentData: SegmentData = {
+          metric_name: this.formatSegmentName(
+            child.name,
+            child.segment_name || childKey
+          ),
+          value: this.formatCurrencyValue(child.value),
+          percentage: this.calculatePercentage(child.value, parentValue),
+          // Use children_count to determine if we should recurse
+          children: hasChildren
+            ? this.extractSegmentChildren(child.children, child.value, 1)
+            : undefined,
         };
-        childrenArray.push(categoryData);
+        childrenArray.push(segmentData);
       }
-    } else {
-      // This is an actual segment with value
+    });
+
+    return childrenArray;
+  }
+
+  // Helper function to recursively process nested children
+  private extractSegmentChildren(
+    childrenObj: any,
+    parentValue: number,
+    level: number
+  ): SegmentData[] {
+    const childrenArray: SegmentData[] = [];
+
+    Object.keys(childrenObj).forEach((childKey) => {
+      const child = childrenObj[childKey];
+
+      // Check if this child has children using children_count
+      const hasChildren = child.children_count && child.children_count > 0;
+
+      // Handle dimension categories - keep their structure
+      if (child.is_dimension_category && child.value === null) {
+        // Create a container for the category with its children properly nested
+        if (hasChildren) {
+          // Create a parent entry for the category
+          const categoryData: SegmentData = {
+            metric_name: this.formatSegmentName(
+              child.name,
+              child.segment_name || childKey
+            ),
+            value: '$0.00',
+            percentage: '0.0%',
+            children: this.extractSegmentChildren(
+              child.children,
+              parentValue,
+              level + 1
+            ),
+          };
+          childrenArray.push(categoryData);
+        }
+        return;
+      }
+
+      // Regular segment with value
       const segmentData: SegmentData = {
-        metric_name: this.formatSegmentName(child.name, child.segment_name || childKey),
+        metric_name: this.formatSegmentName(
+          child.name,
+          child.segment_name || childKey
+        ),
         value: this.formatCurrencyValue(child.value),
         percentage: this.calculatePercentage(child.value, parentValue),
         // Use children_count to determine if we should recurse
         children: hasChildren
-          ? this.extractSegmentChildren(child.children, child.value, 1)
-          : undefined
+          ? this.extractSegmentChildren(child.children, child.value, level + 1)
+          : undefined,
       };
+
       childrenArray.push(segmentData);
-    }
-  });
+    });
 
-  return childrenArray;
-}
+    return childrenArray;
+  }
 
-// Helper function to recursively process nested children
-private extractSegmentChildren(
-  childrenObj: any, 
-  parentValue: number,
-  level: number
-): SegmentData[] {
-  const childrenArray: SegmentData[] = [];
-
-  Object.keys(childrenObj).forEach((childKey) => {
-    const child = childrenObj[childKey];
-    
-    // Check if this child has children using children_count
-    const hasChildren = child.children_count && child.children_count > 0;
-
-    // Handle dimension categories - keep their structure
-    if (child.is_dimension_category && child.value === null) {
-      // Create a container for the category with its children properly nested
-      if (hasChildren) {
-        // Create a parent entry for the category
-        const categoryData: SegmentData = {
-          metric_name: this.formatSegmentName(child.name, child.segment_name || childKey),
-          value: '$0.00',
-          percentage: '0.0%',
-          children: this.extractSegmentChildren(
-            child.children,
-            parentValue,
-            level + 1
-          )
-        };
-        childrenArray.push(categoryData);
-      }
-      return;
+  // Format segment name for display
+  private formatSegmentName(name: string, segmentName: string): string {
+    // Use segment_name if available, otherwise clean up the name
+    if (segmentName && segmentName !== 'null') {
+      // Convert camelCase or snake_case to Title Case
+      return segmentName
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (l) => l.toUpperCase())
+        .trim();
     }
 
-    // Regular segment with value
-    const segmentData: SegmentData = {
-      metric_name: this.formatSegmentName(child.name, child.segment_name || childKey),
-      value: this.formatCurrencyValue(child.value),
-      percentage: this.calculatePercentage(child.value, parentValue),
-      // Use children_count to determine if we should recurse
-      children: hasChildren
-        ? this.extractSegmentChildren(child.children, child.value, level + 1)
-        : undefined
-    };
-
-    childrenArray.push(segmentData);
-  });
-
-  return childrenArray;
-}
-
-// Format segment name for display
-private formatSegmentName(name: string, segmentName: string): string {
-  // Use segment_name if available, otherwise clean up the name
-  if (segmentName && segmentName !== 'null') {
-    // Convert camelCase or snake_case to Title Case
-    return segmentName
-      .replace(/([A-Z])/g, ' $1')
+    // Clean up the full name
+    return name
+      .replace(/^.*_by_/i, '')
       .replace(/_/g, ' ')
-      .replace(/\b\w/g, l => l.toUpperCase())
+      .replace(/\b\w/g, (l) => l.toUpperCase())
       .trim();
   }
-  
-  // Clean up the full name
-  return name
-    .replace(/^.*_by_/i, '')
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, l => l.toUpperCase())
-    .trim();
-}
 
-// Format currency values
-private formatCurrencyValue(value: number | null): string {
-  if (value === null || value === undefined) {
-    return '$0.00';
+  // Format currency values
+  private formatCurrencyValue(value: number | null): string {
+    if (value === null || value === undefined) {
+      return '$0.00';
+    }
+
+    const absValue = Math.abs(value);
+
+    if (absValue >= 1000000000) {
+      return `$${(value / 1000000000).toFixed(2)}B`;
+    } else if (absValue >= 1000000) {
+      return `$${(value / 1000000).toFixed(2)}M`;
+    } else if (absValue >= 1000) {
+      return `$${(value / 1000).toFixed(2)}K`;
+    } else {
+      return `$${value.toFixed(2)}`;
+    }
   }
 
-  const absValue = Math.abs(value);
-  
-  if (absValue >= 1000000000) {
-    return `$${(value / 1000000000).toFixed(2)}B`;
-  } else if (absValue >= 1000000) {
-    return `$${(value / 1000000).toFixed(2)}M`;
-  } else if (absValue >= 1000) {
-    return `$${(value / 1000).toFixed(2)}K`;
-  } else {
-    return `$${value.toFixed(2)}`;
+  // Calculate percentage relative to parent
+  private calculatePercentage(
+    value: number | null,
+    parentValue: number | null
+  ): string {
+    if (
+      value === null ||
+      value === undefined ||
+      parentValue === null ||
+      parentValue === 0
+    ) {
+      return '0.0%';
+    }
+
+    const percentage = (value / parentValue) * 100;
+    return `${percentage.toFixed(1)}%`;
   }
-}
 
-// Calculate percentage relative to parent
-private calculatePercentage(value: number | null, parentValue: number | null): string {
-  if (value === null || value === undefined || parentValue === null || parentValue === 0) {
-    return '0.0%';
+  // Alternative: Get segment data for a specific metric and quarter
+  getSegmentDataForMetric(
+    companyName: string,
+    period: string,
+    metricName: string
+  ): SegmentData[] {
+    const company = this.API_DATA.ANALYSIS_DATA.results.find(
+      (c: any) => c.company_name === companyName
+    );
+
+    if (!company) return [];
+
+    const quarter = company.statements.find(
+      (qtr: any) => qtr.context_info.period_label_text === period
+    );
+
+    if (!quarter) return [];
+
+    const metricData = quarter.all_metrics[metricName];
+    return this.extractSegmentTableData(metricData);
   }
-
-  const percentage = (value / parentValue) * 100;
-  return `${percentage.toFixed(1)}%`;
-}
-
-// Alternative: Get segment data for a specific metric and quarter
-getSegmentDataForMetric(
-  companyName: string, 
-  period: string, 
-  metricName: string
-): SegmentData[] {
-  const company = this.API_DATA.ANALYSIS_DATA.results.find(
-    (c: any) => c.company_name === companyName
-  );
-
-  if (!company) return [];
-
-  const quarter = company.statements.find(
-    (qtr: any) => qtr.context_info.period_label_text === period
-  );
-
-  if (!quarter) return [];
-
-  const metricData = quarter.all_metrics[metricName];
-  return this.extractSegmentTableData(metricData);
-}
 }

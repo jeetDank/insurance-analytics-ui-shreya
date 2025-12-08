@@ -130,13 +130,13 @@
                 class="transition-all duration-300"
               ></mat-progress-bar>
             </app-msg-bubble>
-            } @else if(item.suggestions != null){
+            } @else if(item.data != null){
             <app-msg-bubble
               [isSystemMsg]="item.systemMsg"
               [timestamp]="item.timestamp"
             >
               <app-ambiguity-resolver
-                [ambiguities]="ambiguities"
+                [ambiguities]="item.data"
                 (ambiguitiesUpdate)="onAmbiguitiesUpdate($event)"
                 (ambiguityResolved)="resolveAmbiguity($event)"
               ></app-ambiguity-resolver>

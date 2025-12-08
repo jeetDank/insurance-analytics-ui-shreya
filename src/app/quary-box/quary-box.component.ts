@@ -121,10 +121,20 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       this.shouldScrollToBottom = false;
     }
   }
-    onAmbiguitiesUpdate(updatedAmbiguities: any[]): void {
-    this.ambiguities = updatedAmbiguities;
-    console.log('Updated ambiguities:', updatedAmbiguities);
-  }
+  
+  onAmbiguitiesUpdate(updatedAmbiguities: any[]): void {
+  this.ambiguities.forEach((amb) => {
+    const found = updatedAmbiguities.find(
+      (selected_amb) => amb.query === selected_amb.query
+    );
+    
+    if (found) {
+      amb.selected_ambiguity = found.selected_ambiguity;
+    }
+    console.log(this.ambiguities);
+    
+  });
+}
 
   private scrollToBottom(): void {
     try {
@@ -292,7 +302,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
               this.resolveCompanies(res.parsed.companies);
             } else {
               this._dataService.setParsedQuery(res.parsed);
-              this._dataService.fetchAmbiguities();
               this.addAmbiguitiesToConversation();
             }
           } catch {}
@@ -386,20 +395,23 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   }
 
   resolveAmbiguity(isResolved:boolean = false) {
-    console.log(isResolved);
+    
     
 
     if(isResolved == false){
       this.recordMsg("Please resolve all ambiguities.",true);
-      return 
+      
+      
     }
 
 
 
 
-    let data = this.conversation
-      .filter((item) => item.suggestions != null)
-      .map((item) => ({ ...item.data }));
+    // let data = this.conversation
+    //   .filter((item) => item.suggestions != null)
+    //   .map((item) => ({ ...item.data }));
+
+    let data = this._dataService.createAmbiguityPayload(this.ambiguities);
 
     if (data.length === 0) {
       return;
@@ -433,28 +445,23 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   }
 
   addAmbiguitiesToConversation() {
-    let ambiguities: any[] = this._dataService.fetchAmbiguities();
+    this.ambiguities = this._dataService.fetchAmbiguities();
 
-    ambiguities.forEach((ambiguity) => {
-      this.conversation.push({
-        message: `I noticed you used "${ambiguity.metric_name}". Did you mean one of these metrics?`,
+     this.conversation.push({
+        message: ``,
         processDetail: false,
         processingStatus: 10,
         processDetailsData: null,
         timestamp: this.getFormattedTime(),
         systemMsg: true,
-        suggestions: ambiguity.suggestions,
-        data: ambiguity,
+        suggestions: null,
+        data: this.ambiguities,
       });
-    });
+
     this.triggerScroll();
   }
 
-  updateAmbiguityObject(data: any, index: number) {
-    if (data.value) {
-      this.conversation[index].data.metric_name = data.value;
-    }
-  }
+
 
   // Helper method to check if a step is the active (last) step
   isActiveStep(item: conversation, stepIndex: number): boolean {
