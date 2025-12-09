@@ -633,7 +633,7 @@
             </small>
           </h2>
           <div
-            class="card_background rounded-xl"
+            class=" rounded-xl"
             echarts
             [options]="chart.line_chart_config"
             style="height: 400px"
@@ -675,7 +675,7 @@
             </small>
           </h2>
           <div
-            class="card_background rounded-xl"
+            class=" rounded-xl"
             echarts
             [options]="chart.bar_chart_config"
             style="height: 400px"
@@ -915,7 +915,7 @@
         @if(currentTabSegment == 'stacked'){
         <div class="space-y-4">
           <div
-            class="card_background rounded-xl p-6 flex items-center justify-center"
+            class=" rounded-xl p-6 flex items-center justify-center"
             style="min-height: 400px"
           >
             <p class="text-white/60">Stacked Chart View - Coming Soon</p>
@@ -927,7 +927,7 @@
         @if(currentTabSegment == 'bar'){
         <div class="space-y-4">
           <div
-            class="card_background rounded-xl p-6 flex items-center justify-center"
+            class=" rounded-xl p-6 flex items-center justify-center"
             style="min-height: 400px"
           >
             <p class="text-white/60">Bar Chart View - Coming Soon</p>
@@ -952,7 +952,7 @@
               </p>
 
               @for(metric of quarter.metrics; track metric.metric_name) {
-              <div class="card_background rounded-xl p-4">
+              <div class=" rounded-xl p-4">
                 <app-segment-table
                   [segment_name]="metric.metric_name"
                   [data]="metric.tableData"
@@ -966,7 +966,7 @@
           </div>
           } } @else {
           <div
-            class="card_background rounded-xl p-6 flex items-center justify-center"
+            class=" rounded-xl p-6 flex items-center justify-center"
             style="min-height: 400px"
           >
             <p class="text-white/60">No segment data available</p>
@@ -976,7 +976,10 @@
         } }
 
         <!-- AI Insights Section (Common for both views) -->
-        <div class="flex flex-row align-center mt-5 mb-3 gap-2">
+
+        @if (this.insightsData.length !=0) {
+
+          <div class="flex flex-row align-center mt-5 mb-3 gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -1011,6 +1014,8 @@
           />
           }
         </div>
+        }
+        
 
         <div class="mt-5">
           <app-references [refData]="referenceData"></app-references>
@@ -1094,6 +1099,13 @@
         </p>
       </div>
       }
+
+      <div
+            class=" rounded-xl"
+            echarts
+            [options]="segmentRevenueOption"
+            style="height: 400px"
+          ></div>
     </div>
   </mat-drawer-container>
 </div>

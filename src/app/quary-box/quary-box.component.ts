@@ -358,7 +358,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
           };
           this._dataService.setAnalysisData(data);
 
-          this.dataReady.emit(true);
+         
           
 
           // here check if multiple periods are available if yes then
@@ -369,7 +369,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             this.startVarienceAnalysis();
           } else {
             this.recordProcessMsg(5);
-            this.recordMsg("I've updated the dashboard.", true);
+            this.dataReady.emit(true);
+            this.recordMsg("I've updated the dashboard.(note: Not enough data available for variance analysis)", true);
           }
 
           console.log(this._dataService.API_DATA);
@@ -385,8 +386,18 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     if (payload) {
       this._apiService.varienceAnalysis(payload).subscribe({
         next: (res: any) => {
+
+          if(res.success){
           this.recordProcessMsg(5);
+          this._dataService.setInsightsData(res.data_summary);
+          this.dataReady.emit(true);
           this.recordMsg("I've updated the dashboard.", true);
+          
+          }
+          else{
+          this.recordMsg("I've updated the dashboard.but the variance analysis was not loader.", true);
+          }
+          
           
         },
       });

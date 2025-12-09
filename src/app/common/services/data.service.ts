@@ -6,6 +6,7 @@ interface apiData {
   COMPANY_DATA: any[] | null;
   ANALYSIS_DATA: any | null;
   AMBIGUITY_DATA: any | null;
+  INSIGHTS_DATA:any | null;
 }
 
 export interface SegmentData {
@@ -27,6 +28,7 @@ export class DataService {
     COMPANY_DATA: null,
     ANALYSIS_DATA: null,
     AMBIGUITY_DATA: null,
+    INSIGHTS_DATA:null,
   };
 
   setParsedQuery(data: any) {
@@ -37,6 +39,9 @@ export class DataService {
   }
   setAnalysisData(data: any) {
     this.API_DATA.ANALYSIS_DATA = data;
+  }
+  setInsightsData(data: any) {
+    this.API_DATA.INSIGHTS_DATA = data;
   }
 
   clearData() {
@@ -103,289 +108,35 @@ export class DataService {
 
   fetchVariencePayload() {
     if (this.API_DATA.ANALYSIS_DATA != null) {
+      const companies: any[] = [];
+      this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {
+        company.statements.forEach((quarter: any) => {
+          let filterRequestedMetrics: any = {};
+
+          this.API_DATA.PARSED_QUERY.metrics.forEach((metric: any) => {
+            filterRequestedMetrics[metric] = quarter.all_metrics[metric];
+          });
+
+          const data = {
+            cik: company.cik,
+            company_name: company.company_name,
+            requested_metrics: this.API_DATA.PARSED_QUERY.metrics,
+            period: quarter.context_info.period_label_text,
+            analysis_result: {
+              metrics: filterRequestedMetrics,
+              metadata: quarter.metadata,
+              context_info: quarter.context_info,
+            },
+          };
+
+          companies.push(data);
+        });
+      });
+
       let payload = {
-        companies: [
-          {
-            cik: '0000002969',
-            company_name: 'Allstate Corporation',
-            period: 'Q1 2023',
-            requested_metrics: ['net_income', 'revenue'],
-            analysis_result: {
-              metrics: {
-                revenue: {
-                  name: 'revenue',
-                  value: 13852000000,
-                  concept: 'revenue',
-                  unit: 'USD',
-                },
-                net_income: {
-                  name: 'net_income',
-                  value: -340000000,
-                  concept: 'netincomeloss',
-                  unit: 'USD',
-                },
-              },
-              metadata: {
-                cik: '0000002969',
-                company_name: 'ALLSTATE CORP',
-                filing_type: '10-Q',
-                filing_date: '2023-05-04',
-                period_end_date: '2023-03-31',
-                accession_number: '0000002969-23-000016',
-                filing_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/000000296923000016/all-20230331.htm',
-                html_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/000000296923000016/all-20230331.htm',
-                xml_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/000000296923000016/all-20230331_htm.xml',
-                sec_edgar_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/0000002969-23-000016-index.html',
-                xbrl_json_url:
-                  'https://data.sec.gov/api/xbrl/companyfacts/CIK0000002969.json',
-                fiscal_year: 2023,
-                fiscal_quarter: 1,
-                fiscal_period_type: 'Q1',
-                submission_type: '10-Q',
-                document_format_code: '10-Q',
-              },
-              context_info: {
-                context_id: 'period_2023-03-31',
-                entity_identifier: '0000002969',
-                period_type: 'duration',
-                end_date: '2023-03-31',
-                fiscal_year: 2023,
-                fiscal_quarter: 1,
-                start_date: '2023-01-01',
-                context_ref: 'instant_2023-03-31',
-                duration_days: 90,
-                is_consolidated: true,
-              },
-            },
-          },
-          {
-            cik: '0000002969',
-            company_name: 'Allstate Corporation',
-            period: 'Q2 2023',
-            requested_metrics: ['net_income', 'revenue'],
-            analysis_result: {
-              metrics: {
-                revenue: {
-                  name: 'revenue',
-                  value: 14478000000,
-                  concept: 'revenue',
-                  unit: 'USD',
-                },
-                net_income: {
-                  name: 'net_income',
-                  value: -1400000000,
-                  concept: 'netincomeloss',
-                  unit: 'USD',
-                },
-              },
-              metadata: {
-                cik: '0000002969',
-                company_name: 'ALLSTATE CORP',
-                filing_type: '10-Q',
-                filing_date: '2023-08-03',
-                period_end_date: '2023-06-30',
-                accession_number: '0000002969-23-000027',
-                filing_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/000000296923000027/all-20230630.htm',
-                html_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/000000296923000027/all-20230630.htm',
-                xml_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/000000296923000027/all-20230630_htm.xml',
-                sec_edgar_url:
-                  'https://www.sec.gov/Archives/edgar/data/2969/0000002969-23-000027-index.html',
-                xbrl_json_url:
-                  'https://data.sec.gov/api/xbrl/companyfacts/CIK0000002969.json',
-                fiscal_year: 2023,
-                fiscal_quarter: 2,
-                fiscal_period_type: 'Q2',
-                submission_type: '10-Q',
-                document_format_code: '10-Q',
-              },
-              context_info: {
-                context_id: 'period_2023-06-30',
-                entity_identifier: '0000002969',
-                period_type: 'duration',
-                end_date: '2023-06-30',
-                fiscal_year: 2023,
-                fiscal_quarter: 2,
-                start_date: '2023-04-01',
-                context_ref: 'instant_2023-06-30',
-                duration_days: 91,
-                is_consolidated: true,
-              },
-            },
-          },
-          {
-            cik: '00000086321',
-            company_name: 'Travelers Companies Inc',
-            period: 'Q1 2023',
-            requested_metrics: ['net_income', 'revenue', 'etc'],
-            analysis_result: {
-              metrics: {
-                revenue: {
-                  name: 'revenue',
-                  value: 9855000000,
-                  concept: 'revenue',
-                  unit: 'USD',
-                },
-                net_income: {
-                  name: 'net_income',
-                  value: 975000000,
-                  concept: 'netincomeloss',
-                  unit: 'USD',
-                },
-              },
-              metadata: {
-                cik: '00000086321',
-                company_name: 'TRAVELERS COS INC',
-                filing_type: '10-Q',
-                filing_date: '2023-04-20',
-                period_end_date: '2023-03-31',
-                accession_number: '00000086321-23-000008',
-                filing_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/0000008632123000008/trav-20230331.htm',
-                html_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/0000008632123000008/trav-20230331.htm',
-                xml_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/0000008632123000008/trav-20230331_htm.xml',
-                sec_edgar_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/00000086321-23-000008-index.html',
-                xbrl_json_url:
-                  'https://data.sec.gov/api/xbrl/companyfacts/CIK00000086321.json',
-                fiscal_year: 2023,
-                fiscal_quarter: 1,
-                fiscal_period_type: 'Q1',
-                submission_type: '10-Q',
-                document_format_code: '10-Q',
-              },
-              context_info: {
-                context_id: 'period_2023-03-31',
-                entity_identifier: '00000086321',
-                period_type: 'duration',
-                end_date: '2023-03-31',
-                fiscal_year: 2023,
-                fiscal_quarter: 1,
-                start_date: '2023-01-01',
-                context_ref: 'instant_2023-03-31',
-                duration_days: 90,
-                is_consolidated: true,
-              },
-            },
-          },
-          {
-            cik: '00000086321',
-            company_name: 'Travelers Companies Inc',
-            period: 'Q2 2023',
-            requested_metrics: ['net_income', 'revenue'],
-            analysis_result: {
-              metrics: {
-                revenue: {
-                  name: 'revenue',
-                  value: 10135000000,
-                  concept: 'revenue',
-                  unit: 'USD',
-                },
-                net_income: {
-                  name: 'net_income',
-                  value: -150000000,
-                  concept: 'netincomeloss',
-                  unit: 'USD',
-                },
-              },
-              metadata: {
-                cik: '00000086321',
-                company_name: 'TRAVELERS COS INC',
-                filing_type: '10-Q',
-                filing_date: '2023-07-20',
-                period_end_date: '2023-06-30',
-                accession_number: '00000086321-23-000015',
-                filing_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/0000008632123000015/trav-20230630.htm',
-                html_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/0000008632123000015/trav-20230630.htm',
-                xml_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/0000008632123000015/trav-20230630_htm.xml',
-                sec_edgar_url:
-                  'https://www.sec.gov/Archives/edgar/data/86321/00000086321-23-000015-index.html',
-                xbrl_json_url:
-                  'https://data.sec.gov/api/xbrl/companyfacts/CIK00000086321.json',
-                fiscal_year: 2023,
-                fiscal_quarter: 2,
-                fiscal_period_type: 'Q2',
-                submission_type: '10-Q',
-                document_format_code: '10-Q',
-              },
-              context_info: {
-                context_id: 'period_2023-06-30',
-                entity_identifier: '00000086321',
-                period_type: 'duration',
-                end_date: '2023-06-30',
-                fiscal_year: 2023,
-                fiscal_quarter: 2,
-                start_date: '2023-04-01',
-                context_ref: 'instant_2023-06-30',
-                duration_days: 91,
-                is_consolidated: true,
-              },
-            },
-          },
-          {
-            cik: '0000080661',
-            company_name: 'Progressive Corporation',
-            period: 'Q1 2024',
-            requested_metrics: ['revenue'],
-            analysis_result: {
-              metrics: {
-                revenue: {
-                  name: 'revenue',
-                  value: 17242500000,
-                  concept: 'revenue',
-                  unit: 'USD',
-                },
-              },
-              metadata: {
-                cik: '0000080661',
-                company_name: 'PROGRESSIVE CORP/OH/',
-                filing_type: '10-Q',
-                filing_date: '2024-05-06',
-                period_end_date: '2024-03-31',
-                accession_number: '0000080661-24-000018',
-                filing_url:
-                  'https://www.sec.gov/Archives/edgar/data/80661/000008066124000018/pgr-20240331.htm',
-                html_url:
-                  'https://www.sec.gov/Archives/edgar/data/80661/000008066124000018/pgr-20240331.htm',
-                xml_url:
-                  'https://www.sec.gov/Archives/edgar/data/80661/000008066124000018/pgr-20240331_htm.xml',
-                sec_edgar_url:
-                  'https://www.sec.gov/Archives/edgar/data/80661/0000080661-24-000018-index.html',
-                xbrl_json_url:
-                  'https://data.sec.gov/api/xbrl/companyfacts/CIK0000080661.json',
-                fiscal_year: null,
-                fiscal_quarter: null,
-                fiscal_period_type: null,
-                submission_type: null,
-                document_format_code: null,
-              },
-              context_info: {
-                context_id: 'period_2024-03-31',
-                entity_identifier: '0000080661',
-                period_type: 'duration',
-                end_date: '2024-03-31',
-                fiscal_year: null,
-                fiscal_quarter: null,
-                start_date: null,
-                context_ref: 'instant_2024-03-31',
-                duration_days: null,
-                is_consolidated: true,
-              },
-            },
-          },
-        ],
+        companies: companies,
       };
+
       return payload;
     } else {
       return false;
@@ -1371,4 +1122,107 @@ export class DataService {
     const metricData = quarter.all_metrics[metricName];
     return this.extractSegmentTableData(metricData);
   }
+
+  generateInsights() {
+  const data:any = this.API_DATA.INSIGHTS_DATA;
+  const insightsData = [];
+  const companies = Object.keys(data);
+
+  // Helper function to format numbers
+  const formatNumber = (num:any) => {
+    if (num >= 1000000000) return `$${(num / 1000000000).toFixed(1)}B`;
+    if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
+    return `$${num.toLocaleString()}`;
+  };
+
+  // Helper function to format percentage
+  const formatPercent = (num:any) => {
+    return `${Math.abs(num).toFixed(1)}%`;
+  };
+
+  // Analyze each company's data
+  companies.forEach(key => {
+    const item = data[key];
+    const { company, metric, segment, variances, trend, volatility, periods, values } = item;
+
+    if (variances && variances.length > 0) {
+      const variance = variances[0];
+      const absoluteChange = variance.absolute_change;
+      const percentChange = variance.percent_change || 
+        ((absoluteChange / variance.from_value) * 100);
+
+      // Generate insight based on trend and magnitude
+      let insight = null;
+
+      // Significant growth insight
+      if (trend === 'increasing' && Math.abs(percentChange) > 2) {
+        insight = {
+          icon: 'trending_up',
+          title: `${company} - Strong ${metric} Growth`,
+          description: `${company} shows a ${formatPercent(percentChange)} increase in ${metric} from ${variance.from_period} to ${variance.to_period}, moving from ${formatNumber(variance.from_value)} to ${formatNumber(variance.to_value)}. This ${trend} trend with ${volatility} volatility indicates stable performance.`,
+          source: `${variance.to_period} Analysis`
+        };
+      }
+
+      // Declining trend insight
+      if (trend === 'decreasing' && Math.abs(percentChange) > 2) {
+        insight = {
+          icon: 'trending_down',
+          title: `${company} - ${metric} Decline`,
+          description: `${company} experienced a ${formatPercent(percentChange)} decrease in ${metric} from ${variance.from_period} to ${variance.to_period}. ${metric} dropped from ${formatNumber(variance.from_value)} to ${formatNumber(variance.to_value)}. Monitor this ${trend} trend closely.`,
+          source: `${variance.to_period} Analysis`
+        };
+      }
+
+      // Stable performance insight
+      if (trend === 'stable' || Math.abs(percentChange) < 2) {
+        insight = {
+          icon: 'show_chart',
+          title: `${company} - Consistent ${metric} Performance`,
+          description: `${company} maintains stable ${metric} performance with minimal change of ${formatPercent(percentChange)} between ${variance.from_period} and ${variance.to_period}. Current ${metric} stands at ${formatNumber(variance.to_value)}.`,
+          source: `${variance.to_period} Analysis`
+        };
+      }
+
+      // High volatility warning
+      if (volatility === 'high') {
+        insight = {
+          icon: 'warning',
+          title: `${company} - High ${metric} Volatility`,
+          description: `${company} shows high volatility in ${metric} with a ${formatPercent(percentChange)} change. ${metric} fluctuated from ${formatNumber(variance.from_value)} to ${formatNumber(variance.to_value)} between ${variance.from_period} and ${variance.to_period}. Increased monitoring recommended.`,
+          source: `${variance.to_period} Risk Analysis`
+        };
+      }
+
+      if (insight) {
+        insightsData.push(insight);
+      }
+    }
+  });
+
+  // Add comparative insights if multiple companies
+  if (companies.length > 1) {
+    const comparisons = companies.map(key => ({
+      company: data[key].company,
+      metric: data[key].metric,
+      latestValue: data[key].values[data[key].values.length - 1],
+      percentChange: data[key].variances[0]?.percent_change || 
+        ((data[key].variances[0]?.absolute_change / data[key].variances[0]?.from_value) * 100)
+    }));
+
+    // Find top performer
+    const topPerformer = comparisons.reduce((max, curr) => 
+      curr.percentChange > max.percentChange ? curr : max
+    );
+
+    insightsData.push({
+      icon: 'emoji_events',
+      title: `Top Performer: ${topPerformer.company}`,
+      description: `${topPerformer.company} leads with ${formatPercent(topPerformer.percentChange)} growth in ${topPerformer.metric}, reaching ${formatNumber(topPerformer.latestValue)}. This outperforms peers in the current analysis period.`,
+      source: 'Comparative Analysis'
+    });
+  }
+
+  return insightsData;
+}
 }
