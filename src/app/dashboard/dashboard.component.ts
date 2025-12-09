@@ -21,6 +21,7 @@ import {
   GridComponent,
   GridSimpleComponent,
   LegendComponent,
+  TitleComponent,
   TooltipComponent,
 } from 'echarts/components';
 import { CanvasRenderer, SVGRenderer } from 'echarts/renderers';
@@ -42,6 +43,7 @@ echarts.use([
   TooltipComponent,
   SunburstChart,
   LegendComponent,
+  TitleComponent
 ]);
 
 @Component({
@@ -200,192 +202,9 @@ export class DashboardComponent implements OnInit {
     ],
   };
 
-  segmentRevenueOption: echarts.EChartsCoreOption = {
-    ...this.getCommonChartConfig(),
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: { type: 'shadow' },
-      backgroundColor: 'rgba(15, 15, 25, 0.95)',
-      borderColor: 'rgba(100, 100, 150, 0.3)',
-      borderWidth: 1,
-      borderRadius: 12,
-      padding: 12,
-      textStyle: {
-        color: '#d7d7d7ff',
-        fontSize: 12,
-        fontWeight: 'normal',
-      },
-    },
-
-    legend: {
-      bottom: 10,
-      textStyle: {
-        fontSize: 13,
-        color: '#d7d7d7ff',
-        fontWeight: '500',
-      },
-      itemGap: 20,
-      itemWidth: 12,
-      itemHeight: 12,
-    },
-
-    xAxis: {
-      type: 'value',
-      axisLabel: {
-        color: '#d7d7d7ff',
-        fontSize: 12,
-        fontWeight: '500',
-      },
-      axisLine: {
-        show: true,
-        lineStyle: {
-          color: 'rgba(160, 160, 255, 0.4)',
-          width: 1.5,
-        },
-      },
-      splitLine: { show: false },
-    },
-
-    yAxis: {
-      type: 'category',
-      data: ['Revenue'],
-      axisLabel: {
-        color: '#c0c0ff',
-        fontSize: 13,
-        fontWeight: '600',
-      },
-      axisLine: {
-        show: true,
-        lineStyle: {
-          color: 'rgba(160, 160, 255, 0.4)',
-          width: 1.5,
-        },
-      },
-    },
-
-    backgroundColor: 'transparent',
-
-    series: [
-      {
-        name: 'Property-Liability',
-        type: 'bar',
-        stack: 'total',
-        itemStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 1,
-            y2: 0,
-            colorStops: [
-              { offset: 0, color: 'rgba(74, 144, 226, 0.95)' },
-              { offset: 1, color: 'rgba(74, 144, 226, 0.7)' },
-            ],
-          },
-          borderRadius: [8, 0, 0, 8],
-          // shadowColor: 'rgba(74, 144, 226, 0.5)',
-          // shadowBlur: 12,
-          shadowOffsetX: 2,
-          borderWidth: 0,
-        },
-        emphasis: {
-          itemStyle: {
-            shadowColor: 'rgba(74, 144, 226, 0.8)',
-            // shadowBlur: 20,
-          },
-        },
-        data: [42.8],
-      },
-      {
-        name: 'Protection Services',
-        type: 'bar',
-        stack: 'total',
-        itemStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 1,
-            y2: 0,
-            colorStops: [
-              { offset: 0, color: 'rgba(46, 204, 113, 0.95)' },
-              { offset: 1, color: 'rgba(46, 204, 113, 0.7)' },
-            ],
-          },
-          shadowColor: 'rgba(46, 204, 113, 0.5)',
-          shadowBlur: 12,
-          shadowOffsetX: 2,
-          borderWidth: 0,
-        },
-        emphasis: {
-          itemStyle: {
-            shadowColor: 'rgba(46, 204, 113, 0.8)',
-            // shadowBlur: 20,
-          },
-        },
-        data: [6.8],
-      },
-      {
-        name: 'Allstate Health & Benefits',
-        type: 'bar',
-        stack: 'total',
-        itemStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 1,
-            y2: 0,
-            colorStops: [
-              { offset: 0, color: 'rgba(155, 89, 182, 0.95)' },
-              { offset: 1, color: 'rgba(155, 89, 182, 0.7)' },
-            ],
-          },
-          shadowColor: 'rgba(155, 89, 182, 0.5)',
-          shadowBlur: 12,
-          shadowOffsetX: 2,
-          borderWidth: 0,
-        },
-        emphasis: {
-          itemStyle: {
-            shadowColor: 'rgba(155, 89, 182, 0.8)',
-            shadowBlur: 20,
-          },
-        },
-        data: [3.2],
-      },
-      {
-        name: 'Run-off Property-Liability',
-        type: 'bar',
-        stack: 'total',
-        itemStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 1,
-            y2: 0,
-            colorStops: [
-              { offset: 0, color: 'rgba(241, 196, 15, 0.95)' },
-              { offset: 1, color: 'rgba(241, 196, 15, 0.7)' },
-            ],
-          },
-          borderRadius: [0, 8, 8, 0],
-          shadowColor: 'rgba(241, 196, 15, 0.5)',
-          shadowBlur: 12,
-          shadowOffsetX: 2,
-          borderWidth: 0,
-        },
-        emphasis: {
-          itemStyle: {
-            shadowColor: 'rgba(241, 196, 15, 0.8)',
-            shadowBlur: 20,
-          },
-        },
-        data: [1.4],
-      },
-    ],
-  };
+  segmentStackedOption: any[] = [];
+  commonSegmentsOption: any[] = [];
+  
 
   barChartOption: echarts.EChartsCoreOption = {
     ...this.getCommonChartConfig(),
@@ -676,7 +495,7 @@ export class DashboardComponent implements OnInit {
     ],
   };
 
-  insightsData:any = [];
+  insightsData: any = [];
 
   constructor(
     private _dataService: DataService,
@@ -790,16 +609,31 @@ export class DashboardComponent implements OnInit {
       this.referenceData = this._dataService.generateReferenceData();
 
       this.isComparison = true;
+      if(this._dataService.API_DATA.INSIGHTS_DATA){
+
+        this.insightsData=this._dataService.generateInsights()
+      }
     } else {
       this.isComparison = false;
       this.segmentPeriods =
         this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
+
+      const segmentWiseStackedChartData: any =
+        this._dataService.getSegmentWiseChartData();
+
+      const commonSegmentColumnCharts = this._dataService.generateCommonSegmentComparison(segmentWiseStackedChartData)  
+
+      console.log(segmentWiseStackedChartData);
+      
+
+      this.segmentStackedOption = this._dataService.generateSegmentCharts(
+        segmentWiseStackedChartData
+      );
+      this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(commonSegmentColumnCharts)
     }
 
-    this.insightsData=this._dataService.generateInsights()
-
-    console.log(this.cardView, this.chartsData);
+    console.log(this.segmentStackedOption);
   }
   selectOption(option: string): void {
     this.currentTabComparison = option;
