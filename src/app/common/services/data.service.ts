@@ -1531,7 +1531,7 @@ export class DataService {
         chartConfigs.push({
           company: item.company_name,
           period: item.period,
-          metric: metricName,
+          metric: snakeToTitleCase(metricName) ,
           legends: {total:metricData.total,legends:legends} , // Added legends array
           config: chartConfig,
         });

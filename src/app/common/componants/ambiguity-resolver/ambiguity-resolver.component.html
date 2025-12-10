@@ -43,6 +43,7 @@
       </button>
 
       <span
+        style="line-height: 2;"
         class="text-xs min-w-[40px] text-center"
         [ngStyle]="{ color: 'rgba(255, 255, 255, 0.5)' }"
       >
@@ -94,9 +95,12 @@
     </button>
 
     
-    <button
+    
+  </div>
+  <button
+      
       (click)="notifyAmbiguityResolution()"
-      class="text-left px-4 py-2 text-sm border transition-all flex items-center flex-shrink-1 gap-2"
+      class="px-4 mt-2 py-2 text-sm border transition-all flex items-center gap-2"
       [ngStyle]="{
         'border-radius': '18px',
         'border-color': 'rgb(156, 163, 175)',
@@ -104,22 +108,6 @@
         color: 'rgb(156, 163, 175)'
       }"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        class="h-4 w-4"
-      >
-        <path d="M5 12h14"></path>
-        <path d="M12 5v14"></path>
-      </svg>
-      Resolve All
+      Resolve
     </button>
-  </div>
 </div>

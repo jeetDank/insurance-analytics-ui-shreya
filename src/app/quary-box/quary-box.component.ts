@@ -312,6 +312,9 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             } else {
               this._dataService.setParsedQuery(res.parsed);
               this.addAmbiguitiesToConversation();
+               if(userQuery.trim()){
+                 this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
+               }
             }
           } catch {}
         } else {
