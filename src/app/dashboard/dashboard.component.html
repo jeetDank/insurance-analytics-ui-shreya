@@ -936,6 +936,12 @@
 
         <!-- Bar View -->
         @if(currentTabSegment == 'bar'){
+        
+         @if (commonSegmentsOption.length ==0) {
+        <div style="width: 100%;" class="h-50 flex items-center justify-center" > 
+          No data to display. The dataset may be unavailable, or you may be viewing a single-company analysis.
+         </div> 
+         }
         <div class="space-y-4">
           <div class="rounded-xl p-6 flex flex-col flex-wrap" style="min-height: 200px">
             @for (chart of commonSegmentsOption; track $index) {
