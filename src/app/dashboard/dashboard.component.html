@@ -251,14 +251,14 @@
   </mat-toolbar>
   <mat-drawer-container class="drawer-container" autosize>
     <mat-drawer
-      opened="true"
+      [opened]="isSideNavOpened"
       class=""
       #drawer
       style="border-radius: 0"
       mode="side"
     >
       <div class="h-full drawer rounded-none">
-        <app-quary-box (dataReady)="showData()"></app-quary-box>
+        <app-quary-box (resetData)="resetData()" (dataReady)="showData()"></app-quary-box>
       </div>
     </mat-drawer>
 
@@ -731,7 +731,7 @@
 
         <!-- SEGMENT VIEW -->
         @if(!isComparison){
-        <div class="flex flex-row align-center" style="margin-bottom: 32px">
+        <div class="flex flex-row align-center flex-wrap" style="margin-bottom: 32px">
           <div>
             <h1 class="!text-2xl">
               @for(company of companies; track $index ){

@@ -6,6 +6,7 @@ import {
   AfterViewChecked,
   signal,
   output,
+  EventEmitter,
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -83,6 +84,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   private shouldScrollToBottom = false;
   currentTab: string = 'chat';
   dataReady = output<boolean>();
+  resetData = output<boolean>();
 
   conversation: conversation[] = [];
 
@@ -278,6 +280,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     });
   }
 
+
+
   parseQuery(userQuery: string) {
     if (userQuery.trim().length <= 3) {
       this.snackBar.open('Please enter a valid request to continue.', '', {
@@ -289,6 +293,9 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     }
 
     this.recordMsg(userQuery, false);
+
+    
+    this.resetData.emit(true);
    
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
@@ -358,9 +365,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
           };
           this._dataService.setAnalysisData(data);
 
-         
-          
-
           // here check if multiple periods are available if yes then
           // go for varience analysis other wise just show till batch analysis
 
@@ -392,10 +396,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
           this._dataService.setInsightsData(res.data_summary);
           this.dataReady.emit(true);
           this.recordMsg("I've updated the dashboard.", true);
-          
           }
           else{
-          this.recordMsg("I've updated the dashboard.but the variance analysis was not loader.", true);
+          this.dataReady.emit(true);
+          this.recordMsg("I've updated the dashboard. but variance analysis not loaded", true);
           }
           
           
@@ -406,9 +410,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   }
 
   resolveAmbiguity(isResolved:boolean = false) {
-    
-    
-
+  
     if(isResolved == false){
       this.recordMsg("Please resolve all ambiguities.",true);
       

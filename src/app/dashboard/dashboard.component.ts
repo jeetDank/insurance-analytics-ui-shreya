@@ -44,7 +44,7 @@ echarts.use([
   TooltipComponent,
   SunburstChart,
   LegendComponent,
-  TitleComponent
+  TitleComponent,
 ]);
 
 @Component({
@@ -65,7 +65,7 @@ echarts.use([
     MetricTableComponent,
     SegmentTableComponent,
     CommonModule,
-    LegendDisplayComponent
+    LegendDisplayComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -78,6 +78,7 @@ echarts.use([
 })
 export class DashboardComponent implements OnInit {
   isDarkTheme = true;
+  isSideNavOpened = true;
 
   // Common chart configuration for crisp rendering
   private getCommonChartConfig() {
@@ -206,7 +207,6 @@ export class DashboardComponent implements OnInit {
 
   segmentStackedOption: any[] = [];
   commonSegmentsOption: any[] = [];
-  
 
   barChartOption: echarts.EChartsCoreOption = {
     ...this.getCommonChartConfig(),
@@ -588,8 +588,27 @@ export class DashboardComponent implements OnInit {
   isSegmentSelected(option: string): boolean {
     return this.currentTabSegment === option;
   }
+
+  resetData() {
+    this.isDataAvailable = false;
+    this.companies = [];
+    this.cardView = [];
+    this.chartsData = [];
+    this.metricTableData = [];
+    this.referenceData = [];
+    this.isComparison = true;
+    this.segmentPeriods = null;
+    this.segmentTableData = [];
+    this.commonSegmentsOption = [];
+    this.segmentStackedOption = [];
+    this.isSideNavOpened = true;
+  }
+
   showData() {
-    this.isDataAvailable = true;
+    
+    this.isSideNavOpened = false;
+
+     this.isDataAvailable = true;
 
     this.companies = this._dataService.API_DATA.COMPANY_DATA?.map(
       (data: any) => {
@@ -597,10 +616,16 @@ export class DashboardComponent implements OnInit {
       }
     );
 
+    let segment_keywords = ['segment','segments','segment-breakdown','segment-wise-breakdown','segments']
+
+    // if (
+    //   this._dataService.API_DATA.PARSED_QUERY.segment_filter.dimension_type ==
+    //   null && !segment_keywords.some(kw => this._dataService.API_DATA.PARSED_QUERY.raw_query.toLowerCase().includes(kw))
+    // ) 
     if (
-      this._dataService.API_DATA.PARSED_QUERY.segment_filter.dimension_type ==
-      null
+     !segment_keywords.some(kw => this._dataService.API_DATA.PARSED_QUERY.raw_query.toLowerCase().includes(kw))
     ) {
+      
       this.cardView = this._dataService.fetchCardsData(this.companies);
 
       this.chartsData = this._dataService.generateChartConfigs(this.cardView);
@@ -611,9 +636,8 @@ export class DashboardComponent implements OnInit {
       this.referenceData = this._dataService.generateReferenceData();
 
       this.isComparison = true;
-      if(this._dataService.API_DATA.INSIGHTS_DATA){
-
-        this.insightsData=this._dataService.generateInsights()
+      if (this._dataService.API_DATA.INSIGHTS_DATA) {
+        this.insightsData = this._dataService.generateInsights();
       }
     } else {
       this.isComparison = false;
@@ -621,23 +645,24 @@ export class DashboardComponent implements OnInit {
         this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
 
-      const segmentWiseStackedChartData: any =this._dataService.getSegmentWiseChartData();
+      const segmentWiseStackedChartData: any =
+        this._dataService.getSegmentWiseChartData();
 
-
-      const commonSegmentColumnCharts = this._dataService.generateCommonSegmentComparison(segmentWiseStackedChartData)  
+      const commonSegmentColumnCharts =
+        this._dataService.generateCommonSegmentComparison(
+          segmentWiseStackedChartData
+        );
 
       console.log(segmentWiseStackedChartData);
-      
 
       this.segmentStackedOption = this._dataService.generateSegmentCharts(
         segmentWiseStackedChartData
       );
-      this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(commonSegmentColumnCharts)
+      this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
+        commonSegmentColumnCharts
+      );
       console.log(this.segmentStackedOption);
-      
     }
-
-    
   }
   selectOption(option: string): void {
     this.currentTabComparison = option;

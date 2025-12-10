@@ -166,6 +166,7 @@
           />
 
           <button
+            [disabled]="loaderVisible"
             name="submit_button"
             class="custom-mini-fab flex items-center justify-center rounded-md w-9 h-9 flex-shrink-0"
             (click)="parseQuery(msg.value); msg.value = ''"

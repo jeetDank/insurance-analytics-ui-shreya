@@ -16,74 +16,83 @@
     </tr>
   </thead>
   <tbody class="text-xs">
-    @for (row of flattenedData; track $index) {
-    <tr
-      style="
-        border-bottom: 1px solid rgba(255, 255, 255, 0.008);
-      "
-      [style.background-color]="getBackgroundColor(row.isTopLevel, row.color)"
-    >
-      <td
-        class="py-1.5 px-3 relative"
-        [style.padding-left]="getPaddingLeft(row.level)"
-        [style.color]="row.isTopLevel ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.55)'"
-        [style.font-weight]="row.isTopLevel ? '600' : '400'"
+    @if (flattenedData && flattenedData.length > 0) {
+      @for (row of flattenedData; track $index) {
+      <tr
+        style="
+          border-bottom: 1px solid rgba(255, 255, 255, 0.008);
+        "
+        [style.background-color]="getBackgroundColor(row.isTopLevel, row.color)"
       >
-        @if (row.isTopLevel) {
-        <div
-          class="inline-block h-2 w-2 rounded-sm mr-2"
-          [style.background-color]="row.color"
-        ></div>
-        } @else {
-        <span
-          [style.color]="row.color"
-          style="margin-right: 6px; opacity: 0.5"
-          >└</span
+        <td
+          class="py-1.5 px-3 relative"
+          [style.padding-left]="getPaddingLeft(row.level)"
+          [style.color]="row.isTopLevel ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.55)'"
+          [style.font-weight]="row.isTopLevel ? '600' : '400'"
         >
-        }
-        {{ row.item.metric_name }}
-      </td>
-      <td
-        class="text-right py-1.5 px-3"
-        [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
-        [style.font-weight]="row.isTopLevel ? '600' : '400'"
-      >
-        @if (row.item.value) {
-          {{ row.item.value }}{{ row.item.unit || '' }}
-        }
-       
-      </td>
-      <td
-        class="text-right py-1.5 px-3"
-        [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.44)'"
-        [style.font-weight]="row.isTopLevel ? '600' : '400'"
-      >
-        {{ row.item.percentage }}
-      </td>
-    </tr>
-    }
+          @if (row.isTopLevel) {
+          <div
+            class="inline-block h-2 w-2 rounded-sm mr-2"
+            [style.background-color]="row.color"
+          ></div>
+          } @else {
+          <span
+            [style.color]="row.color"
+            style="margin-right: 6px; opacity: 0.5"
+            >└</span
+          >
+          }
+          {{ row.item.metric_name }}
+        </td>
+        <td
+          class="text-right py-1.5 px-3"
+          [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
+          [style.font-weight]="row.isTopLevel ? '600' : '400'"
+        >
+          @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {
+            {{ row.item.value }}{{ row.item.unit || '' }}
+          }
+        </td>
+        <td
+          class="text-right py-1.5 px-3"
+          [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.44)'"
+          [style.font-weight]="row.isTopLevel ? '600' : '400'"
+        >
+          @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {
+            {{ row.item.percentage }}
+          }
+        </td>
+      </tr>
+      }
 
-    @if (showTotal) {
-    <tr class="border-t-2" style="border-color: rgb(148, 163, 184)">
-      <td
-        class="py-2 px-3"
-        style="color: rgba(255, 255, 255, 0.95); font-weight: 600"
-      >
-        Total
-      </td>
-      <td
-        class="text-right py-2 px-3"
-        style="color: rgb(148, 163, 184); font-weight: 600"
-      >
-        {{ calculateTotal().totalValue }}
-      </td>
-      <td
-        class="text-right py-2 px-3"
-        style="color: rgb(148, 163, 184); font-weight: 600"
-      >
-        {{ calculateTotal().totalPercentage }}
-      </td>
-    </tr>
+      @if (showTotal) {
+      <tr class="border-t-2" style="border-color: rgb(148, 163, 184)">
+        <td
+          class="py-2 px-3"
+          style="color: rgba(255, 255, 255, 0.95); font-weight: 600"
+        >
+          Total
+        </td>
+        <td
+          class="text-right py-2 px-3"
+          style="color: rgb(148, 163, 184); font-weight: 600"
+        >
+          {{ calculateTotal().totalValue }}
+        </td>
+        <td
+          class="text-right py-2 px-3"
+          style="color: rgb(148, 163, 184); font-weight: 600"
+        >
+          {{ calculateTotal().totalPercentage }}
+        </td>
+      </tr>
+      }
+    } @else {
+      <tr>
+        <td colspan="3" class="text-center py-8" style="color: rgba(255, 255, 255, 0.5)">
+          No data available
+        </td>
+      </tr>
     }
   </tbody>
 </table>
