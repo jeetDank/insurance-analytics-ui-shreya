@@ -31,6 +31,7 @@ import { DataService } from '../common/services/data.service';
 import { LoaderService } from '../common/services/loader.service';
 import { CommonModule } from '@angular/common';
 import { AmbiguityResolverComponent } from '../common/componants/ambiguity-resolver/ambiguity-resolver.component';
+import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -64,6 +65,7 @@ echarts.use([
     MetricTableComponent,
     SegmentTableComponent,
     CommonModule,
+    LegendDisplayComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -619,21 +621,19 @@ export class DashboardComponent implements OnInit {
         this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
 
-      const segmentWiseStackedChartData: any =
-        this._dataService.getSegmentWiseChartData();
+      const segmentWiseStackedChartData: any =this._dataService.getSegmentWiseChartData();
 
       const commonSegmentColumnCharts = this._dataService.generateCommonSegmentComparison(segmentWiseStackedChartData)  
-
-      console.log(segmentWiseStackedChartData);
-      
 
       this.segmentStackedOption = this._dataService.generateSegmentCharts(
         segmentWiseStackedChartData
       );
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(commonSegmentColumnCharts)
+      console.log(this.segmentStackedOption);
+      
     }
 
-    console.log(this.segmentStackedOption);
+    
   }
   selectOption(option: string): void {
     this.currentTabComparison = option;

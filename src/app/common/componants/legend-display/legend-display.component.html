@@ -1,0 +1,39 @@
+<div class="w-full">
+      <!-- Title -->
+      <div class="text-sm font-semibold mb-4">
+        Total: ${{ data.total.toFixed(2) }}M
+      </div>
+
+      <!-- Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        @for (legend of data.legends; track legend.name) {
+          <div class="flex items-start justify-between">
+            <!-- Left side: Color box, name, and value -->
+            <div class="flex items-start gap-2">
+              <!-- Color box -->
+              <div 
+                class="w-3 h-3 rounded-sm mt-0.5 flex-shrink-0"
+                [style.background-color]="legend.color">
+              </div>
+
+              <!-- Name and Value -->
+              <div class="flex flex-col">
+                <span class="text-sm text-gray-200">{{ legend.name }}</span>
+                <span 
+                  class="text-sm font-semibold mt-0.5"
+                  [style.color]="legend.color">
+                  ${{ legend.value.toFixed(2) }}M
+                </span>
+              </div>
+            </div>
+
+            <!-- Right side: Percentage -->
+            <span 
+              class="text-sm font-semibold ml-2"
+              [style.color]="legend.color">
+              {{ calculatePercentage(legend.value) }}%
+            </span>
+          </div>
+        }
+      </div>
+    </div>

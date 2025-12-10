@@ -6,7 +6,7 @@ interface apiData {
   COMPANY_DATA: any[] | null;
   ANALYSIS_DATA: any | null;
   AMBIGUITY_DATA: any | null;
-  INSIGHTS_DATA:any | null;
+  INSIGHTS_DATA: any | null;
 }
 
 export interface SegmentData {
@@ -28,7 +28,7 @@ export class DataService {
     COMPANY_DATA: null,
     ANALYSIS_DATA: null,
     AMBIGUITY_DATA: null,
-    INSIGHTS_DATA:null,
+    INSIGHTS_DATA: null,
   };
 
   setParsedQuery(data: any) {
@@ -1124,130 +1124,174 @@ export class DataService {
   }
 
   generateInsights() {
-  const data:any = this.API_DATA.INSIGHTS_DATA;
-  const insightsData = [];
-  const companies = Object.keys(data);
+    const data: any = this.API_DATA.INSIGHTS_DATA;
+    const insightsData = [];
+    const companies = Object.keys(data);
 
-  // Helper function to format numbers
-  const formatNumber = (num:any) => {
-    if (num >= 1000000000) return `$${(num / 1000000000).toFixed(1)}B`;
-    if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
-    return `$${num.toLocaleString()}`;
-  };
+    // Helper function to format numbers
+    const formatNumber = (num: any) => {
+      if (num >= 1000000000) return `$${(num / 1000000000).toFixed(1)}B`;
+      if (num >= 1000000) return `$${(num / 1000000).toFixed(1)}M`;
+      return `$${num.toLocaleString()}`;
+    };
 
-  // Helper function to format percentage
-  const formatPercent = (num:any) => {
-    return `${Math.abs(num).toFixed(1)}%`;
-  };
+    // Helper function to format percentage
+    const formatPercent = (num: any) => {
+      return `${Math.abs(num).toFixed(1)}%`;
+    };
 
-  // Analyze each company's data
-  companies.forEach(key => {
-    const item = data[key];
-    const { company, metric, segment, variances, trend, volatility, periods, values } = item;
+    // Analyze each company's data
+    companies.forEach((key) => {
+      const item = data[key];
+      const {
+        company,
+        metric,
+        segment,
+        variances,
+        trend,
+        volatility,
+        periods,
+        values,
+      } = item;
 
-    if (variances && variances.length > 0) {
-      const variance = variances[0];
-      const absoluteChange = variance.absolute_change;
-      const percentChange = variance.percent_change || 
-        ((absoluteChange / variance.from_value) * 100);
+      if (variances && variances.length > 0) {
+        const variance = variances[0];
+        const absoluteChange = variance.absolute_change;
+        const percentChange =
+          variance.percent_change ||
+          (absoluteChange / variance.from_value) * 100;
 
-      // Generate insight based on trend and magnitude
-      let insight = null;
+        // Generate insight based on trend and magnitude
+        let insight = null;
 
-      // Significant growth insight
-      if (trend === 'increasing' && Math.abs(percentChange) > 2) {
-        insight = {
-          icon: 'trending_up',
-          title: `${company} - Strong ${metric} Growth`,
-          description: `${company} shows a ${formatPercent(percentChange)} increase in ${metric} from ${variance.from_period} to ${variance.to_period}, moving from ${formatNumber(variance.from_value)} to ${formatNumber(variance.to_value)}. This ${trend} trend with ${volatility} volatility indicates stable performance.`,
-          source: `${variance.to_period} Analysis`
-        };
+        // Significant growth insight
+        if (trend === 'increasing' && Math.abs(percentChange) > 2) {
+          insight = {
+            icon: 'trending_up',
+            title: `${company} - Strong ${metric} Growth`,
+            description: `${company} shows a ${formatPercent(
+              percentChange
+            )} increase in ${metric} from ${variance.from_period} to ${
+              variance.to_period
+            }, moving from ${formatNumber(
+              variance.from_value
+            )} to ${formatNumber(
+              variance.to_value
+            )}. This ${trend} trend with ${volatility} volatility indicates stable performance.`,
+            source: `${variance.to_period} Analysis`,
+          };
+        }
+
+        // Declining trend insight
+        if (trend === 'decreasing' && Math.abs(percentChange) > 2) {
+          insight = {
+            icon: 'trending_down',
+            title: `${company} - ${metric} Decline`,
+            description: `${company} experienced a ${formatPercent(
+              percentChange
+            )} decrease in ${metric} from ${variance.from_period} to ${
+              variance.to_period
+            }. ${metric} dropped from ${formatNumber(
+              variance.from_value
+            )} to ${formatNumber(
+              variance.to_value
+            )}. Monitor this ${trend} trend closely.`,
+            source: `${variance.to_period} Analysis`,
+          };
+        }
+
+        // Stable performance insight
+        if (trend === 'stable' || Math.abs(percentChange) < 2) {
+          insight = {
+            icon: 'show_chart',
+            title: `${company} - Consistent ${metric} Performance`,
+            description: `${company} maintains stable ${metric} performance with minimal change of ${formatPercent(
+              percentChange
+            )} between ${variance.from_period} and ${
+              variance.to_period
+            }. Current ${metric} stands at ${formatNumber(variance.to_value)}.`,
+            source: `${variance.to_period} Analysis`,
+          };
+        }
+
+        // High volatility warning
+        if (volatility === 'high') {
+          insight = {
+            icon: 'warning',
+            title: `${company} - High ${metric} Volatility`,
+            description: `${company} shows high volatility in ${metric} with a ${formatPercent(
+              percentChange
+            )} change. ${metric} fluctuated from ${formatNumber(
+              variance.from_value
+            )} to ${formatNumber(variance.to_value)} between ${
+              variance.from_period
+            } and ${variance.to_period}. Increased monitoring recommended.`,
+            source: `${variance.to_period} Risk Analysis`,
+          };
+        }
+
+        if (insight) {
+          insightsData.push(insight);
+        }
       }
-
-      // Declining trend insight
-      if (trend === 'decreasing' && Math.abs(percentChange) > 2) {
-        insight = {
-          icon: 'trending_down',
-          title: `${company} - ${metric} Decline`,
-          description: `${company} experienced a ${formatPercent(percentChange)} decrease in ${metric} from ${variance.from_period} to ${variance.to_period}. ${metric} dropped from ${formatNumber(variance.from_value)} to ${formatNumber(variance.to_value)}. Monitor this ${trend} trend closely.`,
-          source: `${variance.to_period} Analysis`
-        };
-      }
-
-      // Stable performance insight
-      if (trend === 'stable' || Math.abs(percentChange) < 2) {
-        insight = {
-          icon: 'show_chart',
-          title: `${company} - Consistent ${metric} Performance`,
-          description: `${company} maintains stable ${metric} performance with minimal change of ${formatPercent(percentChange)} between ${variance.from_period} and ${variance.to_period}. Current ${metric} stands at ${formatNumber(variance.to_value)}.`,
-          source: `${variance.to_period} Analysis`
-        };
-      }
-
-      // High volatility warning
-      if (volatility === 'high') {
-        insight = {
-          icon: 'warning',
-          title: `${company} - High ${metric} Volatility`,
-          description: `${company} shows high volatility in ${metric} with a ${formatPercent(percentChange)} change. ${metric} fluctuated from ${formatNumber(variance.from_value)} to ${formatNumber(variance.to_value)} between ${variance.from_period} and ${variance.to_period}. Increased monitoring recommended.`,
-          source: `${variance.to_period} Risk Analysis`
-        };
-      }
-
-      if (insight) {
-        insightsData.push(insight);
-      }
-    }
-  });
-
-  // Add comparative insights if multiple companies
-  if (companies.length > 1) {
-    const comparisons = companies.map(key => ({
-      company: data[key].company,
-      metric: data[key].metric,
-      latestValue: data[key].values[data[key].values.length - 1],
-      percentChange: data[key].variances[0]?.percent_change || 
-        ((data[key].variances[0]?.absolute_change / data[key].variances[0]?.from_value) * 100)
-    }));
-
-    // Find top performer
-    const topPerformer = comparisons.reduce((max, curr) => 
-      curr.percentChange > max.percentChange ? curr : max
-    );
-
-    insightsData.push({
-      icon: 'emoji_events',
-      title: `Top Performer: ${topPerformer.company}`,
-      description: `${topPerformer.company} leads with ${formatPercent(topPerformer.percentChange)} growth in ${topPerformer.metric}, reaching ${formatNumber(topPerformer.latestValue)}. This outperforms peers in the current analysis period.`,
-      source: 'Comparative Analysis'
     });
+
+    // Add comparative insights if multiple companies
+    if (companies.length > 1) {
+      const comparisons = companies.map((key) => ({
+        company: data[key].company,
+        metric: data[key].metric,
+        latestValue: data[key].values[data[key].values.length - 1],
+        percentChange:
+          data[key].variances[0]?.percent_change ||
+          (data[key].variances[0]?.absolute_change /
+            data[key].variances[0]?.from_value) *
+            100,
+      }));
+
+      // Find top performer
+      const topPerformer = comparisons.reduce((max, curr) =>
+        curr.percentChange > max.percentChange ? curr : max
+      );
+
+      insightsData.push({
+        icon: 'emoji_events',
+        title: `Top Performer: ${topPerformer.company}`,
+        description: `${topPerformer.company} leads with ${formatPercent(
+          topPerformer.percentChange
+        )} growth in ${topPerformer.metric}, reaching ${formatNumber(
+          topPerformer.latestValue
+        )}. This outperforms peers in the current analysis period.`,
+        source: 'Comparative Analysis',
+      });
+    }
+
+    return insightsData;
   }
 
-  return insightsData;
-}
-
-getSegmentWiseChartData(){  
-
-  if(this.API_DATA.ANALYSIS_DATA != null){
-
+  getSegmentWiseChartData() {
+    if (this.API_DATA.ANALYSIS_DATA != null) {
       const companies: any[] = [];
       this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {
         company.statements.forEach((quarter: any) => {
-          
           // Helper function to calculate segment value recursively
           const calculateSegmentValue = (segment: any): number => {
             // If segment has a direct value property, return it
-            if (segment.value !== undefined && segment.value !== null && typeof segment.value === 'number') {
+            if (
+              segment.value !== undefined &&
+              segment.value !== null &&
+              typeof segment.value === 'number'
+            ) {
               return segment.value;
             }
 
             // If segment has children, sum their values recursively
             if (segment.children) {
               // Handle if children is an object instead of array
-              const childrenArray = Array.isArray(segment.children) 
-                ? segment.children 
+              const childrenArray = Array.isArray(segment.children)
+                ? segment.children
                 : Object.values(segment.children);
-              
+
               return childrenArray.reduce((sum: number, child: any) => {
                 return sum + calculateSegmentValue(child);
               }, 0);
@@ -1266,8 +1310,8 @@ getSegmentWiseChartData(){
             }
 
             // Handle both array and object children
-            const childrenArray = Array.isArray(metricObject.children) 
-              ? metricObject.children 
+            const childrenArray = Array.isArray(metricObject.children)
+              ? metricObject.children
               : Object.values(metricObject.children);
 
             // If childrenArray is empty or not valid, return empty segments
@@ -1276,12 +1320,13 @@ getSegmentWiseChartData(){
             }
 
             childrenArray.forEach((child: any) => {
-              const segmentName = child.name || child.value || child.label || 'Unknown';
+              const segmentName =
+                child.name || child.value || child.label || 'Unknown';
               const segmentValue = calculateSegmentValue(child);
 
               segments.push({
                 segment_name: segmentName,
-                value: segmentValue
+                value: segmentValue,
               });
             });
 
@@ -1293,11 +1338,11 @@ getSegmentWiseChartData(){
           this.API_DATA.PARSED_QUERY.metrics.forEach((metricName: string) => {
             // Get the full metric object from all_metrics
             const metricObject = quarter.all_metrics[metricName];
-            
+
             if (metricObject) {
               metricsData[metricName] = {
                 total: metricObject.value || 0,
-                segments: processMetricSegments(metricObject)
+                segments: processMetricSegments(metricObject),
               };
             }
           });
@@ -1305,7 +1350,7 @@ getSegmentWiseChartData(){
           const data = {
             company_name: company.company_name,
             period: quarter.context_info.period_label_text,
-            metrics: metricsData
+            metrics: metricsData,
           };
 
           companies.push(data);
@@ -1313,48 +1358,273 @@ getSegmentWiseChartData(){
       });
 
       return companies;
+    } else {
+      return null;
+    }
   }
-  else{
-    return null;
-  }
-}
 
-generateSegmentCharts(data: any[]) {
-  const chartConfigs: any[] = [];
-  
-  // Color palette
-  const colorPalette = [
-    '#3b82f6', // blue
-    '#10b981', // green
-    '#ef4444', // red
-    '#f59e0b', // orange
-    '#8b5cf6', // purple
-    '#ec4899', // pink
-    '#06b6d4', // cyan
-    '#84cc16', // lime
-  ];
+  generateSegmentCharts(data: any[]) {
+    const chartConfigs: any[] = [];
 
-  data.forEach((item: any) => {
-    const metrics = Object.keys(item.metrics);
-    
-    metrics.forEach((metricName: string) => {
-      const metricData = item.metrics[metricName];
-      
-      // Skip if no segments
-      if (!metricData.segments || metricData.segments.length === 0) {
-        return;
-      }
+    // Color palette
+    const colorPalette = [
+      '#3b82f6', // blue
+      '#10b981', // green
+      '#ef4444', // red
+      '#f59e0b', // orange
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+      '#06b6d4', // cyan
+      '#84cc16', // lime
+    ];
 
-      // Create series for each segment
-      const series = metricData.segments.map((segment: any, index: number) => {
-        const isFirst = index === 0;
-        const isLast = index === metricData.segments.length - 1;
-        
-        return {
+    data.forEach((item: any) => {
+      const metrics = Object.keys(item.metrics);
+
+      metrics.forEach((metricName: string) => {
+        const metricData = item.metrics[metricName];
+
+        // Skip if no segments
+        if (!metricData.segments || metricData.segments.length === 0) {
+          return;
+        }
+
+        // Create legends array
+        const legends = metricData.segments.map((segment: any, index: number) => ({
           name: segment.segment_name,
-          type: 'bar',
-          stack: 'total',
-          barWidth: '50px',
+          color: colorPalette[index % colorPalette.length],
+          value: segment.value / 1000000, // Convert to millions
+        }));
+
+        // Create series for each segment
+        const series = metricData.segments.map(
+          (segment: any, index: number) => {
+            const isFirst = index === 0;
+            const isLast = index === metricData.segments.length - 1;
+
+            return {
+              name: segment.segment_name,
+              type: 'bar',
+              stack: 'total',
+              barWidth: '40px',
+              itemStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 1,
+                  y2: 0,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: colorPalette[index % colorPalette.length],
+                    },
+                    {
+                      offset: 1,
+                      color: colorPalette[index % colorPalette.length] + 'cc',
+                    }, // 80% opacity
+                  ],
+                },
+                borderRadius: isFirst
+                  ? [8, 0, 0, 8]
+                  : isLast
+                  ? [0, 8, 8, 0]
+                  : [0, 0, 0, 0],
+                borderWidth: 0,
+              },
+              emphasis: {
+                itemStyle: {
+                  color: colorPalette[index % colorPalette.length],
+                },
+              },
+              data: [segment.value / 1000000], // Convert to millions
+            };
+          }
+        );
+
+        const chartConfig = {
+          useDirtyRect: true,
+          devicePixelRatio: window.devicePixelRatio || 1,
+
+          title: {
+            text: ``,
+          },
+
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: 'rgba(15, 15, 25, 0.95)',
+            borderColor: 'rgba(100, 100, 150, 0.3)',
+            borderWidth: 1,
+            borderRadius: 12,
+            padding: 12,
+            textStyle: {
+              color: '#d7d7d7ff',
+              fontSize: 12,
+              fontWeight: 'normal',
+            },
+            formatter: (params: any) => {
+              let result = `<div style="font-weight: 600; margin-bottom: 8px;">${item.period}</div>`;
+              params.forEach((param: any) => {
+                result += `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0;">
+                  <span style="display: inline-block; width: 10px; height: 10px; background: ${
+                    param.color
+                  }; border-radius: 50%; margin-right: 8px;"></span>
+                  <span style="margin-right: 20px;">${snakeToTitleCase(param.seriesName)}</span>
+                  <span style="font-weight: 600;">$${param.value.toFixed(
+                    2
+                  )}M</span>
+                </div>
+              `;
+              });
+              return result;
+            },
+          },
+          grid: {
+            left: '1px',
+            right: '4%',
+            bottom: '15%',
+            top: '15%',
+            containLabel: true,
+          },
+
+          xAxis: {
+            type: 'value',
+            axisLabel: {
+              show: false,
+            },
+            axisLine: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              show: false,
+            },
+          },
+
+          yAxis: {
+            type: 'category',
+            data: [metricName.replace(/_/g, ' ').toUpperCase()],
+            axisLabel: {
+              show: false,
+            },
+            axisLine: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              show: false,
+            },
+          },
+
+          backgroundColor: 'transparent',
+
+          series: series,
+        };
+
+        chartConfigs.push({
+          company: item.company_name,
+          period: item.period,
+          metric: metricName,
+          legends: {total:0,legends:legends} , // Added legends array
+          config: chartConfig,
+        });
+      });
+    });
+
+    return chartConfigs;
+  }
+
+  generateCommonSegmentComparison(data: any[]) {
+    const commonSegments: any = {};
+
+    // First pass: collect all segments and their data
+    data.forEach((item: any) => {
+      const metrics = Object.keys(item.metrics);
+
+      metrics.forEach((metricName: string) => {
+        const metricData = item.metrics[metricName];
+
+        if (!metricData.segments || metricData.segments.length === 0) {
+          return;
+        }
+
+        metricData.segments.forEach((segment: any) => {
+          const segmentKey = `${metricName}_${segment.segment_name}`;
+
+          // Initialize segment if it doesn't exist
+          if (!commonSegments[segmentKey]) {
+            commonSegments[segmentKey] = {
+              metric: metricName,
+              segment_name: segment.segment_name,
+              periods: {},
+            };
+          }
+
+          // Initialize period if it doesn't exist
+          if (!commonSegments[segmentKey].periods[item.period]) {
+            commonSegments[segmentKey].periods[item.period] = [];
+          }
+
+          // Add company data
+          commonSegments[segmentKey].periods[item.period].push({
+            company_name: item.company_name,
+            value: segment.value,
+          });
+        });
+      });
+    });
+
+    // Filter to keep only segments that appear in multiple companies
+    const filteredSegments: any = {};
+
+    Object.keys(commonSegments).forEach((segmentKey: string) => {
+      const segment = commonSegments[segmentKey];
+
+      // Check if this segment has data from multiple companies in at least one period
+      const hasMultipleCompanies = Object.values(segment.periods).some(
+        (companies: any) => companies.length > 1
+      );
+
+      if (hasMultipleCompanies) {
+        filteredSegments[segmentKey] = segment;
+      }
+    });
+
+    return filteredSegments;
+  }
+
+  generateCommonSegmentCharts(commonSegments: any) {
+    const chartConfigs: any[] = [];
+
+    // Color palette for companies
+    const colorPalette = [
+      '#3b82f6', // blue
+      '#10b981', // green
+      '#ef4444', // red
+      '#f59e0b', // orange
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+    ];
+
+    Object.keys(commonSegments).forEach((segmentKey: string) => {
+      const segment = commonSegments[segmentKey];
+
+      Object.keys(segment.periods).forEach((period: string) => {
+        const companies = segment.periods[period];
+
+        // Extract company names and values
+        const companyNames = companies.map((c: any) => c.company_name);
+        const values = companies.map((c: any) => c.value / 1000000); // Convert to millions
+
+        // Create series data with colors
+        const seriesData = values.map((value: number, index: number) => ({
+          value: value,
           itemStyle: {
             color: {
               type: 'linear',
@@ -1364,337 +1634,123 @@ generateSegmentCharts(data: any[]) {
               y2: 0,
               colorStops: [
                 { offset: 0, color: colorPalette[index % colorPalette.length] },
-                { offset: 1, color: colorPalette[index % colorPalette.length] + 'cc' }, // 80% opacity
+                {
+                  offset: 1,
+                  color: colorPalette[index % colorPalette.length] + 'cc',
+                },
               ],
             },
-            borderRadius: isFirst ? [8, 0, 0, 8] : isLast ? [0, 8, 8, 0] : [0, 0, 0, 0],
-            borderWidth: 0,
+            borderRadius: 25,
           },
-          emphasis: {
-            itemStyle: {
-              color: colorPalette[index % colorPalette.length],
+        }));
+
+        const chartConfig = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: 'rgba(15, 15, 25, 0.95)',
+            borderColor: 'rgba(100, 100, 150, 0.3)',
+            borderWidth: 1,
+            borderRadius: 12,
+            padding: 12,
+            textStyle: {
+              color: '#d7d7d7ff',
+              fontSize: 12,
+              fontWeight: 'normal',
+            },
+            formatter: (params: any) => {
+              const param = params[0];
+              return `
+              <div style="font-weight: 600; margin-bottom: 4px;">${
+                param.name
+              }</div>
+              <div style="font-weight: 600; color: #3b82f6;">$${param.value.toFixed(
+                2
+              )}M</div>
+            `;
             },
           },
-          data: [segment.value / 1000000], // Convert to millions
+
+          grid: {
+            left: '20%',
+            right: '15%',
+            top: '5%',
+            bottom: '5%',
+            containLabel: false,
+          },
+
+          xAxis: {
+            type: 'value',
+            show: false,
+            axisLabel: { show: false },
+            axisLine: { show: false },
+            axisTick: { show: false },
+            splitLine: { show: false },
+          },
+
+          yAxis: {
+            type: 'category',
+            data: companyNames,
+            axisLabel: {
+              show: true,
+             
+              color: (value: string, index: number) => {
+      return colorPalette[index % colorPalette.length];
+    },
+              fontSize: 8, 
+              fontWeight: 'bold',
+              interval: 0,
+            },
+            axisLine: { show: false },
+            axisTick: { show: false },
+            splitLine: { show: false },
+          },
+
+          backgroundColor: 'transparent',
+
+          series: [
+            {
+              type: 'bar',
+              data: seriesData,
+              barWidth: '28px',
+              barGap:'10%',
+              barCategoryGap: '5px',
+              label: {
+                show: true,
+                position: 'right',
+                color: '#e0e0e0',
+                fontSize: 14,
+                fontWeight: 'bold',
+                formatter: (params: any) => {
+                  return `$${params.value.toFixed(1)}M`;
+                },
+              },
+              emphasis: {
+                itemStyle: {
+                  opacity: 1,
+                },
+              },
+            },
+          ],
         };
-      });
 
-      const chartConfig = {
-        
-        
-         useDirtyRect: true,
-         devicePixelRatio: window.devicePixelRatio || 1,
-          
-        title: {
-          text: ``,
-          
-        },
-
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-          backgroundColor: 'rgba(15, 15, 25, 0.95)',
-          borderColor: 'rgba(100, 100, 150, 0.3)',
-          borderWidth: 1,
-          borderRadius: 12,
-          padding: 12,
-          textStyle: {
-            color: '#d7d7d7ff',
-            fontSize: 12,
-            fontWeight: 'normal',
-          },
-          formatter: (params: any) => {
-            let result = `<div style="font-weight: 600; margin-bottom: 8px;">${item.period}</div>`;
-            params.forEach((param: any) => {
-              result += `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0;">
-                  <span style="display: inline-block; width: 10px; height: 10px; background: ${param.color}; border-radius: 50%; margin-right: 8px;"></span>
-                  <span style="margin-right: 20px;">${param.seriesName}</span>
-                  <span style="font-weight: 600;">$${param.value.toFixed(2)}M</span>
-                </div>
-              `;
-            });
-            return result;
-          },
-        },
-
-        // legend: {
-        //   bottom: 10,
-        //   left: 'center',
-        //   orient: 'horizontal',
-        //   textStyle: {
-        //     fontSize: 13,
-        //     color: '#d7d7d7ff',
-        //     fontWeight: '500',
-        //   },
-        //   itemGap: 30,
-        //   itemWidth: 12,
-        //   itemHeight: 12,
-        //   formatter: (name: string) => {
-        //     const seriesItem = series.find((s: any) => s.name === name);
-        //     const percentage = seriesItem?.percentage || '0';
-        //     const valueInMillions = (seriesItem?.data[0] || 0).toFixed(1);
-        //     return `${name}     $${valueInMillions}M     ${percentage}%`;
-        //   },
-        // },
-
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '15%',
-          top: '15%',
-          containLabel: true,
-        },
-
-        xAxis: {
-          type: 'value',
-          axisLabel: {
-            show: false,
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: false,
-          },
-        },
-
-        yAxis: {
-          type: 'category',
-          data: [metricName.replace(/_/g, ' ').toUpperCase()],
-          axisLabel: {
-            show: false,
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: false,
-          },
-        },
-
-
-        
-        backgroundColor: 'transparent',
-
-        series: series,
-      };
-
-      chartConfigs.push({
-        company: item.company_name,
-        period: item.period,
-        metric: metricName,
-        config: chartConfig,
-      });
-    });
-  });
-
-  return chartConfigs;
-}
-
-
- generateCommonSegmentComparison(data: any[]) {
-  const commonSegments: any = {};
-
-  // First pass: collect all segments and their data
-  data.forEach((item: any) => {
-    const metrics = Object.keys(item.metrics);
-    
-    metrics.forEach((metricName: string) => {
-      const metricData = item.metrics[metricName];
-      
-      if (!metricData.segments || metricData.segments.length === 0) {
-        return;
-      }
-
-      metricData.segments.forEach((segment: any) => {
-        const segmentKey = `${metricName}_${segment.segment_name}`;
-        
-        // Initialize segment if it doesn't exist
-        if (!commonSegments[segmentKey]) {
-          commonSegments[segmentKey] = {
-            metric: metricName,
-            segment_name: segment.segment_name,
-            periods: {}
-          };
-        }
-
-        // Initialize period if it doesn't exist
-        if (!commonSegments[segmentKey].periods[item.period]) {
-          commonSegments[segmentKey].periods[item.period] = [];
-        }
-
-        // Add company data
-        commonSegments[segmentKey].periods[item.period].push({
-          company_name: item.company_name,
-          value: segment.value
+        chartConfigs.push({
+          segment_key: segmentKey,
+          metric: segment.metric,
+          segment_name: snakeToTitleCase(segment.segment_name) ,
+          period: period,
+          config: chartConfig,
         });
       });
     });
-  });
 
-  // Filter to keep only segments that appear in multiple companies
-  const filteredSegments: any = {};
-  
-  Object.keys(commonSegments).forEach((segmentKey: string) => {
-    const segment = commonSegments[segmentKey];
-    
-    // Check if this segment has data from multiple companies in at least one period
-    const hasMultipleCompanies = Object.values(segment.periods).some(
-      (companies: any) => companies.length > 1
-    );
-
-    if (hasMultipleCompanies) {
-      filteredSegments[segmentKey] = segment;
-    }
-  });
-
-  return filteredSegments;
+    return chartConfigs;
+  }
 }
 
-
-generateCommonSegmentCharts(commonSegments: any) {
-  const chartConfigs: any[] = [];
-  
-  // Color palette for companies
-  const colorPalette = [
-    '#3b82f6', // blue
-    '#10b981', // green
-    '#ef4444', // red
-    '#f59e0b', // orange
-    '#8b5cf6', // purple
-    '#ec4899', // pink
-  ];
-
-  Object.keys(commonSegments).forEach((segmentKey: string) => {
-    const segment = commonSegments[segmentKey];
-    
-    Object.keys(segment.periods).forEach((period: string) => {
-      const companies = segment.periods[period];
-      
-      // Extract company names and values
-      const companyNames = companies.map((c: any) => c.company_name);
-      const values = companies.map((c: any) => c.value / 1000000); // Convert to millions
-      
-      // Create series data with colors
-      const seriesData = values.map((value: number, index: number) => ({
-        value: value,
-        itemStyle: {
-          color: {
-            type: 'linear',
-            x: 0,
-            y: 0,
-            x2: 1,
-            y2: 0,
-            colorStops: [
-              { offset: 0, color: colorPalette[index % colorPalette.length] },
-              { offset: 1, color: colorPalette[index % colorPalette.length] + 'cc' },
-            ],
-          },
-          borderRadius: 25,
-        },
-      }));
-
-      const chartConfig = {
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-          backgroundColor: 'rgba(15, 15, 25, 0.95)',
-          borderColor: 'rgba(100, 100, 150, 0.3)',
-          borderWidth: 1,
-          borderRadius: 12,
-          padding: 12,
-          textStyle: {
-            color: '#d7d7d7ff',
-            fontSize: 12,
-            fontWeight: 'normal',
-          },
-          formatter: (params: any) => {
-            const param = params[0];
-            return `
-              <div style="font-weight: 600; margin-bottom: 4px;">${param.name}</div>
-              <div style="font-weight: 600; color: #3b82f6;">$${param.value.toFixed(2)}M</div>
-            `;
-          },
-        },
-
-        grid: {
-          left: '20%',
-          right: '15%',
-          top: '5%',
-          bottom: '5%',
-          containLabel: false,
-        },
-
-        xAxis: {
-          type: 'value',
-          show: false,
-          axisLabel: { show: false },
-          axisLine: { show: false },
-          axisTick: { show: false },
-          splitLine: { show: false },
-        },
-
-        yAxis: {
-          type: 'category',
-          data: companyNames,
-           axisLabel: {
-    show: true,
-    color: '#d7d7d7ff',
-    fontSize: 12,  // ← Change from 14 to 12
-    fontWeight: 'bold',
-    interval: 0,
-  },
-          axisLine: { show: false },
-          axisTick: { show: false },
-          splitLine: { show: false },
-        },
-
-        backgroundColor: 'transparent',
-
-        series: [
-          {
-            type: 'bar',
-            data: seriesData,
-            barWidth: '28px',
-            barCategoryGap: '5px',
-            label: {
-              show: true,
-              position: 'right',
-              color: '#e0e0e0',
-              fontSize: 14,
-              fontWeight: 'bold',
-              formatter: (params: any) => {
-                return `$${params.value.toFixed(1)}M`;
-              },
-            },
-            emphasis: {
-              itemStyle: {
-                opacity: 0.8,
-              },
-            },
-          },
-        ],
-      };
-
-      chartConfigs.push({
-        segment_key: segmentKey,
-        metric: segment.metric,
-        segment_name: segment.segment_name,
-        period: period,
-        config: chartConfig,
-      });
-    });
-  });
-
-  return chartConfigs;
-}
-
-
+function snakeToTitleCase(str: string): string {
+  return str
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 }
