@@ -399,6 +399,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
           }
           else{
           this.dataReady.emit(true);
+            this.recordProcessMsg(5);
           this.recordMsg("I've updated the dashboard. but variance analysis not loaded", true);
           }
           
