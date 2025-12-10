@@ -605,10 +605,9 @@ export class DashboardComponent implements OnInit {
   }
 
   showData() {
-    
     this.isSideNavOpened = false;
 
-     this.isDataAvailable = true;
+    this.isDataAvailable = true;
 
     this.companies = this._dataService.API_DATA.COMPANY_DATA?.map(
       (data: any) => {
@@ -616,16 +615,28 @@ export class DashboardComponent implements OnInit {
       }
     );
 
-    let segment_keywords = ['segment','segments','segment-breakdown','segment-wise-breakdown','segments']
+    let segment_keywords = [
+      'segment',
+      'segments',
+      'segment-breakdown',
+      'segment-wise-breakdown',
+      'segments',
+      'segment-wise',
+      
+    ];
 
     // if (
     //   this._dataService.API_DATA.PARSED_QUERY.segment_filter.dimension_type ==
-    //   null && !segment_keywords.some(kw => this._dataService.API_DATA.PARSED_QUERY.raw_query.toLowerCase().includes(kw))
-    // ) 
-    if (
-     !segment_keywords.some(kw => this._dataService.API_DATA.PARSED_QUERY.raw_query.toLowerCase().includes(kw))
-    ) {
-      
+    //   null
+    // )
+
+    const rawQuery = this._dataService.API_DATA.PARSED_QUERY.raw_query;
+
+    const isSegment = segment_keywords.some((keyword) =>
+      rawQuery.includes(keyword)
+    );
+
+    if (isSegment == false) {
       this.cardView = this._dataService.fetchCardsData(this.companies);
 
       this.chartsData = this._dataService.generateChartConfigs(this.cardView);

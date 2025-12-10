@@ -294,7 +294,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
 
     this.recordMsg(userQuery, false);
 
-    
     this.resetData.emit(true);
    
     this._apiService.parseQuery({ query: userQuery }).subscribe({
@@ -303,7 +302,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
           try {
             
             if (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) {
-              this._dataService.setParsedQuery(res.parsed);
+               this._dataService.setParsedQuery(res.parsed);
+               if(userQuery.trim()){
+                 this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
+               }
                this.recordProcessMsg(0);
                this.recordProcessMsg(1);
               this.resolveCompanies(res.parsed.companies);
