@@ -623,7 +623,11 @@ export class DashboardComponent implements OnInit {
 
       const segmentWiseStackedChartData: any =this._dataService.getSegmentWiseChartData();
 
+
       const commonSegmentColumnCharts = this._dataService.generateCommonSegmentComparison(segmentWiseStackedChartData)  
+
+      console.log(segmentWiseStackedChartData);
+      
 
       this.segmentStackedOption = this._dataService.generateSegmentCharts(
         segmentWiseStackedChartData

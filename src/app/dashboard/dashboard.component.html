@@ -917,7 +917,7 @@
           <div class="rounded-xl p-6 flex flex-col flex-wrap" style="min-height: 400px">
             @for (chart of segmentStackedOption; track $index) {
             
-            <div class="text-sm font-bold mt-2 mb-2" >{{chart.company}} - {{chart.period}} </div> 
+            <div class="text-sm font-bold mt-4 mb-2" >{{chart.company}} - {{chart.period}} </div> 
 
             <div
               class="rounded-xl"
@@ -925,7 +925,7 @@
               [options]="chart.config"
               style="height: 100px;width: 100%;"
             ></div>
-            <div>
+            <div class="mb-4">
               <app-legend-display [data]="chart.legends" ></app-legend-display>
             </div>
 

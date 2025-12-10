@@ -5,6 +5,7 @@ interface Legend {
   color: string;
   name: string;
   value: number;
+  percentage:number
 }
 
 interface LegendData {
@@ -21,9 +22,9 @@ interface LegendData {
 export class LegendDisplayComponent {
    @Input() data: LegendData = { total: 0, legends: [] };
 
-  calculatePercentage(value: number): string {
-    if (this.data.total === 0) return '0.0';
-    return ((value / this.data.total) * 100).toFixed(1);
+  round(value: number): string {
+    if (value === 0 || value == null) return '0.0';
+    return (value).toFixed(1);
   }
 
 }

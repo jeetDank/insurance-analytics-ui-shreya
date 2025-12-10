@@ -18,9 +18,10 @@
 
               <!-- Name and Value -->
               <div class="flex flex-col">
-                <span class="text-sm text-gray-200">{{ legend.name }}</span>
+                <span class="text-xs text-gray-200">{{ legend.name }}</span>
                 <span 
-                  class="text-sm font-semibold mt-0.5"
+                  style="font-size: 10px;"
+                  class="font-semibold mt-0.5"
                   [style.color]="legend.color">
                   ${{ legend.value.toFixed(2) }}M
                 </span>
@@ -29,9 +30,11 @@
 
             <!-- Right side: Percentage -->
             <span 
-              class="text-sm font-semibold ml-2"
+             style="font-size: 10px;"
+              class="font-semibold ml-2"
               [style.color]="legend.color">
-              {{ calculatePercentage(legend.value) }}%
+              <!-- {{ calculatePercentage(legend.value) }}% -->
+                {{ round(legend.percentage)}}%
             </span>
           </div>
         }

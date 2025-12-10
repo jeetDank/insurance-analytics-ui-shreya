@@ -1391,9 +1391,10 @@ export class DataService {
 
         // Create legends array
         const legends = metricData.segments.map((segment: any, index: number) => ({
-          name: segment.segment_name,
+          name: snakeToTitleCase(segment.segment_name) ,
           color: colorPalette[index % colorPalette.length],
           value: segment.value / 1000000, // Convert to millions
+          percentage: segment.value / metricData.total
         }));
 
         // Create series for each segment
@@ -1531,7 +1532,7 @@ export class DataService {
           company: item.company_name,
           period: item.period,
           metric: metricName,
-          legends: {total:0,legends:legends} , // Added legends array
+          legends: {total:metricData.total,legends:legends} , // Added legends array
           config: chartConfig,
         });
       });
