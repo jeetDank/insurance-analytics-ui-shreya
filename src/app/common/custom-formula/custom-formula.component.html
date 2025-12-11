@@ -1,110 +1,168 @@
 <div class="mt-5 p-4">
   <!-- Header Section -->
-  <div class="flex items-center justify-between w-full mb-2">
+  <div class="flex items-center flex-wrap justify-between w-full mb-4">
     <div class="flex items-center gap-2">
       <span class="flex items-center">
-        <i class="material-icons">calculate</i>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-calculator h-4 w-4"
+          aria-hidden="true"
+          style="color: rgb(156, 163, 175)"
+        >
+          <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+          <line x1="8" x2="16" y1="6" y2="6"></line>
+          <line x1="16" x2="16" y1="14" y2="18"></line>
+          <path d="M16 10h.01"></path>
+          <path d="M12 10h.01"></path>
+          <path d="M8 10h.01"></path>
+          <path d="M12 14h.01"></path>
+          <path d="M8 14h.01"></path>
+          <path d="M12 18h.01"></path>
+          <path d="M8 18h.01"></path>
+        </svg>
       </span>
       <h4 class="">Custom Formulas</h4>
     </div>
     <span
-      (click)="toggleAddForm()"
+      (click)="toggleFormulaView()"
       class="flex items-center p-2 hover:bg-neutral-800 rounded cursor-pointer transition-colors"
     >
       <i class="material-icons">{{ showAddForm ? "close" : "add" }}</i>
     </span>
+    <div class="text-xs sub-text grow mt-2">
+      Create and manage custom metrics
+    </div>
   </div>
 
-  <div class="mb-2">
-    <h5 class="text-secondary">Create and manage custom metrics</h5>
+  <div class="flex flex-row custom-search-box items-center">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-search h-3.5 w-3.5 ms-1"
+      aria-hidden="true"
+      style="color: rgba(255, 255, 255, 0.4)"
+    >
+      <path d="m21 21-4.34-4.34"></path>
+      <circle cx="11" cy="11" r="8"></circle>
+    </svg>
+
+    <input type="text" placeholder="Search Formulas..." />
   </div>
 
-  <!-- Add New Formula Form -->
-  @if(showAddForm){
-  <mat-card class="p-4 shadow-md border border-neutral-200 mb-4">
 
-    <form [formGroup]="formulaForm" class="space-y-4">
-      <!-- Formula Name -->
+  @if(!formulaListView){
+    <div class="mt-4 p-3">
+    <form class="myform flex flex-col gap-6" action="">
+      <input type="text" placeholder="Formula Name (e.g., ROE)" />
 
-      <!-- Action Buttons -->
-      <div class="flex gap-2 justify-end pt-2">
-        <button
-        class="w-full"
-          mat-raised-button
-          color="primary"
-          type="button"
-          (click)="addNewFormula()"
-          [disabled]="!formulaForm.valid"
+      <textarea
+        rows="2"
+        name=""
+        id=""
+        placeholder="Formula (e.g., Net Income / Shareholders Equity)"
+      ></textarea>
+
+      <input type="text" placeholder="Description (optional)" />
+      <div class="mt-2 flex flex-row gap-2" >
+      <button type="button" class="add-button flex grow items-center justify-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-check h-3 w-3 mr-1"
+          aria-hidden="true"
         >
-          <span class="flex flex-row items-center"><i class="material-icons me-2" >check</i> Add Formula</span> 
-        </button>
-
-        <span
-          (click)="cancelAdd()"
-          class="flex items-center  p-2 hover:bg-neutral-800 rounded cursor-pointer transition-colors"
-          ><i class="material-icons ">close</i>
-        </span>
-      </div>
+          <path d="M20 6 9 17l-5-5"></path>
+        </svg>
+        <span> Add</span>
+      </button>
+      <button type="button" (click)="toggleFormulaView()"><i style="font-size: 16;"  class="material-icons">close</i></button>
+    </div>
     </form>
-  </mat-card>
+    
+  </div>
   }
 
-  <!-- Formula List View -->
-  @if(customFormulaList.length > 0){
-  <div class="space-y-3">
-    @for(formula of customFormulaList; track formula.id) {
-    <mat-card class="p-4 shadow-sm border border-neutral-200">
-      <div class="flex items-center justify-between mb-2">
-        <h5 class="font-medium text-neutral-800">{{ formula.name }}</h5>
-        <div class="flex gap-2">
-          <span class="cursor-pointer" >
-            <i (click)="editFormula(formula.id)" class="material-icons text-sm"
-              >edit</i
-            >
-          </span>
 
-          <span class="cursor-pointer" >
-            <i
-              (click)="deleteFormula(formula.id)"
-              class="material-icons text-sm"
-              >delete</i
+  @if (formulaListView) {
+    <div class="mt-4 list-bg" >
+    <div class="p-3">
+      <div class="flex justify-between">
+        <div class="text-sm font-semibold">ROE</div>
+        <div class="flex gap-2">
+          <button class="text-neutral-400 text-md hover:text-neutral-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-pen h-3 w-3"
+              aria-hidden="true"
             >
-          </span>
+              <path
+                d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"
+              ></path>
+            </svg>
+          </button>
+
+          <button class="text-neutral-400 text-md hover:text-red-300">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-trash2 lucide-trash-2 h-3 w-3"
+              aria-hidden="true"
+            >
+              <path d="M10 11v6"></path>
+              <path d="M14 11v6"></path>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"></path>
+              <path d="M3 6h18"></path>
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
         </div>
       </div>
-
-      <!-- Formula -->
-      <div class="mt-2">
-        <p class="text-sm text-neutral-600 p-3 rounded font-mono border">
-          {{ formula.formula }}
+      <div>
+        <p class="!text-xs mt-1" style="font-family: space-mono">
+          Net Income / shareholder equity
         </p>
       </div>
-
-      <!-- Description -->
-      @if(formula.description){
-      <div class="mt-2">
-        <p class="text-sm text-neutral-500">{{ formula.description }}</p>
-      </div>
-      }
-    </mat-card>
-    }
-  </div>
-  }
-
-  <!-- Empty State -->
-  @if(!showAddForm && customFormulaList.length === 0){
-  <div class="mt-6 w-full flex flex-col items-center justify-center py-8">
-    <div class="mb-2">
-      <i class="material-icons !text-neutral-400" style="font-size: 48px"
-        >calculate</i
-      >
-    </div>
-    <div class="mb-1">
-      <h4 class="text-secondary">No custom formulas yet</h4>
-    </div>
-    <div>
-      <h6 class="text-secondary">Click + to create one</h6>
     </div>
   </div>
   }
+  
+
+  
 </div>

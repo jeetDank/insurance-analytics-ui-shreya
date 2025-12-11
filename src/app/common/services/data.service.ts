@@ -114,8 +114,18 @@ export class DataService {
           let filterRequestedMetrics: any = {};
 
           this.API_DATA.PARSED_QUERY.metrics.forEach((metric: any) => {
-            filterRequestedMetrics[metric] = quarter.all_metrics[metric];
+            filterRequestedMetrics[metric] = {
+            "name": quarter.all_metrics[metric].name ,
+            "value": quarter.all_metrics[metric].value,
+            "concept": quarter.all_metrics[metric].concept,
+            "unit": quarter.all_metrics[metric].unit
+            }
+            
+            
           });
+          let context_info = quarter.context_info;
+
+          context_info.is_consolidated = true;
 
           const data = {
             cik: company.cik,
@@ -125,7 +135,7 @@ export class DataService {
             analysis_result: {
               metrics: filterRequestedMetrics,
               metadata: quarter.metadata,
-              context_info: quarter.context_info,
+              context_info: context_info,
             },
           };
 
@@ -1393,8 +1403,8 @@ export class DataService {
         const legends = metricData.segments.map((segment: any, index: number) => ({
           name: snakeToTitleCase(segment.segment_name) ,
           color: colorPalette[index % colorPalette.length],
-          value: segment.value / 1000000, // Convert to millions
-          percentage: segment.value / metricData.total
+          value: segment.value,
+          percentage: (segment.value / metricData.total) *100
         }));
 
         // Create series for each segment
@@ -1532,7 +1542,7 @@ export class DataService {
           company: item.company_name,
           period: item.period,
           metric: snakeToTitleCase(metricName) ,
-          legends: {total:metricData.total,legends:legends} , // Added legends array
+          legends: {total:metricData.total,legends:legends} , // legends array for custom legends
           config: chartConfig,
         });
       });

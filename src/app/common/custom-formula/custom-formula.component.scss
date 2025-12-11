@@ -1,0 +1,42 @@
+
+
+.custom-search-box{
+border: 1px solid #ffffff14;
+border-radius: 8px;
+
+}
+
+.custom-search-box:focus-within{
+    outline: 4px solid #ffffff14;
+}
+
+
+
+.myform input,textarea{
+border: 1px solid #ffffff14;
+border-radius: 8px;
+width: 100%;
+
+}
+
+.myform input:focus-within,textarea:focus-within{
+    outline: 4px solid #ffffff14;
+
+}
+
+textarea{
+    padding: 10px;
+}
+
+
+.add-button{
+    height: 28px;
+    background-color: #9ca3af;
+    border-radius: 8px;
+    text-align: center;
+    color: black;
+}
+
+.list-bg{
+    background-color: #ffffff04;
+}

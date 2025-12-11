@@ -78,12 +78,6 @@ export class CustomFormulaComponent {
     this.formulaListView = !this.formulaListView;
   }
 
-  toggleAddForm() {
-    this.showAddForm = !this.showAddForm;
-    if (!this.showAddForm) {
-      this.formulaForm.reset();
-    }
-  }
 
   addNewFormula() {
     if (this.formulaForm.valid) {

@@ -222,13 +222,16 @@ color: rgba(255, 255, 255, 0.95);
 }
 
 .text-secondary{
-  color: rgba(255, 255, 255, 0.55)
+  color: #ffffff8c
 }
 
 .text-muted{
-  color: rgba(255, 255, 255, 0.3);
+  color: #ffffff4d;
 }
 
+.sub-text{
+  color:#fff6;
+}
 
 .card_background{
   background-color: #FFFFFF14;
@@ -324,7 +327,11 @@ color: rgb(202, 2, 2);
 
 
 input::placeholder{
- color:rgba(255, 255, 255, 0.3) !important;
+ color:#858586 !important;
+}
+
+textarea::placeholder{
+  color: #858586;
 }
 
 

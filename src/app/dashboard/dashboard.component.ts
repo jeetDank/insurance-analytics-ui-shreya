@@ -652,6 +652,8 @@ export class DashboardComponent implements OnInit {
       }
     } else {
       this.isComparison = false;
+
+      this.referenceData = this._dataService.generateReferenceData();
       this.segmentPeriods =
         this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
