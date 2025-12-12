@@ -115,15 +115,13 @@ export class DataService {
 
           this.API_DATA.PARSED_QUERY.metrics.forEach((metric: any) => {
             filterRequestedMetrics[metric] = {
-            "name": quarter.all_metrics[metric].name ,
-            "value": quarter.all_metrics[metric].value,
-            "concept": quarter.all_metrics[metric].concept,
-            "unit": quarter.all_metrics[metric].unit
-            }
-            
-            
+              name: quarter.all_metrics[metric]?.name,
+              value: quarter.all_metrics[metric]?.value,
+              concept: quarter.all_metrics[metric]?.concept,
+              unit: quarter.all_metrics[metric]?.unit,
+            };
           });
-          let context_info = quarter.context_info;
+          let context_info = quarter?.context_info;
 
           context_info.is_consolidated = true;
 
@@ -1400,12 +1398,14 @@ export class DataService {
         }
 
         // Create legends array
-        const legends = metricData.segments.map((segment: any, index: number) => ({
-          name: snakeToTitleCase(segment.segment_name) ,
-          color: colorPalette[index % colorPalette.length],
-          value: segment.value,
-          percentage: (segment.value / metricData.total) *100
-        }));
+        const legends = metricData.segments.map(
+          (segment: any, index: number) => ({
+            name: snakeToTitleCase(segment.segment_name),
+            color: colorPalette[index % colorPalette.length],
+            value: segment.value,
+            percentage: (segment.value / metricData.total) * 100,
+          })
+        );
 
         // Create series for each segment
         const series = metricData.segments.map(
@@ -1482,7 +1482,9 @@ export class DataService {
                   <span style="display: inline-block; width: 10px; height: 10px; background: ${
                     param.color
                   }; border-radius: 50%; margin-right: 8px;"></span>
-                  <span style="margin-right: 20px;">${snakeToTitleCase(param.seriesName)}</span>
+                  <span style="margin-right: 20px;">${snakeToTitleCase(
+                    param.seriesName
+                  )}</span>
                   <span style="font-weight: 600;">$${param.value.toFixed(
                     2
                   )}M</span>
@@ -1541,8 +1543,8 @@ export class DataService {
         chartConfigs.push({
           company: item.company_name,
           period: item.period,
-          metric: snakeToTitleCase(metricName) ,
-          legends: {total:metricData.total,legends:legends} , // legends array for custom legends
+          metric: snakeToTitleCase(metricName),
+          legends: { total: metricData.total, legends: legends }, // legends array for custom legends
           config: chartConfig,
         });
       });
@@ -1704,11 +1706,11 @@ export class DataService {
             data: companyNames,
             axisLabel: {
               show: true,
-             
+
               color: (value: string, index: number) => {
-      return colorPalette[index % colorPalette.length];
-    },
-              fontSize: 8, 
+                return colorPalette[index % colorPalette.length];
+              },
+              fontSize: 8,
               fontWeight: 'bold',
               interval: 0,
             },
@@ -1724,7 +1726,7 @@ export class DataService {
               type: 'bar',
               data: seriesData,
               barWidth: '28px',
-              barGap:'10%',
+              barGap: '10%',
               barCategoryGap: '5px',
               label: {
                 show: true,
@@ -1748,7 +1750,7 @@ export class DataService {
         chartConfigs.push({
           segment_key: segmentKey,
           metric: segment.metric,
-          segment_name: snakeToTitleCase(segment.segment_name) ,
+          segment_name: snakeToTitleCase(segment.segment_name),
           period: period,
           config: chartConfig,
         });
@@ -1757,11 +1759,47 @@ export class DataService {
 
     return chartConfigs;
   }
+
+  
+
+  fetchMetricsForFormulaComponent() {
+    if (!this.API_DATA?.ANALYSIS_DATA?.results?.[0]?.statements) {
+      return null;
+    }
+
+    const metricsMap = new Map<
+      string,
+      {
+        metric: string;
+        value: number;
+        metricViewName: string;
+      }
+    >();
+
+    // Get the first company (or iterate all if you want combined data)
+    const company = this.API_DATA.ANALYSIS_DATA.results[0];
+
+    // Get latest quarter (assuming they're in chronological order)
+    const latestQuarter = company.statements[company.statements.length - 1];
+
+    // Extract metrics from latest quarter
+    Object.entries(latestQuarter.all_metrics as Record<string, any>).forEach(
+      ([metricKey, metricData]) => {
+        metricsMap.set(metricKey, {
+          metric: metricKey,
+          value: metricData.value,
+          metricViewName: metricData.name,
+        });
+      }
+    );
+
+    return Array.from(metricsMap.values());
+  }
 }
 
 function snakeToTitleCase(str: string): string {
   return str
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 }

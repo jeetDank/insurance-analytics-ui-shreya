@@ -196,7 +196,7 @@
       </div>
 
       }@else{
-      <app-custom-formula></app-custom-formula>
+      <app-custom-formula (formulaListChanged)="getCustomFormulas($event)" [suggestionsMetrics]="formulaSuggestions"  ></app-custom-formula>
       }
     </div>
   </div>

@@ -92,6 +92,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
 
   loaderVisible: boolean = false;
 
+  formulaSuggestions:any[] | null = [];
+
  ambiguities:any[] = [
     {
       query: 're',
@@ -358,6 +360,15 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       });
   }
 
+
+  getCustomFormulas(data:any){
+    console.log(data);
+    
+  }
+
+
+
+
   startBatchAnalysis() {
     let payload = this._dataService.fetchBatchAnalysisPayload();
 
@@ -369,6 +380,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             summary: res.summary,
           };
           this._dataService.setAnalysisData(data);
+          this.formulaSuggestions = this._dataService.fetchMetricsForFormulaComponent();
 
           // here check if multiple periods are available if yes then
           // go for varience analysis other wise just show till batch analysis
@@ -404,12 +416,15 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
           }
           else{
           this.dataReady.emit(true);
-            this.recordProcessMsg(5);
+          this.recordProcessMsg(5);
           this.recordMsg("I've updated the dashboard. but variance analysis not loaded", true);
           }
           
           
         },
+        error:(err)=>{
+            this.recordMsg(err?.message ? err.message : 'Something went wrong',true);
+        }
       });
     } else {
     }

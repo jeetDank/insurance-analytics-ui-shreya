@@ -271,16 +271,16 @@ color: rgb(202, 2, 2);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(128, 128, 128, 0.3);
   border-radius: 10px;
-  border: 2px solid var(--color-background, rgba(255, 255, 255, 0.3));
+  border: 2px solid var(--color-background, rgba(121, 121, 121, 0.3));
   
   &:hover {
     background: rgba(255, 255, 255, 0.08);
   }
   
   &:active {
-    background: var(--color-primary, #94a3b8);
+    background: var(--color-primary, #606060);
   }
 }
 

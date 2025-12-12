@@ -1,6 +1,6 @@
-<div class="mt-5 p-4">
+<div  class="mt-5 p-4" >
   <!-- Header Section -->
-  <div class="flex items-center flex-wrap justify-between w-full mb-4">
+  <div  class="flex items-center flex-wrap justify-between w-full mb-4">
     <div class="flex items-center gap-2">
       <span class="flex items-center">
         <svg
@@ -35,12 +35,13 @@
       (click)="toggleFormulaView()"
       class="flex items-center p-2 hover:bg-neutral-800 rounded cursor-pointer transition-colors"
     >
-      <i class="material-icons">{{ showAddForm ? "close" : "add" }}</i>
+      <i class="material-icons">{{ formulaListView ? "add" : "close" }}</i>
     </span>
     <div class="text-xs sub-text grow mt-2">
       Create and manage custom metrics
     </div>
   </div>
+
 
   <div class="flex flex-row custom-search-box items-center">
     <svg
@@ -61,57 +62,153 @@
       <circle cx="11" cy="11" r="8"></circle>
     </svg>
 
-    <input type="text" placeholder="Search Formulas..." />
+    <input #search (keyup)="searchData(search.value)" class="grow"  type="text" placeholder="Search Formulas..." />
   </div>
-
 
   @if(!formulaListView){
-    <div class="mt-4 p-3">
-    <form class="myform flex flex-col gap-6" action="">
-      <input type="text" placeholder="Formula Name (e.g., ROE)" />
+  <div class="mt-4 p-3" style="overflow-y: auto;">
+    <form
+      [formGroup]="formulaForm"
+      class="myform flex flex-col gap-6"
+      action=""
+    >
+      <input
+        formControlName="name"
+        type="text"
+        placeholder="Formula Name (e.g., ROE)"
+      />
 
-      <textarea
-        rows="2"
-        name=""
-        id=""
-        placeholder="Formula (e.g., Net Income / Shareholders Equity)"
-      ></textarea>
+      <div class="relative">
+        <textarea
+          #formulaTextarea
+          formControlName="formula"
+          rows="3"
+          placeholder="Formula (e.g., net_income / revenue * 100)"
+          (input)="onFormulaInput($event)"
+          (focus)="onFormulaFocus()"
+          (blur)="onFormulaBlur()"
+          class="w-full"
+        ></textarea>
 
-      <input type="text" placeholder="Description (optional)" />
-      <div class="mt-2 flex flex-row gap-2" >
-      <button type="button" class="add-button flex grow items-center justify-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-check h-3 w-3 mr-1"
-          aria-hidden="true"
+        <!-- Suggestions Dropdown -->
+        @if(showSuggestions && filteredSuggestions.length > 0) {
+        <div class="suggestions-dropdown">
+          @for(suggestion of filteredSuggestions; track suggestion.metric) {
+          <div
+            class="suggestion-item"
+            (click)="selectSuggestion(suggestion, formulaTextarea)"
+          >
+            <div class="flex justify-between items-center w-full">
+              <div>
+                <div class="font-medium text-sm">
+                  {{ suggestion.metricViewName }}
+                </div>
+                <div class="text-xs text-neutral-500">
+                  {{ suggestion.metric }}
+                </div>
+                <div class="font-medium text-sm">{{ suggestion.company }}</div>
+                <div class="text-xs text-neutral-500">
+                  {{ suggestion.quarter }}
+                </div>
+              </div>
+              <div class="text-xs text-neutral-400">
+                {{ suggestion.value | number }}
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+        }
+
+        <!-- Error Message -->
+        @if(formulaError) {
+        <div class="formula-error-message">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="inline mr-1"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          {{ formulaError }}
+        </div>
+        }
+
+        <!-- Helper Text -->
+        <!-- <div class="text-xs text-neutral-500 mt-2">
+          Available metrics: @for(metric of suggestionsMetrics; track
+          metric.metric; let last = $last) {
+          <span class="text-neutral-400"
+            >{{ metric.metric }}@if(!last){, }</span
+          >
+          }
+        </div> -->
+      </div>
+
+      <input
+        formControlName="description"
+        type="text"
+        placeholder="Description (optional)"
+      />
+
+      <div class="mt-2 flex flex-row gap-2">
+        <button
+          [disabled]="formulaForm.invalid || formulaError"
+          (click)="addNewFormula()"
+          type="button"
+          class="add-button flex grow items-center justify-center"
+          [class.opacity-50]="formulaForm.invalid || formulaError"
         >
-          <path d="M20 6 9 17l-5-5"></path>
-        </svg>
-        <span> Add</span>
-      </button>
-      <button type="button" (click)="toggleFormulaView()"><i style="font-size: 16;"  class="material-icons">close</i></button>
-    </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-check h-3 w-3 mr-1"
+            aria-hidden="true"
+          >
+            <path d="M20 6 9 17l-5-5"></path>
+          </svg>
+          <span>{{ editingFormulaId !== null ? "Update" : "Add" }}</span>
+        </button>
+        <button type="button" (click)="toggleFormulaView()">
+          <i style="font-size: 16" class="material-icons">close</i>
+        </button>
+      </div>
     </form>
-    
   </div>
-  }
-
-
-  @if (formulaListView) {
-    <div class="mt-4 list-bg" >
+  } @if (formulaListView) {
+  <div class="mt-4 list-bg">
+    @for (item of filteredList; track item.id) {
     <div class="p-3">
-      <div class="flex justify-between">
-        <div class="text-sm font-semibold">ROE</div>
+      <div class="flex justify-between items-start">
+        <div class="flex-1">
+          <div class="text-sm font-semibold">{{ item.name }}</div>
+          @if(item.calculatedValue !== undefined) {
+          <div class="text-lg font-bold text-blue-400 mt-1">
+            {{ item.calculatedValue | number : "1.2-2" }}
+          </div>
+          }
+        </div>
         <div class="flex gap-2">
-          <button class="text-neutral-400 text-md hover:text-neutral-300">
+          <button
+            (click)="editFormula(item.id)"
+            class="text-neutral-400 text-md hover:text-neutral-300"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -131,7 +228,10 @@
             </svg>
           </button>
 
-          <button class="text-neutral-400 text-md hover:text-red-300">
+          <button
+            (click)="deleteFormula(item.id)"
+            class="text-neutral-400 text-md hover:text-red-300"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -156,13 +256,14 @@
       </div>
       <div>
         <p class="!text-xs mt-1" style="font-family: space-mono">
-          Net Income / shareholder equity
+          {{ item.formula }}
         </p>
       </div>
+      <div class="text-xs mt-2 mb-2 text-neutral-500">
+        {{ item.description }}
+      </div>
     </div>
+    }
   </div>
   }
-  
-
-  
 </div>
