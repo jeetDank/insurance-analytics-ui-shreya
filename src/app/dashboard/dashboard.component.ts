@@ -19,7 +19,6 @@ import { SunburstChart } from 'echarts/charts';
 import { PieChart } from 'echarts/charts';
 import {
   GridComponent,
-  GridSimpleComponent,
   LegendComponent,
   TitleComponent,
   TooltipComponent,
@@ -30,8 +29,10 @@ import { SegmentTableComponent } from '../common/componants/segment-table/segmen
 import { DataService } from '../common/services/data.service';
 import { LoaderService } from '../common/services/loader.service';
 import { CommonModule } from '@angular/common';
-import { AmbiguityResolverComponent } from '../common/componants/ambiguity-resolver/ambiguity-resolver.component';
 import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
+
+import { LucideAngularModule, FilesIcon } from 'lucide-angular';
+
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -66,6 +67,7 @@ echarts.use([
     SegmentTableComponent,
     CommonModule,
     LegendDisplayComponent,
+    // LucideAngularModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -79,6 +81,7 @@ echarts.use([
 export class DashboardComponent implements OnInit {
   isDarkTheme = true;
   isSideNavOpened = true;
+  readonly FileIcon = FilesIcon;
 
   // Common chart configuration for crisp rendering
   private getCommonChartConfig() {
@@ -666,15 +669,20 @@ export class DashboardComponent implements OnInit {
           segmentWiseStackedChartData
         );
 
-      console.log(segmentWiseStackedChartData);
+      
 
-      this.segmentStackedOption = this._dataService.generateSegmentCharts(
-        segmentWiseStackedChartData
-      );
+      // this.segmentStackedOption = this._dataService.generateSegmentCharts(
+      //   segmentWiseStackedChartData
+      // );
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
         commonSegmentColumnCharts
       );
-      console.log(this.segmentStackedOption);
+
+      const verticalSegmentbarChart:any =this._dataService.fetchVerticalStackedBarChartData();
+
+      this.segmentStackedOption = this._dataService.generateVerticalSegmentCharts(verticalSegmentbarChart)
+
+      console.log(this.segmentStackedOption,);
     }
   }
   selectOption(option: string): void {

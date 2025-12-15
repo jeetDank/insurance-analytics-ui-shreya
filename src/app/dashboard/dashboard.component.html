@@ -379,8 +379,8 @@
                 aria-hidden="true"
               >
                 <path d="M5 12h14"></path>
-                <path d="M12 5v14"></path></svg
-              >Add Metric
+                <path d="M12 5v14"></path></svg>
+                Add Metric
             </button>
 
             <button
@@ -406,8 +406,8 @@
               >
                 <path d="M12 15V3"></path>
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <path d="m7 10 5 5 5-5"></path></svg
-              >Export to Excel
+                <path d="m7 10 5 5 5-5"></path></svg>
+                Export to Excel
             </button>
           </div>
         </div>
@@ -781,8 +781,7 @@
                 aria-hidden="true"
               >
                 <path d="M5 12h14"></path>
-                <path d="M12 5v14"></path></svg
-              >Add Segment
+                <path d="M12 5v14"></path></svg>Add Segment
             </button>
 
             <button
@@ -808,8 +807,7 @@
               >
                 <path d="M12 15V3"></path>
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <path d="m7 10 5 5 5-5"></path></svg
-              >Export to Excel
+                <path d="m7 10 5 5 5-5"></path></svg>Export to Excel
             </button>
           </div>
         </div>
@@ -922,10 +920,10 @@
               class="rounded-xl"
               echarts
               [options]="chart.config"
-              style="height: 100px;width: 100%;"
+              style="min-height:400px;width: 100%;"
             ></div>
             <div class="mb-4">
-              <app-legend-display [data]="chart.legends" ></app-legend-display>
+              <!-- <app-legend-display [data]="chart.legends" ></app-legend-display> -->
             </div>
 
             }
@@ -1125,3 +1123,10 @@
     </div>
   </mat-drawer-container>
 </div>
+
+<!-- 
+
+<div>
+
+  <i-lucide [img]="FileIcon" class="my-icon"></i-lucide>
+</div> -->

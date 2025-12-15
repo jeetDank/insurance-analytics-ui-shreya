@@ -1760,8 +1760,6 @@ export class DataService {
     return chartConfigs;
   }
 
-  
-
   fetchMetricsForFormulaComponent() {
     if (!this.API_DATA?.ANALYSIS_DATA?.results?.[0]?.statements) {
       return null;
@@ -1795,6 +1793,365 @@ export class DataService {
 
     return Array.from(metricsMap.values());
   }
+
+
+
+
+  convertResponseObject(input:any) {
+  const result = {};
+
+  const toCamelCase = (str:any) =>
+    str
+      .trim()
+      .replace(/^[A-Z]/, (m:any) => m.toLowerCase())
+      .replace(/[^a-zA-Z0-9]+(.)/g, (_:any, chr:any) => chr.toUpperCase());
+
+  const deepMerge = (target:any, source:any) => {
+    for (const key in source) {
+      if (
+        source[key] &&
+        typeof source[key] === "object" &&
+        !Array.isArray(source[key]) &&
+        key in target
+      ) {
+        deepMerge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    }
+  };
+
+  Object.entries(input).forEach(([key, obj]:any) => {
+    const value = obj?.value;
+
+    // SIMPLE KEY
+    if (!key.startsWith("{") || !key.endsWith("}")) {
+      deepMerge(result, {
+        [toCamelCase(key)]: { value }
+      });
+      return;
+    }
+
+    // COMPOUND KEY
+    const pairs = key
+      .slice(1, -1)
+      .split(",")
+      .map((p:any) => p.trim());
+
+    let currentLevel:any = result;
+
+    pairs.forEach((pair:any, index:any) => {
+      const [rawKey, rawValue] = pair.split("=");
+
+      const k = toCamelCase(rawKey);
+      const v = toCamelCase(rawValue);
+
+      currentLevel[k] ??= {};
+      currentLevel[k][v] ??= {};
+
+      currentLevel = currentLevel[k][v];
+
+      if (index === pairs.length - 1) {
+        currentLevel.value = value;
+      }
+    });
+  });
+
+  return result;
+}
+
+
+
+
+
+
+  fetchVerticalStackedBarChartData() {
+    if (this.API_DATA.ANALYSIS_DATA) {
+      
+      let data: any[] = [];
+      this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {
+        let companyData = {
+          company: company.company_name,
+          quarters: <any[]>[],
+        };
+
+        company.statements.forEach((quarter: any) => {
+          let filtredRequestedMetrics: any[] = [];
+          this.API_DATA.PARSED_QUERY.metrics.forEach((metric: any) => {
+            filtredRequestedMetrics.push({metricName:metric,total:quarter.all_metrics[metric].value,children:this.convertResponseObject(quarter.all_metrics[metric].children)})
+          });
+          companyData.quarters.push({
+            period: quarter.context_info.period_label_text,
+            metrics: filtredRequestedMetrics,
+
+          });
+        });
+        data.push(companyData)
+      });
+      return data;
+    } else {
+      return null;
+    }
+  }
+
+  generateVerticalSegmentCharts(data: any[]) {
+  const chartConfigs: any[] = [];
+
+  // Color palette
+  const colorPalette = [
+    '#3b82f6', // blue
+    '#10b981', // green
+    '#ef4444', // red
+    '#f59e0b', // orange
+    '#8b5cf6', // purple
+    '#ec4899', // pink
+    '#06b6d4', // cyan
+    '#84cc16', // lime
+  ];
+
+  data.forEach((companyData: any) => {
+    const companyName = companyData.company;
+
+    companyData.quarters.forEach((quarterData: any) => {
+      const period = quarterData.period;
+      const metric = quarterData.metrics[0];
+
+      // Get root level keys (these will be the bars)
+      const rootKeys = Object.keys(metric.children);
+      const categories = rootKeys.map(key => snakeToTitleCase(key));
+
+      // Collect all unique segment names across all bars
+      const allSegmentNames = new Set<string>();
+      const barSegments: any = {}; // Store segments for each bar
+
+      rootKeys.forEach(rootKey => {
+        const rootItem = metric.children[rootKey];
+        barSegments[rootKey] = [];
+
+        // Check if this root item has children
+        if (typeof rootItem === 'object' && rootItem !== null) {
+          // If it has a 'value' property only (no other children), treat it as a single segment
+          const childKeys = Object.keys(rootItem).filter(k => k !== 'value');
+          
+          if (childKeys.length === 0 && rootItem.value !== undefined) {
+            // This is a leaf node, use it as a single segment
+            barSegments[rootKey].push({
+              name: rootKey,
+              value: rootItem.value
+            });
+            allSegmentNames.add(rootKey);
+          } else {
+            // This has children, process them as segments
+            childKeys.forEach(childKey => {
+              const childItem = rootItem[childKey];
+              if (childItem && childItem.value !== null && childItem.value !== undefined) {
+                barSegments[rootKey].push({
+                  name: childKey,
+                  value: childItem.value
+                });
+                allSegmentNames.add(childKey);
+              }
+            });
+          }
+        }
+      });
+
+      // Create series for each unique segment
+      const series: any[] = [];
+      const segmentNames = Array.from(allSegmentNames);
+
+      segmentNames.forEach((segmentName, index) => {
+        const seriesData = rootKeys.map(rootKey => {
+          const segment = barSegments[rootKey].find((s: any) => s.name === segmentName);
+          return segment ? segment.value / 1000000 : 0; // Convert to millions
+        });
+
+        series.push({
+          name: snakeToTitleCase(segmentName),
+          type: 'bar',
+          stack: 'total',
+          barWidth: '60%',
+          label: {
+            show: false,
+          },
+          itemStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                {
+                  offset: 0,
+                  color: colorPalette[index % colorPalette.length],
+                },
+                {
+                  offset: 1,
+                  color: colorPalette[index % colorPalette.length] + 'cc',
+                },
+              ],
+            },
+          },
+          emphasis: {
+            itemStyle: {
+              color: colorPalette[index % colorPalette.length],
+            },
+          },
+          data: seriesData,
+        });
+      });
+
+      // Create legends
+      const legends = segmentNames.map((name, index) => ({
+        name: snakeToTitleCase(name),
+        color: colorPalette[index % colorPalette.length],
+      }));
+
+      const chartConfig = {
+        useDirtyRect: true,
+        devicePixelRatio: window.devicePixelRatio || 1,
+
+        title: {
+          text: `${companyName} - ${period}`,
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 600,
+            color: '#d7d7d7ff',
+          },
+          left: 'center',
+          top: 10,
+        },
+
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          backgroundColor: 'rgba(15, 15, 25, 0.95)',
+          borderColor: 'rgba(100, 100, 150, 0.3)',
+          borderWidth: 1,
+          borderRadius: 12,
+          padding: 12,
+          textStyle: {
+            color: '#d7d7d7ff',
+            fontSize: 12,
+            fontWeight: 'normal',
+          },
+          formatter: (params: any) => {
+            const categoryName = params[0].name;
+            let result = `<div style="font-weight: 600; margin-bottom: 8px;">${categoryName}</div>`;
+            
+            let total = 0;
+            params.forEach((param: any) => {
+              if (param.value > 0) {
+                total += param.value;
+                result += `
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0;">
+                    <span style="display: inline-block; width: 10px; height: 10px; background: ${
+                      param.color
+                    }; border-radius: 50%; margin-right: 8px;"></span>
+                    <span style="margin-right: 20px;">${param.seriesName}</span>
+                    <span style="font-weight: 600;">$${param.value.toFixed(2)}M</span>
+                  </div>
+                `;
+              }
+            });
+            
+            result += `
+              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(100, 100, 150, 0.3);">
+                <div style="display: flex; justify-content: space-between;">
+                  <span style="font-weight: 600;">Total:</span>
+                  <span style="font-weight: 600;">$${total.toFixed(2)}M</span>
+                </div>
+              </div>
+            `;
+            
+            return result;
+          },
+        },
+
+        legend: {
+          data: legends.map(l => l.name),
+          bottom: 10,
+          textStyle: {
+            color: '#d7d7d7ff',
+            fontSize: 11,
+          },
+          type: 'scroll',
+        },
+
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          top: '20%',
+          containLabel: true,
+        },
+
+        xAxis: {
+          type: 'category',
+          data: categories,
+          axisLabel: {
+            show: true,
+            color: '#d7d7d7ff',
+            fontSize: 12,
+            interval: 0,
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: 'rgba(100, 100, 150, 0.3)',
+            },
+          },
+          axisTick: {
+            show: false,
+          },
+        },
+
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            show: true,
+            color: '#d7d7d7ff',
+            fontSize: 11,
+            formatter: (value: number) => {
+              return value >= 0 ? `$${value}M` : `-$${Math.abs(value)}M`;
+            },
+          },
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: 'rgba(100, 100, 150, 0.1)',
+              type: 'dashed',
+            },
+          },
+        },
+
+        backgroundColor: 'transparent',
+
+        series: series,
+      };
+
+      chartConfigs.push({
+        company: companyName,
+        period: period,
+        total: metric.total,
+        legends: legends,
+        config: chartConfig,
+      });
+    });
+  });
+
+  return chartConfigs;
+}
+
+
+  
 }
 
 function snakeToTitleCase(str: string): string {
