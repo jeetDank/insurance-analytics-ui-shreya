@@ -538,7 +538,7 @@ export class DashboardComponent implements OnInit {
 
 
   historicalQueries:any = [];
-
+  filteredHistoricalQueries:any = []
 
   onMenuClick() {}
   ngOnInit(): void {
@@ -551,7 +551,7 @@ export class DashboardComponent implements OnInit {
     this._dataService.HistoryBucket$.subscribe((history)=>{
       console.log(history);
       this.historicalQueries = history;
-      console.log(this.historicalQueries);
+      this.filteredHistoricalQueries = this.historicalQueries
       
       
     })
@@ -831,8 +831,31 @@ export class DashboardComponent implements OnInit {
 
  
 
-
-  searchData(searchQuery: string) {
   
+
+  searchHistoricalQuery(searchQuery: string) {
+  const term = searchQuery.toLowerCase().trim();
+
+  this.filteredHistoricalQueries = this.historicalQueries.filter((query:any) => {
+    const parsed = query?.API_DATA?.PARSED_QUERY;
+
+    if (!parsed) return false;
+
+    const rawQueryMatch =
+      parsed.raw_query?.toLowerCase().includes(term);
+
+    const referenceDateMatch =
+      parsed.time_config?.reference_date
+        ?.toLowerCase()
+        .includes(term);
+
+    const metricsMatch =
+      Array.isArray(parsed.metrics) &&
+      parsed.metrics.some((metric:any) =>
+        metric?.toLowerCase().includes(term)
+      );
+
+    return rawQueryMatch || referenceDateMatch || metricsMatch;
+  });
 }
 }

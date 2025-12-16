@@ -1202,7 +1202,7 @@
 
         <input
           #search
-          (keyup)="searchData(search.value)"
+          (keyup)="searchHistoricalQuery(search.value)"
           class="grow"
           type="text"
           placeholder="Search dashboards..."
@@ -1210,7 +1210,7 @@
       </div>
 
 
-      @for(query of historicalQueries;track $index){
+      @for(query of filteredHistoricalQueries;track $index){
 
         @if(query?.API_DATA?.ANALYSIS_DATA){
           <div class="query" (click)="loadHistoricalData(query)" >
