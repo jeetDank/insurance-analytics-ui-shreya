@@ -66,7 +66,7 @@ echarts.use([
     MetricTableComponent,
     SegmentTableComponent,
     CommonModule,
-    LegendDisplayComponent,
+    // LegendDisplayComponent,
     // LucideAngularModule
   ],
   templateUrl: './dashboard.component.html',
@@ -536,6 +536,10 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+
+  historicalQueries:any = [];
+
+
   onMenuClick() {}
   ngOnInit(): void {
     this._loader.isLoading$.subscribe({
@@ -543,6 +547,16 @@ export class DashboardComponent implements OnInit {
         this.isLoaderVisible = res;
       },
     });
+
+    this._dataService.HistoryBucket$.subscribe((history)=>{
+      console.log(history);
+      this.historicalQueries = history;
+      console.log(this.historicalQueries);
+      
+      
+    })
+
+
   }
 
   isLoaderVisible = false;
@@ -592,7 +606,23 @@ export class DashboardComponent implements OnInit {
     return this.currentTabSegment === option;
   }
 
+
+  historicalConvo:any = null;
+
+  sendConvoToQueryBox(conversation:any){
+    this.historicalConvo = conversation;
+  }
+
+
+  loadHistoricalData(query:any){
+    this._dataService.API_DATA = query.API_DATA;
+    this.sendConvoToQueryBox(query.conversation);
+    this.showData();
+
+  }
+
   resetData() {
+
     this.isDataAvailable = false;
     this.companies = [];
     this.cardView = [];
@@ -692,6 +722,34 @@ export class DashboardComponent implements OnInit {
   isSelected(option: string): boolean {
     return this.currentTabComparison === option;
   }
+  isHistoryVisible:boolean =false;
+
+  isHistorySidebarOpen = false;
+  showHistorySidebar = false;
+
+  openHistorySidebar() {
+    this.isHistorySidebarOpen = true;
+    // Trigger animation after DOM is rendered
+    setTimeout(() => {
+      this.showHistorySidebar = true;
+    }, 10);
+  }
+
+  closeHistorySidebar() {
+    this.showHistorySidebar = false;
+    // Wait for animation to complete before removing from DOM
+    setTimeout(() => {
+      this.isHistorySidebarOpen = false;
+    }, 300);
+  }
+
+  toggleHistorySidebar() {
+    if (this.isHistorySidebarOpen) {
+      this.closeHistorySidebar();
+    } else {
+      this.openHistorySidebar();
+    }
+  }
 
   tableColumns: any[] = [
     {
@@ -770,4 +828,11 @@ export class DashboardComponent implements OnInit {
     };
     return gridClasses[columnCount] || 'grid-cols-4';
   }
+
+ 
+
+
+  searchData(searchQuery: string) {
+  
+}
 }

@@ -8,5 +8,5 @@ import { httpLoaderInterceptorInterceptor } from './interceptors/http-loader-int
 import { errorInterceptor } from './interceptors/error-interceptor.interceptor';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideHttpClient(withInterceptors([httpLoaderInterceptorInterceptor,errorInterceptor])),provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideAnimations() ]
+  providers: [provideHttpClient(withInterceptors([httpLoaderInterceptorInterceptor,errorInterceptor])),provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideAnimations(), ]
 };

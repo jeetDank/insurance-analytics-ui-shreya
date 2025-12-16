@@ -222,6 +222,7 @@
     <span class="spacer"></span>
 
     <button
+      (click)="toggleHistorySidebar()"
       data-slot="sheet-trigger"
       class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 text-white/60 hover:text-white hover:bg-white/[0.05]"
       type="button"
@@ -245,7 +246,8 @@
       >
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
         <path d="M3 3v5h5"></path>
-        <path d="M12 7v5l4 2"></path></svg><span class="hidden sm:inline">History</span>
+        <path d="M12 7v5l4 2"></path></svg
+      ><span class="hidden sm:inline">History</span>
     </button>
   </mat-toolbar>
   <mat-drawer-container class="drawer-container" autosize>
@@ -256,8 +258,12 @@
       style="border-radius: 0"
       mode="side"
     >
-      <div class="h-full drawer rounded-none" >
-        <app-quary-box (resetData)="resetData()" (dataReady)="showData()"></app-quary-box>
+      <div class="h-full drawer rounded-none">
+        <app-quary-box
+          [historicalConvo]="historicalConvo"
+          (resetData)="resetData()"
+          (dataReady)="showData()"
+        ></app-quary-box>
       </div>
     </mat-drawer>
 
@@ -379,8 +385,9 @@
                 aria-hidden="true"
               >
                 <path d="M5 12h14"></path>
-                <path d="M12 5v14"></path></svg>
-                Add Metric
+                <path d="M12 5v14"></path>
+              </svg>
+              Add Metric
             </button>
 
             <button
@@ -406,8 +413,9 @@
               >
                 <path d="M12 15V3"></path>
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <path d="m7 10 5 5 5-5"></path></svg>
-                Export to Excel
+                <path d="m7 10 5 5 5-5"></path>
+              </svg>
+              Export to Excel
             </button>
           </div>
         </div>
@@ -730,7 +738,10 @@
 
         <!-- SEGMENT VIEW -->
         @if(!isComparison){
-        <div class="flex flex-row align-center flex-wrap" style="margin-bottom: 32px">
+        <div
+          class="flex flex-row align-center flex-wrap"
+          style="margin-bottom: 32px"
+        >
           <div>
             <h1 class="!text-2xl">
               @for(company of companies; track $index ){
@@ -781,7 +792,8 @@
                 aria-hidden="true"
               >
                 <path d="M5 12h14"></path>
-                <path d="M12 5v14"></path></svg>Add Segment
+                <path d="M12 5v14"></path></svg
+              >Add Segment
             </button>
 
             <button
@@ -807,7 +819,8 @@
               >
                 <path d="M12 15V3"></path>
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <path d="m7 10 5 5 5-5"></path></svg>Export to Excel
+                <path d="m7 10 5 5 5-5"></path></svg
+              >Export to Excel
             </button>
           </div>
         </div>
@@ -911,16 +924,21 @@
         <!-- Stacked View -->
         @if(currentTabSegment == 'stacked'){
         <div class="space-y-4">
-          <div class="rounded-xl p-6 flex flex-col flex-wrap" style="min-height: 400px">
+          <div
+            class="rounded-xl p-6 flex flex-col flex-wrap"
+            style="min-height: 400px"
+          >
             @for (chart of segmentStackedOption; track $index) {
-            
-            <div class="text-sm font-bold mt-4 mb-2" >{{chart.company}} - {{chart.period}} - {{chart.metric}} </div> 
+
+            <div class="text-sm font-bold mt-4 mb-2">
+              {{ chart.company }} - {{ chart.period }} - {{ chart.metric }}
+            </div>
 
             <div
               class="rounded-xl"
               echarts
               [options]="chart.config"
-              style="min-height:400px;width: 100%;"
+              style="min-height: 500px; width: 100%"
             ></div>
             <div class="mb-4">
               <!-- <app-legend-display [data]="chart.legends" ></app-legend-display> -->
@@ -932,24 +950,28 @@
         }
 
         <!-- Bar View -->
-        @if(currentTabSegment == 'bar'){
-        
-         @if (commonSegmentsOption.length ==0) {
-        <div style="width: 100%;" class="h-50 flex items-center justify-center" > 
-          No data to display. The dataset may be unavailable, or you may be viewing a single-company analysis.
-         </div> 
-         }
+        @if(currentTabSegment == 'bar'){ @if (commonSegmentsOption.length ==0) {
+        <div style="width: 100%" class="h-50 flex items-center justify-center">
+          No data to display. The dataset may be unavailable, or you may be
+          viewing a single-company analysis.
+        </div>
+        }
         <div class="space-y-4">
-          <div class="rounded-xl p-6 flex flex-col flex-wrap" style="min-height: 200px">
+          <div
+            class="rounded-xl p-6 flex flex-col flex-wrap"
+            style="min-height: 200px"
+          >
             @for (chart of commonSegmentsOption; track $index) {
             <div class="text-sm mb-2 mt-2">
-                <div class="text-sm font-bold">{{ chart.segment_name }} - {{ chart.period }}</div>
+              <div class="text-sm font-bold">
+                {{ chart.segment_name }} - {{ chart.period }}
+              </div>
             </div>
             <div
               class="rounded-xl"
               echarts
               [options]="chart.config"
-              style="height: 100px;width: 100%;"
+              style="height: 100px; width: 100%"
             ></div>
 
             }
@@ -1130,3 +1152,109 @@
 
   <i-lucide [img]="FileIcon" class="my-icon"></i-lucide>
 </div> -->
+
+
+@if (isHistorySidebarOpen) {
+  <div 
+    class="history-container" 
+    [class.show]="showHistorySidebar"
+    (click)="closeHistorySidebar()">
+    
+    <div 
+      class="history-sidebar p-4" 
+      [class.show]="showHistorySidebar"
+      (click)="$event.stopPropagation()">
+      
+      <!-- Header with close button -->
+      <div class="mb-5 flex justify-between items-start">
+        <div>
+          <h2 class="text-md">Dashboard History</h2>
+          <p>Search and load previously created dashboard</p>
+        </div>
+        <button 
+          (click)="closeHistorySidebar()"
+          class="p-2 hover:bg-[#ffffff0d] rounded-lg transition-colors">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="mb-5 flex flex-row custom-search-box items-center">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-search h-3.5 w-3.5 ms-1"
+          aria-hidden="true"
+          style="color: rgba(255, 255, 255, 0.4)"
+        >
+          <path d="m21 21-4.34-4.34"></path>
+          <circle cx="11" cy="11" r="8"></circle>
+        </svg>
+
+        <input
+          #search
+          (keyup)="searchData(search.value)"
+          class="grow"
+          type="text"
+          placeholder="Search dashboards..."
+        />
+      </div>
+
+
+      @for(query of historicalQueries;track $index){
+
+        @if(query?.API_DATA?.ANALYSIS_DATA){
+          <div class="query" (click)="loadHistoricalData(query)" >
+        <h3 class="text-md mb-2">{{query?.API_DATA?.PARSED_QUERY?.raw_query}}</h3>
+        <div class="mb-2 flex flex-row gap-2 items-center">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="lucide lucide-calendar h-3 w-3"
+            aria-hidden="true"
+          >
+            <path d="M8 2v4"></path>
+            <path d="M16 2v4"></path>
+            <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+            <path d="M3 10h18"></path>
+          </svg>
+          <span class="text-sm sub-text">{{query?.API_DATA?.PARSED_QUERY?.time_config?.reference_date}}</span>
+        </div>
+
+        <!-- requested metrics -->
+        <div class="flex flex-row flex-wrap align-center gap-2">
+
+          @for(metric of query?.API_DATA?.PARSED_QUERY?.metrics;track metric ){
+            <div class="chip pt-1 pb-1 ps-2 pe-2">
+            <h5>{{metric}}</h5>
+          </div>
+          }
+          
+        </div>
+      </div>
+        }
+
+        
+
+      }
+
+      
+    </div>
+  </div>
+}

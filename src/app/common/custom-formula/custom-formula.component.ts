@@ -84,7 +84,7 @@ export class CustomFormulaComponent implements OnInit {
       metric: "net_income",
       value: 85522,
       metricViewName: "Net Income",
-       quarter:"Q2 2024",
+      quarter:"Q2 2024",
       company:"Hartford"
     }
   ];

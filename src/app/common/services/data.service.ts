@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ECharts } from 'echarts/core';
+import { BehaviorSubject } from 'rxjs';
 
 interface apiData {
   PARSED_QUERY: any | null;
@@ -30,6 +31,27 @@ export class DataService {
     AMBIGUITY_DATA: null,
     INSIGHTS_DATA: null,
   };
+
+ 
+HistoryBucket$ = new BehaviorSubject<any[]>(
+  JSON.parse(localStorage.getItem('historyBucket') || '[]')
+);
+
+  addQueryToHistory(conversation: any) {
+  const history = [...this.HistoryBucket$.value];
+
+  if (history.length > 1) {
+    history.shift();
+  }
+
+  history.push({
+    conversation,
+    API_DATA: { ...this.API_DATA }
+  });
+
+  this.HistoryBucket$.next(history);
+  localStorage.setItem('historyBucket', JSON.stringify(history));
+}
 
   setParsedQuery(data: any) {
     this.API_DATA.PARSED_QUERY = data;
@@ -1794,99 +1816,115 @@ export class DataService {
     return Array.from(metricsMap.values());
   }
 
-
-
-
-  convertResponseObject(input:any) {
-  const result = {};
-
-  const toCamelCase = (str:any) =>
-    str
-      .trim()
-      .replace(/^[A-Z]/, (m:any) => m.toLowerCase())
-      .replace(/[^a-zA-Z0-9]+(.)/g, (_:any, chr:any) => chr.toUpperCase());
-
-  const deepMerge = (target:any, source:any) => {
-    for (const key in source) {
-      if (
-        source[key] &&
-        typeof source[key] === "object" &&
-        !Array.isArray(source[key]) &&
-        key in target
-      ) {
-        deepMerge(target[key], source[key]);
-      } else {
-        target[key] = source[key];
-      }
+  convertResponseObject(input: any) {
+    // Add safety check
+    if (!input || typeof input !== 'object') {
+      return {};
     }
-  };
 
-  Object.entries(input).forEach(([key, obj]:any) => {
-    const value = obj?.value;
+    const result = {};
 
-    // SIMPLE KEY
-    if (!key.startsWith("{") || !key.endsWith("}")) {
-      deepMerge(result, {
-        [toCamelCase(key)]: { value }
+    const toCamelCase = (str: any) =>
+      str
+        .trim()
+        .replace(/^[A-Z]/, (m: any) => m.toLowerCase())
+        .replace(/[^a-zA-Z0-9]+(.)/g, (_: any, chr: any) => chr.toUpperCase());
+
+    const deepMerge = (target: any, source: any) => {
+      for (const key in source) {
+        if (
+          source[key] &&
+          typeof source[key] === 'object' &&
+          !Array.isArray(source[key]) &&
+          key in target
+        ) {
+          deepMerge(target[key], source[key]);
+        } else {
+          target[key] = source[key];
+        }
+      }
+    };
+
+    // Helper function to extract value with children.SingleValue fallback
+    const extractValue = (obj: any): any => {
+      let value = obj?.value;
+
+      // If value is null/undefined, check for children.Single Value
+      if (value == null && obj?.children) {
+        if (obj.children['Single Value']) {
+          // Recursively extract value from Single Value object (not just its value)
+          value = extractValue(obj.children['Single Value']);
+        }
+      }
+
+      return value;
+    };
+
+    Object.entries(input).forEach(([key, obj]: any) => {
+      const value = extractValue(obj);
+
+      // SIMPLE KEY
+      if (!key.startsWith('{') || !key.endsWith('}')) {
+        deepMerge(result, {
+          [toCamelCase(key)]: { value },
+        });
+        return;
+      }
+
+      // COMPOUND KEY
+      const pairs = key
+        .slice(1, -1)
+        .split(',')
+        .map((p: any) => p.trim());
+
+      let currentLevel: any = result;
+
+      pairs.forEach((pair: any, index: any) => {
+        const [rawKey, rawValue] = pair.split('=');
+
+        const k = toCamelCase(rawKey);
+        const v = toCamelCase(rawValue);
+
+        currentLevel[k] ??= {};
+        currentLevel[k][v] ??= {};
+
+        currentLevel = currentLevel[k][v];
+
+        if (index === pairs.length - 1) {
+          currentLevel.value = value;
+        }
       });
-      return;
-    }
-
-    // COMPOUND KEY
-    const pairs = key
-      .slice(1, -1)
-      .split(",")
-      .map((p:any) => p.trim());
-
-    let currentLevel:any = result;
-
-    pairs.forEach((pair:any, index:any) => {
-      const [rawKey, rawValue] = pair.split("=");
-
-      const k = toCamelCase(rawKey);
-      const v = toCamelCase(rawValue);
-
-      currentLevel[k] ??= {};
-      currentLevel[k][v] ??= {};
-
-      currentLevel = currentLevel[k][v];
-
-      if (index === pairs.length - 1) {
-        currentLevel.value = value;
-      }
     });
-  });
 
-  return result;
-}
-
-
-
-
-
+    return result;
+  }
 
   fetchVerticalStackedBarChartData() {
     if (this.API_DATA.ANALYSIS_DATA) {
-      
       let data: any[] = [];
       this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {
         let companyData = {
-          company: company.company_name,
+          company: company?.company_name,
           quarters: <any[]>[],
         };
 
         company.statements.forEach((quarter: any) => {
           let filtredRequestedMetrics: any[] = [];
           this.API_DATA.PARSED_QUERY.metrics.forEach((metric: any) => {
-            filtredRequestedMetrics.push({metricName:metric,total:quarter.all_metrics[metric].value,children:this.convertResponseObject(quarter.all_metrics[metric].children)})
+            filtredRequestedMetrics.push({
+              metricName: metric,
+              total: quarter.all_metrics[metric]?.value,
+              children: this.convertResponseObject(
+                quarter.all_metrics[metric].children
+              ),
+            });
           });
           companyData.quarters.push({
-            period: quarter.context_info.period_label_text,
+            period: quarter?.context_info?.period_label_text,
             metrics: filtredRequestedMetrics,
-
           });
         });
-        data.push(companyData)
+        data.push(companyData);
       });
       return data;
     } else {
@@ -1895,168 +1933,212 @@ export class DataService {
   }
 
   generateVerticalSegmentCharts(data: any[]) {
-  const chartConfigs: any[] = [];
+    const chartConfigs: any[] = [];
 
-  // Color palette
-  const colorPalette = [
-    '#3b82f6', // blue
-    '#10b981', // green
-    '#ef4444', // red
-    '#f59e0b', // orange
-    '#8b5cf6', // purple
-    '#ec4899', // pink
-    '#06b6d4', // cyan
-    '#84cc16', // lime
-  ];
+    // Color palette
+    const colorPalette = [
+      '#3b82f6', // blue
+      '#10b981', // green
+      '#ef4444', // red
+      '#f59e0b', // orange
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+      '#06b6d4', // cyan
+      '#84cc16', // lime
+      '#fbbf24', // amber
+      '#a78bfa', // violet
+      '#fb7185', // rose
+      '#34d399', // emerald
+    ];
 
-  data.forEach((companyData: any) => {
-    const companyName = companyData.company;
+    // Helper function to recursively extract all leaf segments
+    function extractLeafSegments(obj: any, path: string = ''): any[] {
+      const segments: any[] = [];
 
-    companyData.quarters.forEach((quarterData: any) => {
-      const period = quarterData.period;
-      const metric = quarterData.metrics[0];
+      if (typeof obj !== 'object' || obj === null) {
+        return segments;
+      }
 
-      // Get root level keys (these will be the bars)
-      const rootKeys = Object.keys(metric.children);
-      const categories = rootKeys.map(key => snakeToTitleCase(key));
+      // Get all keys except 'value'
+      const childKeys = Object.keys(obj).filter((k) => k !== 'value');
 
-      // Collect all unique segment names across all bars
-      const allSegmentNames = new Set<string>();
-      const barSegments: any = {}; // Store segments for each bar
+      // If no children (or only 'value'), this is a leaf node
+      if (childKeys.length === 0) {
+        if (obj.value !== null && obj.value !== undefined) {
+          return [
+            {
+              name: path,
+              value: obj.value,
+              path: path,
+            },
+          ];
+        }
+        return segments;
+      }
 
-      rootKeys.forEach(rootKey => {
-        const rootItem = metric.children[rootKey];
-        barSegments[rootKey] = [];
-
-        // Check if this root item has children
-        if (typeof rootItem === 'object' && rootItem !== null) {
-          // If it has a 'value' property only (no other children), treat it as a single segment
-          const childKeys = Object.keys(rootItem).filter(k => k !== 'value');
-          
-          if (childKeys.length === 0 && rootItem.value !== undefined) {
-            // This is a leaf node, use it as a single segment
-            barSegments[rootKey].push({
-              name: rootKey,
-              value: rootItem.value
-            });
-            allSegmentNames.add(rootKey);
-          } else {
-            // This has children, process them as segments
-            childKeys.forEach(childKey => {
-              const childItem = rootItem[childKey];
-              if (childItem && childItem.value !== null && childItem.value !== undefined) {
-                barSegments[rootKey].push({
-                  name: childKey,
-                  value: childItem.value
-                });
-                allSegmentNames.add(childKey);
-              }
-            });
-          }
+      // Has children - recurse into each child
+      childKeys.forEach((key) => {
+        const child = obj[key];
+        if (child !== null && child !== undefined) {
+          const childPath = path ? `${path}.${key}` : key;
+          const childSegments = extractLeafSegments(child, childPath);
+          segments.push(...childSegments);
         }
       });
 
-      // Create series for each unique segment
-      const series: any[] = [];
-      const segmentNames = Array.from(allSegmentNames);
+      return segments;
+    }
 
-      segmentNames.forEach((segmentName, index) => {
-        const seriesData = rootKeys.map(rootKey => {
-          const segment = barSegments[rootKey].find((s: any) => s.name === segmentName);
-          return segment ? segment.value / 1000000 : 0; // Convert to millions
+    data.forEach((companyData: any) => {
+      const companyName = companyData.company;
+
+      companyData.quarters.forEach((quarterData: any) => {
+        const period = quarterData.period;
+        const metric = quarterData.metrics[0];
+
+        // Get root level keys (these will be the bars)
+        const rootKeys = Object.keys(metric.children);
+        const categories = rootKeys.map((key) => snakeToTitleCase(key));
+
+        // Extract all leaf segments for each root bar
+        const barSegments: any = {};
+        const allSegmentNames = new Set<string>();
+
+        rootKeys.forEach((rootKey) => {
+          const rootItem = metric.children[rootKey];
+          const leafSegments = extractLeafSegments(rootItem, rootKey);
+
+          barSegments[rootKey] = leafSegments;
+
+          // Add segment names to the set
+          leafSegments.forEach((seg) => {
+            // Use the last part of the path as the segment name for display
+            const segmentDisplayName = seg.path.split('.').pop() || seg.name;
+            allSegmentNames.add(segmentDisplayName);
+          });
         });
 
-        series.push({
-          name: snakeToTitleCase(segmentName),
-          type: 'bar',
-          stack: 'total',
-          barWidth: '60%',
-          label: {
-            show: false,
-          },
-          itemStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                {
-                  offset: 0,
-                  color: colorPalette[index % colorPalette.length],
-                },
-                {
-                  offset: 1,
-                  color: colorPalette[index % colorPalette.length] + 'cc',
-                },
-              ],
+        // Create a mapping of segment display names to their data
+        const segmentNames = Array.from(allSegmentNames);
+        const series: any[] = [];
+
+        segmentNames.forEach((segmentName, index) => {
+          const seriesData = rootKeys.map((rootKey) => {
+            const segments = barSegments[rootKey];
+            const segment = segments.find((s: any) => {
+              const displayName = s.path.split('.').pop();
+              return displayName === segmentName;
+            });
+            return segment ? segment.value / 1000000 : 0; // Convert to millions
+          });
+
+          series.push({
+            name: snakeToTitleCase(segmentName),
+            type: 'bar',
+            stack: 'total',
+            barWidth: '60%',
+            label: {
+              show: false,
             },
-          },
-          emphasis: {
             itemStyle: {
-              color: colorPalette[index % colorPalette.length],
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: colorPalette[index % colorPalette.length],
+                  },
+                  {
+                    offset: 1,
+                    color: colorPalette[index % colorPalette.length] + 'cc',
+                  },
+                ],
+              },
             },
-          },
-          data: seriesData,
+            emphasis: {
+              itemStyle: {
+                color: colorPalette[index % colorPalette.length],
+              },
+            },
+            data: seriesData,
+          });
         });
-      });
 
-      // Create legends
-      const legends = segmentNames.map((name, index) => ({
-        name: snakeToTitleCase(name),
-        color: colorPalette[index % colorPalette.length],
-      }));
+        // Create legends
+        const legends = segmentNames.map((name, index) => ({
+          name: snakeToTitleCase(name),
+          color: colorPalette[index % colorPalette.length],
+        }));
 
-      const chartConfig = {
-        useDirtyRect: true,
-        devicePixelRatio: window.devicePixelRatio || 1,
+        const chartConfig = {
+          useDirtyRect: true,
+          devicePixelRatio: window.devicePixelRatio || 1,
 
-        title: {
-          text: `${companyName} - ${period}`,
-          textStyle: {
-            fontSize: 16,
-            fontWeight: 600,
-            color: '#d7d7d7ff',
+          title: {
+            text: `${companyName} - ${period}`,
+            textStyle: {
+              fontSize: 16,
+              fontWeight: 600,
+              color: '#d7d7d7ff',
+            },
+            left: 'center',
+            top: 10,
           },
-          left: 'center',
-          top: 10,
-        },
 
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: { type: 'shadow' },
-          backgroundColor: 'rgba(15, 15, 25, 0.95)',
-          borderColor: 'rgba(100, 100, 150, 0.3)',
-          borderWidth: 1,
-          borderRadius: 12,
-          padding: 12,
-          textStyle: {
-            color: '#d7d7d7ff',
-            fontSize: 12,
-            fontWeight: 'normal',
-          },
-          formatter: (params: any) => {
-            const categoryName = params[0].name;
-            let result = `<div style="font-weight: 600; margin-bottom: 8px;">${categoryName}</div>`;
-            
-            let total = 0;
-            params.forEach((param: any) => {
-              if (param.value > 0) {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: 'rgba(15, 15, 25, 0.95)',
+            borderColor: 'rgba(100, 100, 150, 0.3)',
+            borderWidth: 1,
+            borderRadius: 12,
+            padding: 12,
+            textStyle: {
+              color: '#d7d7d7ff',
+              fontSize: 12,
+              fontWeight: 'normal',
+            },
+            formatter: (params: any) => {
+              const categoryName = params[0].name;
+              let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${categoryName}</div>`;
+
+              let total = 0;
+              const validParams = params.filter((p: any) => p.value > 0);
+
+              validParams.forEach((param: any) => {
                 total += param.value;
+                const percentage =
+                  (param.value /
+                    validParams.reduce(
+                      (sum: number, p: any) => sum + p.value,
+                      0
+                    )) *
+                  100;
                 result += `
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin: 4px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
+                  <div style="display: flex; align-items: center; flex: 1;">
                     <span style="display: inline-block; width: 10px; height: 10px; background: ${
                       param.color
                     }; border-radius: 50%; margin-right: 8px;"></span>
-                    <span style="margin-right: 20px;">${param.seriesName}</span>
-                    <span style="font-weight: 600;">$${param.value.toFixed(2)}M</span>
+                    <span>${param.seriesName}</span>
                   </div>
-                `;
-              }
-            });
-            
-            result += `
+                  <div style="text-align: right; margin-left: 12px;">
+                    <span style="font-weight: 600;">$${param.value.toFixed(
+                      2
+                    )}M</span>
+                    <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(
+                      1
+                    )}%)</span>
+                  </div>
+                </div>
+              `;
+              });
+
+              result += `
               <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(100, 100, 150, 0.3);">
                 <div style="display: flex; justify-content: space-between;">
                   <span style="font-weight: 600;">Total:</span>
@@ -2064,94 +2146,97 @@ export class DataService {
                 </div>
               </div>
             `;
-            
-            return result;
-          },
-        },
 
-        legend: {
-          data: legends.map(l => l.name),
-          bottom: 10,
-          textStyle: {
-            color: '#d7d7d7ff',
-            fontSize: 11,
-          },
-          type: 'scroll',
-        },
-
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '15%',
-          top: '20%',
-          containLabel: true,
-        },
-
-        xAxis: {
-          type: 'category',
-          data: categories,
-          axisLabel: {
-            show: true,
-            color: '#d7d7d7ff',
-            fontSize: 12,
-            interval: 0,
-          },
-          axisLine: {
-            show: true,
-            lineStyle: {
-              color: 'rgba(100, 100, 150, 0.3)',
+              return result;
             },
           },
-          axisTick: {
-            show: false,
-          },
-        },
 
-        yAxis: {
-          type: 'value',
-          axisLabel: {
-            show: true,
-            color: '#d7d7d7ff',
-            fontSize: 11,
-            formatter: (value: number) => {
-              return value >= 0 ? `$${value}M` : `-$${Math.abs(value)}M`;
+          legend: {
+            data: legends.map((l) => l.name),
+            bottom: 10,
+            textStyle: {
+              color: '#d7d7d7ff',
+              fontSize: 11,
+            },
+            type: 'scroll',
+            pageIconColor: '#d7d7d7ff',
+            pageIconInactiveColor: 'rgba(100, 100, 150, 0.3)',
+            pageTextStyle: {
+              color: '#d7d7d7ff',
             },
           },
-          axisLine: {
-            show: false,
+
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '15%',
+            top: '20%',
+            containLabel: true,
           },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: 'rgba(100, 100, 150, 0.1)',
-              type: 'dashed',
+
+          xAxis: {
+            type: 'category',
+            data: categories,
+            axisLabel: {
+              show: true,
+              color: '#d7d7d7ff',
+              fontSize: 12,
+              interval: 0,
+            },
+            axisLine: {
+              show: true,
+              lineStyle: {
+                color: 'rgba(100, 100, 150, 0.3)',
+              },
+            },
+            axisTick: {
+              show: false,
             },
           },
-        },
 
-        backgroundColor: 'transparent',
+          yAxis: {
+            type: 'value',
+            axisLabel: {
+              show: true,
+              color: '#d7d7d7ff',
+              fontSize: 11,
+              formatter: (value: number) => {
+                return value >= 0 ? `$${value}M` : `-$${Math.abs(value)}M`;
+              },
+            },
+            axisLine: {
+              show: false,
+            },
+            axisTick: {
+              show: false,
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                color: 'rgba(100, 100, 150, 0.1)',
+                type: 'dashed',
+              },
+            },
+          },
 
-        series: series,
-      };
+          backgroundColor: 'transparent',
 
-      chartConfigs.push({
-        company: companyName,
-        period: period,
-        total: metric.total,
-        legends: legends,
-        config: chartConfig,
+          series: series,
+        };
+
+        chartConfigs.push({
+          company: companyName,
+          period: period,
+          total: metric.total,
+          segments: barSegments,
+          legends: legends,
+          config: chartConfig,
+        });
       });
     });
-  });
 
-  return chartConfigs;
-}
-
-
-  
+    return chartConfigs;
+  }
 }
 
 function snakeToTitleCase(str: string): string {

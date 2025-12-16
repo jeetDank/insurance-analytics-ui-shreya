@@ -113,3 +113,73 @@ button.inactive {
 button.inactive:hover {
   color: rgba(255, 255, 255, 0.8);
 }
+
+
+
+
+
+.history-container {
+  background-color: #00000047;
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  
+  &.show {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.history-sidebar {
+  height: 100vh;
+  width: 380px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 101;
+  background-color: #0a0a0a;
+  border: 1px solid #ffffff1a;
+  
+  // Animation properties
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  
+  &.show {
+    transform: translateX(0);
+  }
+}
+
+.custom-search-box {
+  border: 1px solid #ffffff14;
+  border-radius: 8px;
+}
+
+.custom-search-box:focus-within {
+  outline: 4px solid #ffffff14;
+}
+
+.chip {
+  background-color: #ffffff0d;
+}
+
+.query {
+  background-color: #ffffff05;
+  border: 1px solid #ffffff0d;
+  padding: 16px;
+  margin-bottom: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.query:hover {
+  background-color: #ffffff17;
+  border: 1px solid #ffffff22;
+}

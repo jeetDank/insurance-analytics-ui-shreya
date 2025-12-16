@@ -7,6 +7,9 @@ import {
   signal,
   output,
   EventEmitter,
+  Input,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -71,12 +74,12 @@ interface processSteps {
     MatSelectModule,
     MatInputModule,
     CommonModule,
-    AmbiguityResolverComponent
+    AmbiguityResolverComponent,
   ],
   templateUrl: './quary-box.component.html',
   styleUrl: './quary-box.component.scss',
 })
-export class QuaryBoxComponent implements OnInit, AfterViewChecked {
+export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   @ViewChild('chatContainer') private chatContainer!: ElementRef;
 
   horizontalPosition: MatSnackBarHorizontalPosition = 'end';
@@ -84,6 +87,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   private shouldScrollToBottom = false;
   currentTab: string = 'chat';
   dataReady = output<boolean>();
+  @Input() historicalConvo: any = null;
   resetData = output<boolean>();
 
   conversation: conversation[] = [];
@@ -92,24 +96,28 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
 
   loaderVisible: boolean = false;
 
-  formulaSuggestions:any[] | null = [];
+  formulaSuggestions: any[] | null = [];
 
- ambiguities:any[] = [
+  ambiguities: any[] = [
     {
       query: 're',
       selected_ambiguity: '',
-      suggestions: ['Return on Equity', 'Revenue', 'Retained Earnings']
+      suggestions: ['Return on Equity', 'Revenue', 'Retained Earnings'],
     },
     {
       query: 'cap',
       selected_ambiguity: '',
-      suggestions: ['Capital', 'Capacity', 'Capitalization']
+      suggestions: ['Capital', 'Capacity', 'Capitalization'],
     },
     {
       query: 'op',
       selected_ambiguity: '',
-      suggestions: ['Operating Profit', 'Operating Expenses', 'Operating Cash Flow']
-    }
+      suggestions: [
+        'Operating Profit',
+        'Operating Expenses',
+        'Operating Cash Flow',
+      ],
+    },
   ];
 
   constructor(
@@ -125,20 +133,25 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       this.shouldScrollToBottom = false;
     }
   }
-  
-  onAmbiguitiesUpdate(updatedAmbiguities: any[]): void {
-  this.ambiguities.forEach((amb) => {
-    const found = updatedAmbiguities.find(
-      (selected_amb) => amb.query === selected_amb.query
-    );
-    
-    if (found) {
-      amb.selected_ambiguity = found.selected_ambiguity;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.historicalConvo != null) {
+      this.conversation = this.historicalConvo;
     }
-    console.log(this.ambiguities);
-    
-  });
-}
+  }
+
+  onAmbiguitiesUpdate(updatedAmbiguities: any[]): void {
+    this.ambiguities.forEach((amb) => {
+      const found = updatedAmbiguities.find(
+        (selected_amb) => amb.query === selected_amb.query
+      );
+
+      if (found) {
+        amb.selected_ambiguity = found.selected_ambiguity;
+      }
+      console.log(this.ambiguities);
+    });
+  }
 
   private scrollToBottom(): void {
     try {
@@ -156,11 +169,11 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   }
 
   private animateProgress(targetProgress: number): void {
-    
-    const processingMsgIndex = this.conversation
-  .map((item, index) => ({ item, index }))
-  .reverse()
-  .find(({ item }) => item.processDetail === true)?.index ?? -1;
+    const processingMsgIndex =
+      this.conversation
+        .map((item, index) => ({ item, index }))
+        .reverse()
+        .find(({ item }) => item.processDetail === true)?.index ?? -1;
 
     if (processingMsgIndex === -1) return;
 
@@ -282,8 +295,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     });
   }
 
-
-
   parseQuery(userQuery: string) {
     if (userQuery.trim().length <= 3) {
       this.snackBar.open('Please enter a valid request to continue.', '', {
@@ -294,41 +305,46 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       return;
     }
 
+    this.historicalConvo = null;
+
     this.recordMsg(userQuery, false);
 
     this.resetData.emit(true);
-   
+
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
         if (res.success == true && res.validation.is_valid) {
           try {
-            
             if (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) {
-               this._dataService.setParsedQuery(res.parsed);
-               if(userQuery.trim()){
-                 this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
-               }
-               this.recordProcessMsg(0);
-               this.recordProcessMsg(1);
+              this._dataService.setParsedQuery(res.parsed);
+              if (userQuery.trim()) {
+                this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
+              }
+              this.recordProcessMsg(0);
+              this.recordProcessMsg(1);
               this.resolveCompanies(res.parsed.companies);
             } else {
               this._dataService.setParsedQuery(res.parsed);
               this.addAmbiguitiesToConversation();
-               if(userQuery.trim()){
-                 this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
-               }
+              if (userQuery.trim()) {
+                this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
+              }
             }
           } catch {}
         } else {
-
-          this.recordMsg(`Could not parse "${userQuery}".Please try again with a different query.`,true)
-          this.snackBar.open('Could not parse the query. please try again with a different query. ', '', {
-           horizontalPosition: 'end',
-            verticalPosition: this.verticalPosition,
-           duration: 3000,
-          });
-
-
+          this.recordMsg(
+            `Could not parse "${userQuery}".Please try again with a different query.`,
+            true
+          );
+          this.snackBar.open(
+            'Could not parse the query. please try again with a different query. ',
+            '',
+            {
+              horizontalPosition: 'end',
+              verticalPosition: this.verticalPosition,
+              duration: 3000,
+            }
+          );
         }
       },
     });
@@ -360,14 +376,9 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
       });
   }
 
-
-  getCustomFormulas(data:any){
+  getCustomFormulas(data: any) {
     console.log(data);
-    
   }
-
-
-
 
   startBatchAnalysis() {
     let payload = this._dataService.fetchBatchAnalysisPayload();
@@ -380,7 +391,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             summary: res.summary,
           };
           this._dataService.setAnalysisData(data);
-          this.formulaSuggestions = this._dataService.fetchMetricsForFormulaComponent();
+          this.formulaSuggestions =
+            this._dataService.fetchMetricsForFormulaComponent();
 
           // here check if multiple periods are available if yes then
           // go for varience analysis other wise just show till batch analysis
@@ -389,9 +401,15 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
             this.recordProcessMsg(4);
             this.startVarienceAnalysis();
           } else {
+            if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory(this.conversation);
+            }
             this.recordProcessMsg(5);
             this.dataReady.emit(true);
-            this.recordMsg("I've updated the dashboard.(note: Not enough data available for variance analysis)", true);
+            this.recordMsg(
+              "I've updated the dashboard.(note: Not enough data available for variance analysis)",
+              true
+            );
           }
 
           console.log(this._dataService.API_DATA);
@@ -407,39 +425,42 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
     if (payload) {
       this._apiService.varienceAnalysis(payload).subscribe({
         next: (res: any) => {
-
-          if(res.success){
-          this.recordProcessMsg(5);
-          this._dataService.setInsightsData(res.data_summary);
-          this.dataReady.emit(true);
-          this.recordMsg("I've updated the dashboard.", true);
+          if (res.success) {
+            if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory(this.conversation);
+            }
+            
+            this.recordProcessMsg(5);
+            this._dataService.setInsightsData(res.data_summary);
+            this.dataReady.emit(true);
+            this.recordMsg("I've updated the dashboard.", true);
+          } else {
+            if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory(this.conversation);
+            }
+            this.dataReady.emit(true);
+            this.recordProcessMsg(5);
+            this.recordMsg(
+              "I've updated the dashboard. but variance analysis not loaded",
+              true
+            );
           }
-          else{
-          this.dataReady.emit(true);
-          this.recordProcessMsg(5);
-          this.recordMsg("I've updated the dashboard. but variance analysis not loaded", true);
-          }
-          
-          
         },
-        error:(err)=>{
-            this.recordMsg(err?.message ? err.message : 'Something went wrong',true);
-        }
+        error: (err) => {
+          this.recordMsg(
+            err?.message ? err.message : 'Something went wrong',
+            true
+          );
+        },
       });
     } else {
     }
   }
 
-  resolveAmbiguity(isResolved:boolean = false) {
-  
-    if(isResolved == false){
-      this.recordMsg("Please resolve all ambiguities.",true);
-      
-      
+  resolveAmbiguity(isResolved: boolean = false) {
+    if (isResolved == false) {
+      this.recordMsg('Please resolve all ambiguities.', true);
     }
-
-
-
 
     // let data = this.conversation
     //   .filter((item) => item.suggestions != null)
@@ -464,7 +485,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
         if (results.length > 0) {
           this.recordMsg(`Ambiguities resolved: ${results.length}`, true);
           this.recordProcessMsg(0);
-          this.recordProcessMsg(1)
+          this.recordProcessMsg(1);
           this.resolveCompanies(
             this._dataService.API_DATA.PARSED_QUERY.companies
           );
@@ -481,21 +502,19 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
   addAmbiguitiesToConversation() {
     this.ambiguities = this._dataService.fetchAmbiguities();
 
-     this.conversation.push({
-        message: ``,
-        processDetail: false,
-        processingStatus: 10,
-        processDetailsData: null,
-        timestamp: this.getFormattedTime(),
-        systemMsg: true,
-        suggestions: null,
-        data: this.ambiguities,
-      });
+    this.conversation.push({
+      message: ``,
+      processDetail: false,
+      processingStatus: 10,
+      processDetailsData: null,
+      timestamp: this.getFormattedTime(),
+      systemMsg: true,
+      suggestions: null,
+      data: this.ambiguities,
+    });
 
     this.triggerScroll();
   }
-
-
 
   // Helper method to check if a step is the active (last) step
   isActiveStep(item: conversation, stepIndex: number): boolean {
@@ -529,8 +548,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked {
         'Show segment wise distribution of revenue and net income for Hartford and Allstate',
     },
     {
-      query:
-        'Give me revenue for progressive for last quarter.',
+      query: 'Give me revenue for progressive for last quarter.',
     },
   ];
 
