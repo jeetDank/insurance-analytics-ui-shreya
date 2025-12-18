@@ -29,10 +29,15 @@ import { SegmentTableComponent } from '../common/componants/segment-table/segmen
 import { DataService } from '../common/services/data.service';
 import { LoaderService } from '../common/services/loader.service';
 import { CommonModule } from '@angular/common';
-import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
+import {
+  MatSnackBar,
+  MatSnackBarHorizontalPosition,
+  MatSnackBarModule,
+  MatSnackBarVerticalPosition,
+} from '@angular/material/snack-bar';
 
 import { LucideAngularModule, FilesIcon } from 'lucide-angular';
-
+import { ExcelExportService } from '../common/services/excel-export.service';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -66,6 +71,7 @@ echarts.use([
     MetricTableComponent,
     SegmentTableComponent,
     CommonModule,
+    MatSnackBarModule,
     // LegendDisplayComponent,
     // LucideAngularModule
   ],
@@ -504,7 +510,9 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private _dataService: DataService,
-    private _loader: LoaderService
+    private _loader: LoaderService,
+    private _excelService: ExcelExportService,
+    private snackBar: MatSnackBar
   ) {
     // Check if user has a saved preference
     const savedTheme = localStorage.getItem('theme');
@@ -536,9 +544,8 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-
-  historicalQueries:any = [];
-  filteredHistoricalQueries:any = []
+  historicalQueries: any = [];
+  filteredHistoricalQueries: any = [];
 
   onMenuClick() {}
   ngOnInit(): void {
@@ -548,15 +555,11 @@ export class DashboardComponent implements OnInit {
       },
     });
 
-    this._dataService.HistoryBucket$.subscribe((history)=>{
+    this._dataService.HistoryBucket$.subscribe((history) => {
       console.log(history);
       this.historicalQueries = history;
-      this.filteredHistoricalQueries = this.historicalQueries
-      
-      
-    })
-
-
+      this.filteredHistoricalQueries = this.historicalQueries;
+    });
   }
 
   isLoaderVisible = false;
@@ -606,23 +609,19 @@ export class DashboardComponent implements OnInit {
     return this.currentTabSegment === option;
   }
 
+  historicalConvo: any = null;
 
-  historicalConvo:any = null;
-
-  sendConvoToQueryBox(conversation:any){
+  sendConvoToQueryBox(conversation: any) {
     this.historicalConvo = conversation;
   }
 
-
-  loadHistoricalData(query:any){
+  loadHistoricalData(query: any) {
     this._dataService.API_DATA = query.API_DATA;
     this.sendConvoToQueryBox(query.conversation);
     this.showData();
-
   }
 
   resetData() {
-
     this.isDataAvailable = false;
     this.companies = [];
     this.cardView = [];
@@ -635,6 +634,18 @@ export class DashboardComponent implements OnInit {
     this.commonSegmentsOption = [];
     this.segmentStackedOption = [];
     this.isSideNavOpened = true;
+  }
+
+  exportToExcel() {
+    if (this._dataService.API_DATA.ANALYSIS_DATA) {
+      this._excelService.exportExcel(this._dataService.API_DATA.ANALYSIS_DATA.results);
+    } else {
+      this.snackBar.open('Please enter a valid request to continue.', '', {
+        horizontalPosition: 'start',
+        verticalPosition: 'bottom',
+        duration: 3000,
+      });
+    }
   }
 
   showData() {
@@ -655,7 +666,6 @@ export class DashboardComponent implements OnInit {
       'segment-wise-breakdown',
       'segments',
       'segment-wise',
-      
     ];
 
     // if (
@@ -699,8 +709,6 @@ export class DashboardComponent implements OnInit {
           segmentWiseStackedChartData
         );
 
-      
-
       // this.segmentStackedOption = this._dataService.generateSegmentCharts(
       //   segmentWiseStackedChartData
       // );
@@ -708,11 +716,15 @@ export class DashboardComponent implements OnInit {
         commonSegmentColumnCharts
       );
 
-      const verticalSegmentbarChart:any =this._dataService.fetchVerticalStackedBarChartData();
+      const verticalSegmentbarChart: any =
+        this._dataService.fetchVerticalStackedBarChartData();
 
-      this.segmentStackedOption = this._dataService.generateVerticalSegmentCharts(verticalSegmentbarChart)
+      this.segmentStackedOption =
+        this._dataService.generateVerticalSegmentCharts(
+          verticalSegmentbarChart
+        );
 
-      console.log(this.segmentStackedOption,);
+      console.log(this.segmentStackedOption);
     }
   }
   selectOption(option: string): void {
@@ -722,7 +734,7 @@ export class DashboardComponent implements OnInit {
   isSelected(option: string): boolean {
     return this.currentTabComparison === option;
   }
-  isHistoryVisible:boolean =false;
+  isHistoryVisible: boolean = false;
 
   isHistorySidebarOpen = false;
   showHistorySidebar = false;
@@ -829,33 +841,29 @@ export class DashboardComponent implements OnInit {
     return gridClasses[columnCount] || 'grid-cols-4';
   }
 
- 
-
-  
-
   searchHistoricalQuery(searchQuery: string) {
-  const term = searchQuery.toLowerCase().trim();
+    const term = searchQuery.toLowerCase().trim();
 
-  this.filteredHistoricalQueries = this.historicalQueries.filter((query:any) => {
-    const parsed = query?.API_DATA?.PARSED_QUERY;
+    this.filteredHistoricalQueries = this.historicalQueries.filter(
+      (query: any) => {
+        const parsed = query?.API_DATA?.PARSED_QUERY;
 
-    if (!parsed) return false;
+        if (!parsed) return false;
 
-    const rawQueryMatch =
-      parsed.raw_query?.toLowerCase().includes(term);
+        const rawQueryMatch = parsed.raw_query?.toLowerCase().includes(term);
 
-    const referenceDateMatch =
-      parsed.time_config?.reference_date
-        ?.toLowerCase()
-        .includes(term);
+        const referenceDateMatch = parsed.time_config?.reference_date
+          ?.toLowerCase()
+          .includes(term);
 
-    const metricsMatch =
-      Array.isArray(parsed.metrics) &&
-      parsed.metrics.some((metric:any) =>
-        metric?.toLowerCase().includes(term)
-      );
+        const metricsMatch =
+          Array.isArray(parsed.metrics) &&
+          parsed.metrics.some((metric: any) =>
+            metric?.toLowerCase().includes(term)
+          );
 
-    return rawQueryMatch || referenceDateMatch || metricsMatch;
-  });
-}
+        return rawQueryMatch || referenceDateMatch || metricsMatch;
+      }
+    );
+  }
 }

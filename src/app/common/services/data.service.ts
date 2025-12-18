@@ -32,26 +32,25 @@ export class DataService {
     INSIGHTS_DATA: null,
   };
 
- 
-HistoryBucket$ = new BehaviorSubject<any[]>(
-  JSON.parse(localStorage.getItem('historyBucket') || '[]')
-);
+  HistoryBucket$ = new BehaviorSubject<any[]>(
+    JSON.parse(localStorage.getItem('historyBucket') || '[]')
+  );
 
   addQueryToHistory(conversation: any) {
-  const history = [...this.HistoryBucket$.value];
+    const history = [...this.HistoryBucket$.value];
 
-  if (history.length > 1) {
-    history.shift();
+    if (history.length > 1) {
+      history.shift();
+    }
+
+    history.push({
+      conversation,
+      API_DATA: { ...this.API_DATA },
+    });
+
+    this.HistoryBucket$.next(history);
+    // localStorage.setItem('historyBucket', JSON.stringify(history));
   }
-
-  history.push({
-    conversation,
-    API_DATA: { ...this.API_DATA }
-  });
-
-  this.HistoryBucket$.next(history);
-  localStorage.setItem('historyBucket', JSON.stringify(history));
-}
 
   setParsedQuery(data: any) {
     this.API_DATA.PARSED_QUERY = data;
@@ -2029,14 +2028,25 @@ HistoryBucket$ = new BehaviorSubject<any[]>(
               const displayName = s.path.split('.').pop();
               return displayName === segmentName;
             });
-            return segment ? segment.value / 1000000 : 0; // Convert to millions
+            return segment ? segment.value / 1000000 : 0; // Convert to millions, keep negative values
           });
 
+          // Calculate total for this segment across all categories
+          const segmentTotal = seriesData.reduce(
+            (sum, value) => sum + value,
+            0
+          );
+          const displayName = snakeToTitleCase(segmentName);
+          const legendName = `${displayName} ($${
+            segmentTotal >= 0 ? '' : '-'
+          }${Math.abs(segmentTotal).toFixed(2)}M)`;
+
           series.push({
-            name: snakeToTitleCase(segmentName),
+            name: legendName, // Use legend name with value
             type: 'bar',
             stack: 'total',
-            barWidth: '60%',
+            barWidth: '50%',
+            stackStrategy: 'all',
             label: {
               show: false,
             },
@@ -2068,11 +2078,20 @@ HistoryBucket$ = new BehaviorSubject<any[]>(
           });
         });
 
-        // Create legends
-        const legends = segmentNames.map((name, index) => ({
-          name: snakeToTitleCase(name),
-          color: colorPalette[index % colorPalette.length],
-        }));
+        // Create legends with values
+        const legends = segmentNames.map((name, index) => {
+          const segmentTotal = series[index].data.reduce(
+            (sum: number, value: number) => sum + value,
+            0
+          );
+          const displayName = snakeToTitleCase(name);
+          return {
+            name: `${displayName} ($${segmentTotal >= 0 ? '' : '-'}${Math.abs(
+              segmentTotal
+            ).toFixed(2)}M)`,
+            color: colorPalette[index % colorPalette.length],
+          };
+        });
 
         const chartConfig = {
           useDirtyRect: true,
@@ -2107,29 +2126,34 @@ HistoryBucket$ = new BehaviorSubject<any[]>(
               let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${categoryName}</div>`;
 
               let total = 0;
-              const validParams = params.filter((p: any) => p.value > 0);
+              // Show all params, including zero values
+              const allParams = params;
 
-              validParams.forEach((param: any) => {
-                total += param.value;
+              allParams.forEach((param: any) => {
+                const value = param.value;
+                total += value;
+
+                const totalForPercentage = allParams.reduce(
+                  (sum: number, p: any) => sum + p.value,
+                  0
+                );
                 const percentage =
-                  (param.value /
-                    validParams.reduce(
-                      (sum: number, p: any) => sum + p.value,
-                      0
-                    )) *
-                  100;
+                  totalForPercentage !== 0
+                    ? (value / totalForPercentage) * 100
+                    : 0;
+
                 result += `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
                   <div style="display: flex; align-items: center; flex: 1;">
                     <span style="display: inline-block; width: 10px; height: 10px; background: ${
                       param.color
                     }; border-radius: 50%; margin-right: 8px;"></span>
-                    <span>${param.seriesName}</span>
+                    <span>${param.seriesName.split(' (')[0]}</span>
                   </div>
                   <div style="text-align: right; margin-left: 12px;">
-                    <span style="font-weight: 600;">$${param.value.toFixed(
-                      2
-                    )}M</span>
+                    <span style="font-weight: 600;">${
+                      value >= 0 ? '$' : '-$'
+                    }${Math.abs(value).toFixed(2)}M</span>
                     <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(
                       1
                     )}%)</span>
@@ -2142,7 +2166,9 @@ HistoryBucket$ = new BehaviorSubject<any[]>(
               <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(100, 100, 150, 0.3);">
                 <div style="display: flex; justify-content: space-between;">
                   <span style="font-weight: 600;">Total:</span>
-                  <span style="font-weight: 600;">$${total.toFixed(2)}M</span>
+                  <span style="font-weight: 600;">${
+                    total >= 0 ? '$' : '-$'
+                  }${Math.abs(total).toFixed(2)}M</span>
                 </div>
               </div>
             `;
