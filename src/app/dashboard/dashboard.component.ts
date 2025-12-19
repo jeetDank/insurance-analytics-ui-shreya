@@ -653,9 +653,9 @@ export class DashboardComponent implements OnInit {
 
     this.isDataAvailable = true;
 
-    this.companies = this._dataService.API_DATA.COMPANY_DATA?.map(
+    this.companies = this._dataService.API_DATA.COMPANY_DATA?.filter(company=>company.success).map(
       (data: any) => {
-        return { name: data.company.name, logo: data.company.logo_url };
+        return { name: data?.company?.name, logo: data?.company?.logo_url };
       }
     );
 
@@ -724,7 +724,9 @@ export class DashboardComponent implements OnInit {
           verticalSegmentbarChart
         );
 
-      console.log(this.segmentStackedOption);
+       if (this._dataService.API_DATA.INSIGHTS_DATA) {
+        this.insightsData = this._dataService.generateInsights();
+      }
     }
   }
   selectOption(option: string): void {

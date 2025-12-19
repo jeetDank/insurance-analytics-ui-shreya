@@ -315,13 +315,32 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
       next: (res) => {
         if (res.success == true && res.validation.is_valid) {
           try {
-            if (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) {
+            // check if company ambiguities are there
+
+            const companyAmbiguity = res?.parsed?.ambiguities.filter(
+              (ambiguity: any) =>
+                ambiguity.context?.toLowerCase().includes('company') ||
+                ambiguity.context?.toLowerCase().includes('ticker')
+            );
+
+            console.log(companyAmbiguity);
+            
+
+            if (
+              (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) ||
+              companyAmbiguity.length != 0
+            ) {
               this._dataService.setParsedQuery(res.parsed);
               if (userQuery.trim()) {
                 this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
               }
               this.recordProcessMsg(0);
               this.recordProcessMsg(1);
+
+              
+
+
+
               this.resolveCompanies(res.parsed.companies);
             } else {
               this._dataService.setParsedQuery(res.parsed);
@@ -330,7 +349,12 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
                 this._dataService.API_DATA.PARSED_QUERY.raw_query = userQuery;
               }
             }
-          } catch {}
+          } catch {
+            this.recordMsg(
+            `Something went wrong. please try again.`,
+            true
+          );
+          }
         } else {
           this.recordMsg(
             `Could not parse "${userQuery}".Please try again with a different query.`,
@@ -364,14 +388,39 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
       .subscribe({
         next: (res) => {
           try {
+            if (res?.total_resolved == 0) {
+              throw new Error('No companies found!');
+            }
+
+            const unresolvedCompanies: string[] = res?.results
+              .filter((company: any) => !company?.success)
+              .map((company: any) => company?.input ?? 'requested company');
+
+            console.log(unresolvedCompanies);
+
             this._dataService.setCompanyData(res.results);
-            [2, 3].forEach((num, index) => {
+
+            [2, 3].forEach((processStep, index) => {
               setTimeout(() => {
-                this.recordProcessMsg(num);
+                this.recordProcessMsg(processStep);
               }, index * 1000);
             });
+
+            if (unresolvedCompanies.length) {
+              this.recordMsg(
+                `Could not resolve: ${unresolvedCompanies.join(',')}. `,
+                true
+              );
+            }
+
             this.startBatchAnalysis();
-          } catch {}
+          } catch (error) {
+            console.error(error);
+            this.recordMsg(
+              ` ${error ? error : 'Something went wrong. Please try again.'} `,
+              true
+            );
+          }
         },
       });
   }
@@ -429,7 +478,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             if (this.historicalConvo == null) {
               this._dataService.addQueryToHistory(this.conversation);
             }
-            
+
             this.recordProcessMsg(5);
             this._dataService.setInsightsData(res.data_summary);
             this.dataReady.emit(true);

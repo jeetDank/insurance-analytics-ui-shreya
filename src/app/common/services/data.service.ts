@@ -83,7 +83,7 @@ export class DataService {
         analysis_depth: 2,
       };
 
-      payload.companies = this.API_DATA.COMPANY_DATA.map((data) => {
+      payload.companies = this.API_DATA.COMPANY_DATA.filter((company:any)=>company.success).map((data) => {
         return {
           cik: data.company.identifiers.cik,
           name: data.company.name,
