@@ -1,52 +1,62 @@
-<table class="w-full !mb-4">
+<table class="w-full mb-4">
   <thead>
-    <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.024)">
+    <tr class="border-b border-white/5">
       <th
         *ngFor="let column of columns"
+        class="px-6 py-4 text-xs font-medium"
         [ngClass]="getColumnAlignment(column)"
-        class="px-6 py-4"
-        [style.font-family]="'-apple-system, BlinkMacSystemFont, SF Pro Display, Inter, sans-serif'"
         [style.color]="getHeaderColor(column)"
       >
         {{ column.header }}
       </th>
     </tr>
   </thead>
+
   <tbody>
     <tr
-      *ngFor="let row of data; let last = last"
-      [ngClass]="{'hover:bg-white/[0.02] transition-colors': hoverable}"
-      [style.border-bottom]="last ? 'none' : '1px solid rgba(255, 255, 255, 0.01)'"
+      *ngFor="let row of data; let i = index,let last = last"
+      class="transition-colors"
+      [style.background-color]="getRowBackground(i)"
+     
     >
       <td
         *ngFor="let column of columns"
+        class="px-6 py-4 text-sm"
         [ngClass]="getColumnAlignment(column)"
-        class="px-6 py-4"
-        [style.font-family]="'-apple-system, BlinkMacSystemFont, SF Pro Display, Inter, sans-serif'"
       >
-        <ng-container [ngSwitch]="getCellContent(column, row).type">
-          <!-- Text Content -->
+        <!-- Cache cell content -->
+        <ng-container
+          *ngIf="getCellContent(column, row) as cell"
+          [ngSwitch]="cell.type"
+        >
+
+          <!-- TEXT -->
           <span
             *ngSwitchCase="'text'"
             [style.color]="getCellColor(column)"
           >
-            {{ getCellContent(column, row).value }}
+            {{ cell.value }}
           </span>
 
-          <!-- Trend Content with Arrow -->
+          <!-- TREND -->
           <div
             *ngSwitchCase="'trend'"
-            class="flex items-center gap-1"
+            class="flex items-center flex-col gap-2"
             [ngClass]="{
               'justify-end': column.align === 'right',
               'justify-start': column.align === 'left',
               'justify-center': column.align === 'center'
             }"
           >
+            <!-- Main value -->
+            <span class="text-white/90">
+              {{ cell.value }}
+            </span>
+
+            <div class="flex flex-row gap-1">
+               <!-- Arrow -->
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -54,25 +64,31 @@
               stroke-linecap="round"
               stroke-linejoin="round"
               class="h-3.5 w-3.5"
-              [style.color]="getTrendColor(getCellContent(column, row).trend?.color)"
-              aria-hidden="true"
+              [style.color]="getTrendColor(cell.trend?.color)"
             >
-              <ng-container *ngIf="getCellContent(column, row).trend?.direction === 'down'">
-                <path d="M12 5v14"></path>
-                <path d="m19 12-7 7-7-7"></path>
+              <ng-container *ngIf="cell.trend?.direction === 'up'">
+                <path d="M12 19V5" />
+                <path d="m5 12 7-7 7 7" />
               </ng-container>
-              <ng-container *ngIf="getCellContent(column, row).trend?.direction === 'up'">
-                <path d="M12 19V5"></path>
-                <path d="m5 12 7-7 7 7"></path>
+
+              <ng-container *ngIf="cell.trend?.direction === 'down'">
+                <path d="M12 5v14" />
+                <path d="m19 12-7 7-7-7" />
               </ng-container>
             </svg>
+
+            <!-- Percentage -->
             <span
-              [style.font-family]="'-apple-system, BlinkMacSystemFont, SF Pro Display, Inter, sans-serif'"
-              [style.color]="getTrendColor(getCellContent(column, row).trend?.color)"
+              class="text-xs font-medium"
+              [style.color]="getTrendColor(cell.trend?.color)"
             >
-              {{ getCellContent(column, row).trend?.value }}
+              {{ cell.trend?.value }}
             </span>
+            </div>
+
+           
           </div>
+
         </ng-container>
       </td>
     </tr>

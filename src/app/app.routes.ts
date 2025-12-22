@@ -4,11 +4,19 @@ import { PageNotFoundComponent } from './common/componants/page-not-found/page-n
 
 export const routes: Routes = [
 
-  {path:"",redirectTo:"dashboard",pathMatch:'full'},
+  {path:"",redirectTo:"login",pathMatch:'full'},
   {
     path: 'dashboard',
     loadChildren: () =>
       import('./dashboard/dashboard.routes').then(
+        (m) => m.routes
+      ),
+  },
+ 
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./auth/auth.routes').then(
         (m) => m.routes
       ),
   },

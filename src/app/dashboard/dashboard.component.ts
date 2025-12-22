@@ -39,6 +39,7 @@ import {
 import { LucideAngularModule, FilesIcon } from 'lucide-angular';
 import { ExcelExportService } from '../common/services/excel-export.service';
 import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
+import { Router } from '@angular/router';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -513,8 +514,17 @@ export class DashboardComponent implements OnInit {
     private _dataService: DataService,
     private _loader: LoaderService,
     private _excelService: ExcelExportService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router:Router
   ) {
+
+    const username = localStorage.getItem("username");
+    const password = localStorage.getItem("password");
+
+    if(!username && !password){
+      console.log("navigating to login page")
+      router.navigateByUrl('/login')
+    }
     // Check if user has a saved preference
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
