@@ -8,7 +8,7 @@
         Segment
       </th>
       <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
-        {{segment_name | titlecase }}
+        {{ segment_name | titlecase }}
       </th>
       <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
         %
@@ -18,53 +18,76 @@
   <tbody class="text-xs">
     @if (flattenedData && flattenedData.length > 0) {
       @for (row of flattenedData; track $index) {
-      <tr
-        style="
-          border-bottom: 1px solid rgba(255, 255, 255, 0.008);
-        "
-        [style.background-color]="getBackgroundColor(row.isTopLevel, row.color)"
-      >
-        <td
-          class="py-1.5 px-3 relative"
-          [style.padding-left]="getPaddingLeft(row.level)"
-          [style.color]="row.isTopLevel ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.55)'"
-          [style.font-weight]="row.isTopLevel ? '600' : '400'"
+        @if (row.isVisible) {
+        <tr
+          style="
+            border-bottom: 1px solid rgba(255, 255, 255, 0.008);
+          "
+          [style.background-color]="getBackgroundColor(row.isTopLevel, row.color)"
         >
-          @if (row.isTopLevel) {
-          <div
-            class="inline-block h-2 w-2 rounded-sm mr-2"
-            [style.background-color]="row.color"
-          ></div>
-          } @else {
-          <span
-            [style.color]="row.color"
-            style="margin-right: 6px; opacity: 0.5"
-            >└</span
+          <td
+            class="py-1.5 px-3 relative"
+            [style.padding-left]="getPaddingLeft(row.level)"
+            [style.color]="row.isTopLevel ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.55)'"
+            [style.font-weight]="row.isTopLevel ? '600' : '400'"
+            [style.cursor]="row.hasChildren ? 'pointer' : 'default'"
+            (click)="row.hasChildren ? toggleExpand($index) : null"
           >
-          }
-          {{ row.item.metric_name }}
-        </td>
-        <td
-          class="text-right py-1.5 px-3"
-          [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
-          [style.font-weight]="row.isTopLevel ? '600' : '400'"
-        >
-          @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {
-            {{ row.item.value }}{{ row.item.unit || '' }}
-          }
-        </td>
-        <td
-          class="text-right py-1.5 px-3"
-          [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.44)'"
-          [style.font-weight]="row.isTopLevel ? '600' : '400'"
-        >
-          @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {
-            {{ row.item.percentage }}
-          }
-        </td>
-      </tr>
+            @if (row.isTopLevel) {
+            <div
+              class="inline-block rounded-sm mr-2"
+              style="width: 12px; height: 12px; vertical-align: middle;"
+              [style.background-color]="row.color"
+            ></div>
+            } @else {
+            <span
+              [style.color]="row.color"
+              style="margin-right: 6px; opacity: 0.5"
+              >{{ row.isLastChild ? '└' : '├' }}</span
+            >
+            }
+            @if (row.hasChildren) {
+            <!-- <svg
+              class="inline-block mr-1"
+              style="width: 14px; height: 14px; vertical-align: middle; transition: transform 0.2s;"
+              [style.transform]="row.isExpanded ? 'rotate(90deg)' : 'rotate(0deg)'"
+              [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg> -->
+            }
+            {{ getCleanName(row.item.metric_name) }}
+          </td>
+          <td
+            class="text-right py-1.5 px-3"
+            [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
+            [style.font-weight]="row.isTopLevel ? '600' : '400'"
+          >
+            @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {
+              {{ row.item.value }}{{ row.item.unit || '' }}
+            }
+          </td>
+          <td
+            class="text-right py-1.5 px-3"
+            [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.44)'"
+            [style.font-weight]="row.isTopLevel ? '600' : '400'"
+          >
+            @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {
+              {{ row.item.percentage }}
+            }
+          </td>
+        </tr>
+        }
       }
-
       @if (showTotal) {
       <tr class="border-t-2" style="border-color: rgb(148, 163, 184)">
         <td

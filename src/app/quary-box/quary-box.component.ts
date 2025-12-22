@@ -446,7 +446,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           // here check if multiple periods are available if yes then
           // go for varience analysis other wise just show till batch analysis
 
-          if (this._dataService.API_DATA.PARSED_QUERY.time_periods.length > 1) {
+          if (this._dataService.API_DATA.PARSED_QUERY?.time_periods.length > 1) {
             this.recordProcessMsg(4);
             this.startVarienceAnalysis();
           } else {
@@ -463,6 +463,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
 
           console.log(this._dataService.API_DATA);
         } else {
+          this.recordMsg(
+              "Something went wrong. please try again.",
+              true
+            );
         }
       },
     });
