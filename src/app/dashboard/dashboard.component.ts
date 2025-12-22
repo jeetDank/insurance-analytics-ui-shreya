@@ -700,7 +700,6 @@ export class DashboardComponent implements OnInit {
         this.cardView
       );
 
-
       this.referenceData = this._dataService.generateReferenceData();
 
       this.isComparison = true;
@@ -724,17 +723,16 @@ export class DashboardComponent implements OnInit {
           segmentWiseStackedChartData
         );
 
-        console.log(segmentWiseStackedChartData);
-        
+      console.log(segmentWiseStackedChartData);
+
       // this.segmentStackedOption = this._dataService.generateSegmentCharts(
       //   segmentWiseStackedChartData
       // );
-       
-        
+
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
         commonSegmentColumnData
       );
-       console.log(commonSegmentColumnData,this.commonSegmentsOption);
+      console.log(commonSegmentColumnData, this.commonSegmentsOption);
 
       const verticalSegmentbarData: any =
         this._dataService.fetchVerticalStackedBarChartData();
