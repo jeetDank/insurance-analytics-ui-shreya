@@ -638,7 +638,9 @@ export class DashboardComponent implements OnInit {
 
   exportToExcel() {
     if (this._dataService.API_DATA.ANALYSIS_DATA) {
-      this._excelService.exportExcel(this._dataService.API_DATA.ANALYSIS_DATA.results);
+      this._excelService.exportExcel(
+        this._dataService.API_DATA.ANALYSIS_DATA.results
+      );
     } else {
       this.snackBar.open('Please enter a valid request to continue.', '', {
         horizontalPosition: 'start',
@@ -653,11 +655,11 @@ export class DashboardComponent implements OnInit {
 
     this.isDataAvailable = true;
 
-    this.companies = this._dataService.API_DATA.COMPANY_DATA?.filter(company=>company.success).map(
-      (data: any) => {
-        return { name: data?.company?.name, logo: data?.company?.logo_url };
-      }
-    );
+    this.companies = this._dataService.API_DATA.COMPANY_DATA?.filter(
+      (company) => company.success
+    ).map((data: any) => {
+      return { name: data?.company?.name, logo: data?.company?.logo_url };
+    });
 
     let segment_keywords = [
       'segment',
@@ -697,12 +699,15 @@ export class DashboardComponent implements OnInit {
       this.isComparison = false;
 
       this.referenceData = this._dataService.generateReferenceData();
-      this.segmentPeriods =
-        this._dataService.API_DATA.PARSED_QUERY.time_periods;
+
+      this.segmentPeriods = this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
 
       const segmentWiseStackedChartData: any =
         this._dataService.getSegmentWiseChartData();
+
+      
+      
 
       const commonSegmentColumnCharts =
         this._dataService.generateCommonSegmentComparison(
@@ -712,6 +717,7 @@ export class DashboardComponent implements OnInit {
       // this.segmentStackedOption = this._dataService.generateSegmentCharts(
       //   segmentWiseStackedChartData
       // );
+
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
         commonSegmentColumnCharts
       );
@@ -719,12 +725,16 @@ export class DashboardComponent implements OnInit {
       const verticalSegmentbarChart: any =
         this._dataService.fetchVerticalStackedBarChartData();
 
+
       this.segmentStackedOption =
         this._dataService.generateVerticalSegmentCharts(
           verticalSegmentbarChart
         );
 
-       if (this._dataService.API_DATA.INSIGHTS_DATA) {
+      console.log(this.segmentStackedOption);
+      
+
+      if (this._dataService.API_DATA.INSIGHTS_DATA) {
         this.insightsData = this._dataService.generateInsights();
       }
     }

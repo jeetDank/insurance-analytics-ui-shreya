@@ -83,7 +83,9 @@ export class DataService {
         analysis_depth: 2,
       };
 
-      payload.companies = this.API_DATA.COMPANY_DATA.filter((company:any)=>company.success).map((data) => {
+      payload.companies = this.API_DATA.COMPANY_DATA.filter(
+        (company: any) => company.success
+      ).map((data) => {
         return {
           cik: data.company.identifiers.cik,
           name: data.company.name,
@@ -1816,87 +1818,39 @@ export class DataService {
   }
 
   convertResponseObject(input: any) {
-    // Add safety check
-    if (!input || typeof input !== 'object') {
-      return {};
+  // Add safety check
+  if (!input || typeof input !== 'object') {
+    return {};
+  }
+
+  const result: any = {};
+
+  // Recursively extract value and children structure
+  const extractData = (obj: any): any => {
+    const extracted: any = {
+      value: obj?.value
+    };
+
+    // If there are children, recursively process them
+    if (obj?.children && typeof obj.children === 'object') {
+      extracted.children = {};
+      
+      Object.entries(obj.children).forEach(([childKey, childObj]: any) => {
+        extracted.children[childKey] = extractData(childObj);
+      });
     }
 
-    const result = {};
+    return extracted;
+  };
 
-    const toCamelCase = (str: any) =>
-      str
-        .trim()
-        .replace(/^[A-Z]/, (m: any) => m.toLowerCase())
-        .replace(/[^a-zA-Z0-9]+(.)/g, (_: any, chr: any) => chr.toUpperCase());
+  Object.entries(input).forEach(([key, obj]: any) => {
+    result[key] = extractData(obj);
+  });
 
-    const deepMerge = (target: any, source: any) => {
-      for (const key in source) {
-        if (
-          source[key] &&
-          typeof source[key] === 'object' &&
-          !Array.isArray(source[key]) &&
-          key in target
-        ) {
-          deepMerge(target[key], source[key]);
-        } else {
-          target[key] = source[key];
-        }
-      }
-    };
+  return result;
+}
 
-    // Helper function to extract value with children.SingleValue fallback
-    const extractValue = (obj: any): any => {
-      let value = obj?.value;
-
-      // If value is null/undefined, check for children.Single Value
-      if (value == null && obj?.children) {
-        if (obj.children['Single Value']) {
-          // Recursively extract value from Single Value object (not just its value)
-          value = extractValue(obj.children['Single Value']);
-        }
-      }
-
-      return value;
-    };
-
-    Object.entries(input).forEach(([key, obj]: any) => {
-      const value = extractValue(obj);
-
-      // SIMPLE KEY
-      if (!key.startsWith('{') || !key.endsWith('}')) {
-        deepMerge(result, {
-          [toCamelCase(key)]: { value },
-        });
-        return;
-      }
-
-      // COMPOUND KEY
-      const pairs = key
-        .slice(1, -1)
-        .split(',')
-        .map((p: any) => p.trim());
-
-      let currentLevel: any = result;
-
-      pairs.forEach((pair: any, index: any) => {
-        const [rawKey, rawValue] = pair.split('=');
-
-        const k = toCamelCase(rawKey);
-        const v = toCamelCase(rawValue);
-
-        currentLevel[k] ??= {};
-        currentLevel[k][v] ??= {};
-
-        currentLevel = currentLevel[k][v];
-
-        if (index === pairs.length - 1) {
-          currentLevel.value = value;
-        }
-      });
-    });
-
-    return result;
-  }
+  
 
   fetchVerticalStackedBarChartData() {
     if (this.API_DATA.ANALYSIS_DATA) {
@@ -2257,6 +2211,7 @@ export class DataService {
           segments: barSegments,
           legends: legends,
           config: chartConfig,
+          metric_name:metric.name
         });
       });
     });
