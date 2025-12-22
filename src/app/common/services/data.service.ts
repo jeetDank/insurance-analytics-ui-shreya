@@ -885,20 +885,91 @@ export class DataService {
     return results;
   }
 
+  // generateMetricTableData(cardData: any) {
+  //   const tableData = cardData.map((data: any) => {
+  //     const tableData = data.cards.map((card: any) => {
+  //       return {
+  //         company: card?.companyName,
+  //         quarter: card?.period,
+  //         value: card?.metric,
+  //         change: card?.trend?.trend,
+  //       };
+  //     });
+
+  //     return {
+  //       metric_name: data.metricName,
+  //       tableData: tableData,
+  //     };
+  //   });
+
+  //   return tableData;
+  // }
+
   generateMetricTableData(cardData: any) {
+    const quarterRenderer = (value: any): any => ({
+      type: 'trend',
+      value: value?.value,
+      trend: {
+        direction: value?.change >= 0 ? 'up' : 'down',
+        value: `${Math.abs(value?.change).toFixed(2)}%`,
+        color: value?.change >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)',
+      },
+    });
+
     const tableData = cardData.map((data: any) => {
-      const tableData = data.cards.map((card: any) => {
+      const processedData = data.cards.map((card: any) => {
+        console.log(card);
+        
         return {
-          company: card.companyName,
-          quarter: card.period,
-          value: card.metric,
-          change: 0,
+          company: card?.companyName,
+          quarter: card?.period,
+          value: card?.metric,
+          change: card.trend?.trend,
         };
+      });
+
+      // Get unique quarters and companies
+      const quarters = [
+        ...new Set(processedData.map((d: any) => d.quarter)),
+      ].sort();
+      const companies = [...new Set(processedData.map((d: any) => d.company))];
+
+      // Generate columns
+      const columns: any[] = [
+        {
+          header: 'Company',
+          field: 'company',
+          align: 'left',
+        },
+        ...quarters.map((quarter: any) => ({
+          header: quarter,
+          field: quarter.toLowerCase().replace(/\s+/g, '_'), // "Q2 2025" -> "q2_2025"
+          align: 'right' as const,
+          cellRenderer: quarterRenderer,
+        })),
+      ];
+
+      // Transform data into table row format
+      const transformedData = companies.map((company) => {
+        const row: any = { company };
+
+        processedData
+          .filter((d: any) => d.company === company)
+          .forEach((d: any) => {
+            const fieldName = d.quarter.toLowerCase().replace(/\s+/g, '_');
+            row[fieldName] = {
+              value: d.value,
+              change: d.change,
+            };
+          });
+
+        return row;
       });
 
       return {
         metric_name: data.metricName,
-        tableData: tableData,
+        columns: columns,
+        data: transformedData,
       };
     });
 
@@ -1784,7 +1855,7 @@ export class DataService {
   }
 
   fetchMetricsForFormulaComponent() {
-    if (this.API_DATA?.ANALYSIS_DATA?.results?.[0]?.statements.length ==0) {
+    if (this.API_DATA?.ANALYSIS_DATA?.results?.[0]?.statements.length == 0) {
       return null;
     }
 
@@ -1837,7 +1908,6 @@ export class DataService {
 
         Object.entries(obj.children).forEach(([childKey, childObj]: any) => {
           // Skip if the key is "Consolidated"
-          
 
           extracted.children[childKey] = extractData(childObj);
         });
@@ -1846,10 +1916,11 @@ export class DataService {
       return extracted;
     };
     Object.entries(input).forEach(([key, obj]: any) => {
-        console.log(key);
-        
+      console.log(key);
+
+      if (key != 'Consolidated') {
         result[key] = extractData(obj);
-      
+      }
     });
 
     return result;

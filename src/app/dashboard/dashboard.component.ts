@@ -515,15 +515,14 @@ export class DashboardComponent implements OnInit {
     private _loader: LoaderService,
     private _excelService: ExcelExportService,
     private snackBar: MatSnackBar,
-    private router:Router
+    private router: Router
   ) {
+    const username = localStorage.getItem('username');
+    const password = localStorage.getItem('password');
 
-    const username = localStorage.getItem("username");
-    const password = localStorage.getItem("password");
-
-    if(!username && !password){
-      console.log("navigating to login page")
-      router.navigateByUrl('/login')
+    if (!username && !password) {
+      console.log('navigating to login page');
+      router.navigateByUrl('/login');
     }
     // Check if user has a saved preference
     const savedTheme = localStorage.getItem('theme');
@@ -700,6 +699,10 @@ export class DashboardComponent implements OnInit {
       this.metricTableData = this._dataService.generateMetricTableData(
         this.cardView
       );
+
+      console.log(this.metricTableData,this.cardView);
+      
+
       this.referenceData = this._dataService.generateReferenceData();
 
       this.isComparison = true;
@@ -711,14 +714,12 @@ export class DashboardComponent implements OnInit {
 
       this.referenceData = this._dataService.generateReferenceData();
 
-      this.segmentPeriods = this._dataService.API_DATA.PARSED_QUERY.time_periods;
+      this.segmentPeriods =
+        this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
 
       const segmentWiseStackedChartData: any =
         this._dataService.getSegmentWiseChartData();
-
-      
-      
 
       const commonSegmentColumnCharts =
         this._dataService.generateCommonSegmentComparison(
@@ -736,9 +737,7 @@ export class DashboardComponent implements OnInit {
       const verticalSegmentbarChart: any =
         this._dataService.fetchVerticalStackedBarChartData();
 
-        console.log(verticalSegmentbarChart);
-        
-
+      console.log(verticalSegmentbarChart);
 
       this.segmentStackedOption =
         this._dataService.generateVerticalSegmentCharts(
@@ -746,7 +745,6 @@ export class DashboardComponent implements OnInit {
         );
 
       console.log(this.segmentStackedOption);
-      
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
         this.insightsData = this._dataService.generateInsights();
