@@ -184,14 +184,11 @@ export class DataService {
     return `Q${quarter} ${year}`; // Returns "Q2 2025"
   }
   fetchCardsData(companies: { name: string; logo: string }[]) {
-    console.log(companies);
-
     const requested_metrics = this.API_DATA.PARSED_QUERY.metrics;
 
     const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
       (company: any) => {
         // Find matching company logo
-        console.log(company, companies);
 
         const matchedCompany = companies.find(
           (c) =>
@@ -220,7 +217,6 @@ export class DataService {
         };
       }
     );
-    console.log('returning from fetch cards data ', companyWiseCardData);
 
     return this.populateCardView(companyWiseCardData);
   }
@@ -328,7 +324,6 @@ export class DataService {
         // Map through sorted quarters for each company
         return sortedQuarters.map((quarter: any) => {
           const metricData = quarter.metrics[metricName];
-          console.log('metric data', metricData);
 
           return {
             companyName: this.formatCompanyName(company.company_name),
@@ -918,8 +913,6 @@ export class DataService {
 
     const tableData = cardData.map((data: any) => {
       const processedData = data.cards.map((card: any) => {
-        console.log(card);
-        
         return {
           company: card?.companyName,
           quarter: card?.period,
@@ -1916,8 +1909,6 @@ export class DataService {
       return extracted;
     };
     Object.entries(input).forEach(([key, obj]: any) => {
-      console.log(key);
-
       if (key != 'Consolidated') {
         result[key] = extractData(obj);
       }
@@ -1977,6 +1968,15 @@ export class DataService {
       '#fb7185', // rose
       '#34d399', // emerald
     ];
+
+    // Helper function to darken a hex color
+    function darkenColor(hex: string, percent: number = 20): string {
+      const num = parseInt(hex.replace('#', ''), 16);
+      const r = Math.max(0, ((num >> 16) & 0xff) * (1 - percent / 100));
+      const g = Math.max(0, ((num >> 8) & 0xff) * (1 - percent / 100));
+      const b = Math.max(0, (num & 0xff) * (1 - percent / 100));
+      return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+    }
 
     // Helper function to recursively extract all leaf segments
     function extractLeafSegments(obj: any, path: string = ''): any[] {
@@ -2073,7 +2073,7 @@ export class DataService {
             name: legendName, // Use legend name with value
             type: 'bar',
             stack: 'total',
-            barWidth: '50%',
+            barWidth: '140px',
             stackStrategy: 'all',
             label: {
               show: false,
@@ -2106,20 +2106,103 @@ export class DataService {
           });
         });
 
-        // Create legends with values
-        const legends = segmentNames.map((name, index) => {
+        const legendsMap = new Map<string, any>();
+
+        // Calculate grand total across all segments
+        const grandTotal = series.reduce((sum, s) => {
+          return (
+            sum +
+            s.data.reduce(
+              (dataSum: number, value: number) => dataSum + value,
+              0
+            )
+          );
+        }, 0);
+
+        // Build hierarchy with colors matching the series
+        segmentNames.forEach((segmentName, index) => {
           const segmentTotal = series[index].data.reduce(
             (sum: number, value: number) => sum + value,
             0
           );
-          const displayName = snakeToTitleCase(name);
-          return {
-            name: `${displayName} ($${segmentTotal >= 0 ? '' : '-'}${Math.abs(
-              segmentTotal
-            ).toFixed(2)}M)`,
-            color: colorPalette[index % colorPalette.length],
-          };
+
+          // Use the exact same color as the series
+          const segmentColor = colorPalette[index % colorPalette.length];
+
+          // Find the full path for this segment from barSegments
+          let fullPath = '';
+          for (const rootKey of rootKeys) {
+            const segments = barSegments[rootKey];
+            const segment = segments.find((s: any) => {
+              const displayName = s.path.split('.').pop();
+              return displayName === segmentName;
+            });
+            if (segment) {
+              fullPath = segment.path;
+              break;
+            }
+          }
+
+          const pathParts = fullPath.split('.');
+          const parentName = pathParts[0];
+
+          if (pathParts.length === 1) {
+            // Top-level segment with no parent
+            if (!legendsMap.has(parentName)) {
+              legendsMap.set(parentName, {
+                name: snakeToTitleCase(parentName),
+                color: segmentColor,
+                value: segmentTotal,
+                percentage:
+                  grandTotal !== 0
+                    ? parseFloat(((segmentTotal / grandTotal) * 100).toFixed(1))
+                    : 0,
+                children: [],
+              });
+            }
+          } else {
+            // Child segment with parent
+            const childName = pathParts[pathParts.length - 1];
+
+            // Create parent if it doesn't exist
+            if (!legendsMap.has(parentName)) {
+              legendsMap.set(parentName, {
+                name: snakeToTitleCase(parentName),
+                color: colorPalette[0], // Default color for parent grouping
+                value: 0,
+                percentage: 0,
+                children: [],
+              });
+            }
+
+            const parent = legendsMap.get(parentName);
+            parent.value += segmentTotal;
+
+            // Add child with the exact color from the series
+            parent.children.push({
+              name: snakeToTitleCase(childName),
+              color: segmentColor,
+              value: parseFloat(segmentTotal.toFixed(1)),
+              percentage:
+                grandTotal !== 0
+                  ? parseFloat(((segmentTotal / grandTotal) * 100).toFixed(1))
+                  : 0,
+            });
+          }
         });
+
+        // Update parent percentages and values after all children are added
+        legendsMap.forEach((legend) => {
+          if (legend.children.length > 0) {
+            legend.value = parseFloat(legend.value.toFixed(1));
+            legend.percentage =
+              grandTotal !== 0
+                ? parseFloat(((legend.value / grandTotal) * 100).toFixed(1))
+                : 0;
+          }
+        });
+
+        const legends = Array.from(legendsMap.values());
 
         const chartConfig = {
           useDirtyRect: true,
@@ -2281,9 +2364,12 @@ export class DataService {
         chartConfigs.push({
           company: companyName,
           period: period,
-          total: metric.total,
+          total: parseFloat((metric.total / 1000000).toFixed(1)),
           segments: barSegments,
-          legends: legends,
+          legends: {
+            total: parseFloat((metric.total / 1000000).toFixed(1)),
+            legends: legends,
+          },
           config: chartConfig,
           metric_name: metric.name,
         });

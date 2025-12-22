@@ -721,6 +721,9 @@ export class DashboardComponent implements OnInit {
       const segmentWiseStackedChartData: any =
         this._dataService.getSegmentWiseChartData();
 
+      console.log(segmentWiseStackedChartData);
+      
+
       const commonSegmentColumnCharts =
         this._dataService.generateCommonSegmentComparison(
           segmentWiseStackedChartData
@@ -737,7 +740,6 @@ export class DashboardComponent implements OnInit {
       const verticalSegmentbarChart: any =
         this._dataService.fetchVerticalStackedBarChartData();
 
-      console.log(verticalSegmentbarChart);
 
       this.segmentStackedOption =
         this._dataService.generateVerticalSegmentCharts(

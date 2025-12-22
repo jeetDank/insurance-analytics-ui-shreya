@@ -943,7 +943,7 @@
               style="min-height: 500px; width: 100%"
             ></div>
             <div class="mb-4">
-              <!-- <app-legend-display [data]="chart.legends" ></app-legend-display> -->
+              <app-legend-display [data]="chart.legends" ></app-legend-display>
             </div>
 
             }
@@ -1005,6 +1005,8 @@
                   [showTotal]="true"
                 >
                 </app-segment-table>
+
+               
               </div>
               }
             </div>
@@ -1078,9 +1080,8 @@
       </div>
       } @if(!isDataAvailable && !isLoaderVisible ){
 
-      <app-metric-table></app-metric-table>
 
-      <app-legend-display></app-legend-display>
+      
 
       <div class="flex flex-col items-center justify-center h-full">
         <div class="mb-8 flex justify-center gap-3">
