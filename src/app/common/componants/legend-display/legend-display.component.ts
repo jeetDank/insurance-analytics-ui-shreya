@@ -1,30 +1,94 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-interface Legend {
-  color: string;
+export interface LegendItem {
   name: string;
+  color: string;
   value: number;
-  percentage:number
+  percentage: number;
+  children?: LegendItem[];
 }
 
-interface LegendData {
+export interface LegendData {
   total: number;
-  legends: Legend[];
+  legends: LegendItem[];
 }
 
 @Component({
   selector: 'app-legend-display',
-  imports: [],
   templateUrl: './legend-display.component.html',
-  styleUrl: './legend-display.component.scss'
+  styleUrls: ['./legend-display.component.scss']
 })
 export class LegendDisplayComponent {
-   @Input() data: LegendData = { total: 0, legends: [] };
+  @Input() data: LegendData  = {
+  total: 54.2,
+  legends: [
+    {
+      name: 'Property-Liability',
+      color: 'rgb(59, 130, 246)',
+      value: 42.8,
+      percentage: 79.0,
+      children: [
+        {
+          name: 'Allstate Brand',
+          color: 'rgb(47, 104, 197)',
+          value: 34.2,
+          percentage: 63.1
+        },
+        {
+          name: 'National General',
+          color: 'rgb(47, 104, 197)',
+          value: 5.4,
+          percentage: 10.0
+        },
+        {
+          name: 'Encompass',
+          color: 'rgb(47, 104, 197)',
+          value: 2.1,
+          percentage: 3.9
+        },
+        {
+          name: 'Esurance',
+          color: 'rgb(47, 104, 197)',
+          value: 1.1,
+          percentage: 2.0
+        }
+      ]
+    },
+    {
+      name: 'Property-Liability',
+      color: 'rgb(59, 130, 246)',
+      value: 42.8,
+      percentage: 79.0,
+      children: [
+        {
+          name: 'Allstate Brand',
+          color: 'rgb(47, 104, 197)',
+          value: 34.2,
+          percentage: 63.1
+        },
+        {
+          name: 'National General',
+          color: 'rgb(47, 104, 197)',
+          value: 5.4,
+          percentage: 10.0
+        },
+        {
+          name: 'Encompass',
+          color: 'rgb(47, 104, 197)',
+          value: 2.1,
+          percentage: 3.9
+        },
+        {
+          name: 'Esurance',
+          color: 'rgb(47, 104, 197)',
+          value: 1.1,
+          percentage: 2.0
+        }
+      ]
+    }
+  ]
+};
 
-  round(value: number): string {
-    if (value === 0 || value == null) return '0.0';
-    return (value).toFixed(1);
+  round(value?: number): string {
+    return value == null ? '0.0' : value.toFixed(1);
   }
-
 }

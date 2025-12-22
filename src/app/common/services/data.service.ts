@@ -1784,7 +1784,7 @@ export class DataService {
   }
 
   fetchMetricsForFormulaComponent() {
-    if (!this.API_DATA?.ANALYSIS_DATA?.results?.[0]?.statements) {
+    if (this.API_DATA?.ANALYSIS_DATA?.results?.[0]?.statements.length ==0) {
       return null;
     }
 
@@ -1818,39 +1818,42 @@ export class DataService {
   }
 
   convertResponseObject(input: any) {
-  // Add safety check
-  if (!input || typeof input !== 'object') {
-    return {};
-  }
-
-  const result: any = {};
-
-  // Recursively extract value and children structure
-  const extractData = (obj: any): any => {
-    const extracted: any = {
-      value: obj?.value
-    };
-
-    // If there are children, recursively process them
-    if (obj?.children && typeof obj.children === 'object') {
-      extracted.children = {};
-      
-      Object.entries(obj.children).forEach(([childKey, childObj]: any) => {
-        extracted.children[childKey] = extractData(childObj);
-      });
+    // Add safety check
+    if (!input || typeof input !== 'object') {
+      return {};
     }
 
-    return extracted;
-  };
+    const result: any = {};
 
-  Object.entries(input).forEach(([key, obj]: any) => {
-    result[key] = extractData(obj);
-  });
+    // Recursively extract value and children structure
+    const extractData = (obj: any): any => {
+      const extracted: any = {
+        value: obj?.value,
+      };
 
-  return result;
-}
+      // If there are children, recursively process them
+      if (obj?.children && typeof obj.children === 'object') {
+        extracted.children = {};
 
-  
+        Object.entries(obj.children).forEach(([childKey, childObj]: any) => {
+          // Skip if the key is "Consolidated"
+          
+
+          extracted.children[childKey] = extractData(childObj);
+        });
+      }
+
+      return extracted;
+    };
+    Object.entries(input).forEach(([key, obj]: any) => {
+        console.log(key);
+        
+        result[key] = extractData(obj);
+      
+    });
+
+    return result;
+  }
 
   fetchVerticalStackedBarChartData() {
     if (this.API_DATA.ANALYSIS_DATA) {
@@ -1868,7 +1871,7 @@ export class DataService {
               metricName: metric,
               total: quarter.all_metrics[metric]?.value,
               children: this.convertResponseObject(
-                quarter.all_metrics[metric].children
+                quarter.all_metrics[metric]?.children
               ),
             });
           });
@@ -2211,7 +2214,7 @@ export class DataService {
           segments: barSegments,
           legends: legends,
           config: chartConfig,
-          metric_name:metric.name
+          metric_name: metric.name,
         });
       });
     });

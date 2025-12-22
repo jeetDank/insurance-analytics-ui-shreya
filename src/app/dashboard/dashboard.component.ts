@@ -38,6 +38,7 @@ import {
 
 import { LucideAngularModule, FilesIcon } from 'lucide-angular';
 import { ExcelExportService } from '../common/services/excel-export.service';
+import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -72,7 +73,7 @@ echarts.use([
     SegmentTableComponent,
     CommonModule,
     MatSnackBarModule,
-    // LegendDisplayComponent,
+    LegendDisplayComponent,
     // LucideAngularModule
   ],
   templateUrl: './dashboard.component.html',
@@ -724,6 +725,9 @@ export class DashboardComponent implements OnInit {
 
       const verticalSegmentbarChart: any =
         this._dataService.fetchVerticalStackedBarChartData();
+
+        console.log(verticalSegmentbarChart);
+        
 
 
       this.segmentStackedOption =
