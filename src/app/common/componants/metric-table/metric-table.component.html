@@ -14,10 +14,9 @@
 
   <tbody>
     <tr
-      *ngFor="let row of data; let i = index,let last = last"
+      *ngFor="let row of data; let i = index; let last = last"
       class="transition-colors"
       [style.background-color]="getRowBackground(i)"
-     
     >
       <td
         *ngFor="let column of columns"
@@ -29,23 +28,19 @@
           *ngIf="getCellContent(column, row) as cell"
           [ngSwitch]="cell.type"
         >
-
           <!-- TEXT -->
-          <span
-            *ngSwitchCase="'text'"
-            [style.color]="getCellColor(column)"
-          >
+          <span *ngSwitchCase="'text'" [style.color]="getCellColor(column)">
             {{ cell.value }}
           </span>
 
           <!-- TREND -->
           <div
             *ngSwitchCase="'trend'"
-            class="flex items-center flex-col gap-2"
+            class="flex flex-col gap-1"
             [ngClass]="{
-              'justify-end': column.align === 'right',
-              'justify-start': column.align === 'left',
-              'justify-center': column.align === 'center'
+              'items-end text-right': column.align === 'right',
+              'items-start text-left': column.align === 'left',
+              'items-center text-center': column.align === 'center'
             }"
           >
             <!-- Main value -->
@@ -53,42 +48,45 @@
               {{ cell.value }}
             </span>
 
-            <div class="flex flex-row gap-1">
-               <!-- Arrow -->
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="h-3.5 w-3.5"
-              [style.color]="getTrendColor(cell.trend?.color)"
+            <!-- Arrow + % -->
+            <div
+              class="flex items-center gap-1"
+              [ngClass]="{
+                'justify-end': column.align === 'right',
+                'justify-start': column.align === 'left',
+                'justify-center': column.align === 'center'
+              }"
             >
-              <ng-container *ngIf="cell.trend?.direction === 'up'">
-                <path d="M12 19V5" />
-                <path d="m5 12 7-7 7 7" />
-              </ng-container>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="h-3.5 w-3.5"
+                [style.color]="getTrendColor(cell.trend?.color)"
+              >
+                <ng-container *ngIf="cell.trend?.direction === 'up'">
+                  <path d="M12 19V5" />
+                  <path d="m5 12 7-7 7 7" />
+                </ng-container>
 
-              <ng-container *ngIf="cell.trend?.direction === 'down'">
-                <path d="M12 5v14" />
-                <path d="m19 12-7 7-7-7" />
-              </ng-container>
-            </svg>
+                <ng-container *ngIf="cell.trend?.direction === 'down'">
+                  <path d="M12 5v14" />
+                  <path d="m19 12-7 7-7-7" />
+                </ng-container>
+              </svg>
 
-            <!-- Percentage -->
-            <span
-              class="text-xs font-medium"
-              [style.color]="getTrendColor(cell.trend?.color)"
-            >
-              {{ cell.trend?.value }}
-            </span>
+              <span
+                class="text-xs font-medium"
+                [style.color]="getTrendColor(cell.trend?.color)"
+              >
+                {{ cell.trend?.value }}
+              </span>
             </div>
-
-           
           </div>
-
         </ng-container>
       </td>
     </tr>
