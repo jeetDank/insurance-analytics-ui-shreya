@@ -700,8 +700,6 @@ export class DashboardComponent implements OnInit {
         this.cardView
       );
 
-      console.log(this.metricTableData,this.cardView);
-      
 
       this.referenceData = this._dataService.generateReferenceData();
 
@@ -721,32 +719,28 @@ export class DashboardComponent implements OnInit {
       const segmentWiseStackedChartData: any =
         this._dataService.getSegmentWiseChartData();
 
-      console.log(segmentWiseStackedChartData);
-      
-
-      const commonSegmentColumnCharts =
+      const commonSegmentColumnData =
         this._dataService.generateCommonSegmentComparison(
           segmentWiseStackedChartData
         );
 
+        console.log(segmentWiseStackedChartData);
+        
       // this.segmentStackedOption = this._dataService.generateSegmentCharts(
       //   segmentWiseStackedChartData
       // );
-
+       
+        
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
-        commonSegmentColumnCharts
+        commonSegmentColumnData
       );
+       console.log(commonSegmentColumnData,this.commonSegmentsOption);
 
-      const verticalSegmentbarChart: any =
+      const verticalSegmentbarData: any =
         this._dataService.fetchVerticalStackedBarChartData();
 
-
       this.segmentStackedOption =
-        this._dataService.generateVerticalSegmentCharts(
-          verticalSegmentbarChart
-        );
-
-      console.log(this.segmentStackedOption);
+        this._dataService.generateVerticalSegmentCharts(verticalSegmentbarData);
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
         this.insightsData = this._dataService.generateInsights();

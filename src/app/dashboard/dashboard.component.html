@@ -926,6 +926,14 @@
         <!-- Stacked View -->
         @if(currentTabSegment == 'stacked'){
         <div class="space-y-4">
+
+          <p class="p-6 mt-2 mb-2">
+            Note: Segment data is sourced from XBRL filings. Information may vary from the company’s primary financial statements due to tagging inconsistencies.
+          </p>
+
+
+
+
           <div
             class="rounded-xl p-6 flex flex-col flex-wrap"
             style="min-height: 400px"
@@ -933,14 +941,14 @@
             @for (chart of segmentStackedOption; track $index) {
 
             <div class="text-sm font-bold mt-4 mb-2">
-              {{ chart.company }} - {{ chart.period }} - {{ chart.metric_name }}
+              {{ chart.company }} - {{ chart.period }}
             </div>
 
             <div
               class="rounded-xl"
               echarts
               [options]="chart.config"
-              style="min-height: 500px; width: 100%"
+              style="min-height: 400px; width: 100%"
             ></div>
             <div class="mb-4">
               <app-legend-display [data]="chart.legends" ></app-legend-display>
@@ -973,7 +981,7 @@
               class="rounded-xl"
               echarts
               [options]="chart.config"
-              style="height: 100px; width: 100%"
+              style="height: 500px; width: 100%"
             ></div>
 
             }

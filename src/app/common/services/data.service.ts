@@ -1655,10 +1655,13 @@ export class DataService {
         }
 
         metricData.segments.forEach((segment: any) => {
-          const segmentKey = `${metricName}_${segment.segment_name}`;
+          
+          const segmentKey:string = `${metricName}_${segment.segment_name}`;
+
+          
 
           // Initialize segment if it doesn't exist
-          if (!commonSegments[segmentKey]) {
+          if (!commonSegments[segmentKey]   ) {
             commonSegments[segmentKey] = {
               metric: metricName,
               segment_name: segment.segment_name,
@@ -1698,8 +1701,243 @@ export class DataService {
 
     return filteredSegments;
   }
-
   generateCommonSegmentCharts(commonSegments: any) {
+    const chartConfigs: any[] = [];
+
+    // Color palette for companies
+    const colorPalette = [
+      '#3b82f6', // blue
+      '#10b981', // green
+      '#ef4444', // red
+      '#f59e0b', // orange
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+    ];
+
+    // Group data by period
+    const periodGroups: any = {};
+
+    Object.keys(commonSegments).forEach((segmentKey: string) => {
+      const segment = commonSegments[segmentKey];
+
+      Object.keys(segment.periods).forEach((period: string) => {
+        if (!periodGroups[period]) {
+          periodGroups[period] = {
+            metric: segment.metric,
+            segments: [],
+          };
+        }
+
+        const companies = segment.periods[period];
+        periodGroups[period].segments.push({
+          segment_key: segmentKey,
+          segment_name: segment.segment_name,
+          companies: companies,
+        });
+      });
+    });
+
+    // Create chart for each period
+    Object.keys(periodGroups).forEach((period: string) => {
+      const periodData = periodGroups[period];
+      const segments = periodData.segments;
+
+      // Get all unique company names across all segments
+      const companyNamesSet = new Set<string>();
+      segments.forEach((seg: any) => {
+        seg.companies.forEach((c: any) => companyNamesSet.add(c.company_name));
+      });
+      const companyNames = Array.from(companyNamesSet);
+
+      // Segment names for x-axis
+      const segmentNames = segments.map((s: any) =>
+        snakeToTitleCase(s.segment_name)
+      );
+
+      // Create series for each company
+      const series = companyNames.map(
+        (companyName: string, companyIndex: number) => {
+          const data = segments.map((seg: any) => {
+            const companyData = seg.companies.find(
+              (c: any) => c.company_name === companyName
+            );
+            return companyData ? companyData.value / 1000000 : 0; // Convert to millions
+          });
+
+          return {
+            name: companyName,
+            type: 'bar',
+            data: data,
+            barWidth: '140px',
+            itemStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: colorPalette[companyIndex % colorPalette.length],
+                  },
+                  {
+                    offset: 1,
+                    color:
+                      colorPalette[companyIndex % colorPalette.length] + 'cc',
+                  },
+                ],
+              },
+              borderRadius: [4, 4, 0, 0],
+            },
+            emphasis: {
+              itemStyle: {
+                color: colorPalette[companyIndex % colorPalette.length],
+              },
+            },
+            label: {
+              show: true,
+              position: 'top',
+              color: '#d7d7d7ff',
+              fontSize: 10,
+              formatter: (params: any) => {
+                return params.value > 0 ? `$${params.value.toFixed(1)}M` : '';
+              },
+            },
+          };
+        }
+      );
+
+      const chartConfig = {
+        title: {
+          text: `${period}`,
+          textStyle: {
+            fontSize: 16,
+            fontWeight: 600,
+            color: '#d7d7d7ff',
+          },
+          left: 'center',
+          top: 10,
+        },
+
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          backgroundColor: 'rgba(15, 15, 25, 0.95)',
+          borderColor: 'rgba(100, 100, 150, 0.3)',
+          borderWidth: 1,
+          borderRadius: 12,
+          padding: 12,
+          textStyle: {
+            color: '#d7d7d7ff',
+            fontSize: 12,
+            fontWeight: 'normal',
+          },
+          formatter: (params: any) => {
+            const segmentName = params[0].name;
+            let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${segmentName}</div>`;
+
+            params.forEach((param: any) => {
+              result += `
+              <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
+                <div style="display: flex; align-items: center; flex: 1;">
+                  <span style="display: inline-block; width: 10px; height: 10px; background: ${
+                    param.color
+                  }; border-radius: 50%; margin-right: 8px;"></span>
+                  <span>${param.seriesName}</span>
+                </div>
+                <div style="text-align: right; margin-left: 12px;">
+                  <span style="font-weight: 600;">$${param.value.toFixed(
+                    2
+                  )}M</span>
+                </div>
+              </div>
+            `;
+            });
+
+            return result;
+          },
+        },
+
+        legend: {
+          data: companyNames,
+          bottom: 10,
+          textStyle: {
+            color: '#d7d7d7ff',
+            fontSize: 11,
+          },
+          itemWidth: 12,
+          itemHeight: 12,
+        },
+
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          top: '15%',
+          containLabel: true,
+        },
+
+        xAxis: {
+          type: 'category',
+          data: segmentNames,
+          axisLabel: {
+            show: true,
+            color: '#d7d7d7ff',
+            fontSize: 11,
+            interval: 0,
+            rotate: segmentNames.length > 5 ? 45 : 0,
+          },
+          axisLine: {
+            show: true,
+            lineStyle: {
+              color: 'rgba(100, 100, 150, 0.3)',
+            },
+          },
+          axisTick: {
+            show: false,
+          },
+        },
+
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            show: true,
+            color: '#d7d7d7ff',
+            fontSize: 11,
+            formatter: (value: number) => `$${value}M`,
+          },
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: 'rgba(100, 100, 150, 0.1)',
+              type: 'dashed',
+            },
+          },
+        },
+
+        backgroundColor: 'transparent',
+
+        series: series,
+      };
+
+      chartConfigs.push({
+        period: period,
+        metric: periodData.metric,
+        config: chartConfig,
+      });
+    });
+
+    return chartConfigs;
+  }
+
+  generateCommonSegmentChartsBackup(commonSegments: any) {
     const chartConfigs: any[] = [];
 
     // Color palette for companies
@@ -2209,7 +2447,8 @@ export class DataService {
           devicePixelRatio: window.devicePixelRatio || 1,
 
           title: {
-            text: `${companyName} - ${period}`,
+            // text: `${companyName} - ${period}`,
+            text: ``,
             textStyle: {
               fontSize: 16,
               fontWeight: 600,
