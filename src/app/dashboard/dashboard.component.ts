@@ -36,7 +36,6 @@ import {
   MatSnackBarVerticalPosition,
 } from '@angular/material/snack-bar';
 
-import { LucideAngularModule, FilesIcon } from 'lucide-angular';
 import { ExcelExportService } from '../common/services/excel-export.service';
 import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
 import { Router } from '@angular/router';
@@ -89,7 +88,6 @@ echarts.use([
 export class DashboardComponent implements OnInit {
   isDarkTheme = true;
   isSideNavOpened = true;
-  readonly FileIcon = FilesIcon;
 
   // Common chart configuration for crisp rendering
   private getCommonChartConfig() {
