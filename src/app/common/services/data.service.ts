@@ -1691,7 +1691,18 @@ export class DataService {
 
       // Check if this segment has data from multiple companies in at least one period
       const hasMultipleCompanies = Object.values(segment.periods).some(
-        (companies: any) => companies.length > 1
+        
+        
+        (companies: any) => { 
+            console.log(segment);
+            
+          if(companies.length > 1 && !segment.segment_name.includes("revenue_consolidated") ){
+            return true
+          }
+          else{
+             return  false;
+          }
+        }
       );
 
       if (hasMultipleCompanies) {
@@ -1701,6 +1712,8 @@ export class DataService {
 
     return filteredSegments;
   }
+
+
   generateCommonSegmentCharts(commonSegments: any) {
     const chartConfigs: any[] = [];
 

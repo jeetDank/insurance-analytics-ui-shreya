@@ -962,8 +962,7 @@
         <!-- Bar View -->
         @if(currentTabSegment == 'bar'){ @if (commonSegmentsOption.length ==0) {
         <div style="width: 100%" class="h-50 flex items-center justify-center">
-          No data to display. The dataset may be unavailable, or you may be
-          viewing a single-company analysis.
+          Single company analysis is being viewed hence comparison analysis is not available
         </div>
         }
         <div class="space-y-4">
@@ -974,7 +973,7 @@
             @for (chart of commonSegmentsOption; track $index) {
             <div class="text-sm mb-2 mt-2">
               <div class="text-sm font-bold">
-                {{ chart.segment_name }} - {{ chart.period }}
+                <!-- {{ chart.segment_name }} - {{ chart.period }} -->
               </div>
             </div>
             <div
