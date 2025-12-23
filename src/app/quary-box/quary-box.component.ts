@@ -89,6 +89,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   dataReady = output<boolean>();
   @Input() historicalConvo: any = null;
   resetData = output<boolean>();
+  updateCustomMetricView = output<any>();
 
   conversation: conversation[] = [];
 
@@ -139,6 +140,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
       this.conversation = this.historicalConvo;
     }
   }
+
+
 
   onAmbiguitiesUpdate(updatedAmbiguities: any[]): void {
     this.ambiguities.forEach((amb) => {
@@ -426,7 +429,18 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   }
 
   getCustomFormulas(data: any) {
-    console.log(data);
+     const companies:any = this._dataService.API_DATA.COMPANY_DATA?.filter(
+      (company) => company.success
+    ).map((data: any) => {
+      return { name: data?.company?.name, logo: data?.company?.logo_url };
+    });
+
+    let customCardData = this._dataService.fetchCustomCardsData(companies,data);
+    console.log(customCardData);
+
+    this.updateCustomMetricView.emit(customCardData);
+    
+   
   }
 
   startBatchAnalysis() {

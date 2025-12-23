@@ -660,6 +660,12 @@ export class DashboardComponent implements OnInit {
     }
   }
 
+  customCardView:any = [];
+
+  displayCustomFormulaData(data:any){
+    this.customCardView = data;
+  }
+
   showData() {
     this.isSideNavOpened = false;
 

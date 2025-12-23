@@ -100,6 +100,21 @@ export class DataService {
     }
   }
 
+  generateCustomeCardData(formulaData:any){
+
+    if(this.API_DATA.ANALYSIS_DATA){
+        this.API_DATA.ANALYSIS_DATA.results.forEach((company:any)=>{
+
+        })
+    }
+    else{
+
+    }
+
+    this.API_DATA.ANALYSIS_DATA
+
+  }
+
   createAmbiguityPayload(ambiguities: any[]) {
     let ambiguityData = ambiguities.map((ambiguity: any) => {
       return {
@@ -344,6 +359,10 @@ export class DataService {
       }),
     }));
   }
+
+
+
+
 
   // Helper function to compare quarters chronologically
   private compareQuarters(periodA: string, periodB: string): number {
@@ -2630,6 +2649,200 @@ export class DataService {
 
     return chartConfigs;
   }
+
+  fetchCustomCardsData(
+  companies: { name: string; logo: string }[],
+  customFormulaComponents: any[]
+) {
+  // Extract all unique keywords from all custom formulas as requested metrics
+  const allKeywords = Array.from(
+    new Set(
+      customFormulaComponents.flatMap((formula) => formula.keywords)
+    )
+  );
+
+  const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
+    (company: any) => {
+      // Find matching company logo
+      const matchedCompany = companies.find(
+        (c) =>
+          c.name
+            .toLowerCase()
+            .includes(
+              this.formatCompanyName(company.company_name).toLowerCase()
+            ) || c.name.toLowerCase() == company.company_name.toLowerCase()
+      );
+      const companyLogo = matchedCompany?.logo || '';
+
+      return {
+        company_name: company.company_name,
+        cik: company.cik,
+        logo: companyLogo,
+        period: company?.statements?.context_info?.period_label_text,
+        quarters: company.statements.map((qtr: any) => {
+          // First, extract all keyword metrics from all_metrics
+          const keywordMetrics: any = {};
+          allKeywords.forEach((keyword: string) => {
+            keywordMetrics[keyword] = qtr.all_metrics[keyword]; // Get raw metric data
+          });
+
+          // Then calculate each custom formula
+          const calculatedMetrics: any = {};
+          customFormulaComponents.forEach((formulaObj) => {
+            const keywords = formulaObj.keywords;
+
+            // Get values for this formula's keywords
+            const keywordValues: { [key: string]: number } = {};
+            let hasAllValues = true;
+
+            keywords.forEach((keyword: string) => {
+              const metricData = keywordMetrics[keyword];
+              // Extract raw numeric value from the metric data
+              const rawValue = this.getRawMetricValue(metricData);
+              
+              if (rawValue !== null && rawValue !== undefined && !isNaN(rawValue)) {
+                keywordValues[keyword] = rawValue;
+              } else {
+                hasAllValues = false;
+              }
+            });
+
+            // Calculate the formula result if all keyword values are available
+            if (hasAllValues && keywords.length > 0) {
+              const calculatedValue = this.evaluateFormula(
+                formulaObj.formula,
+                keywordValues
+              );
+              calculatedMetrics[formulaObj.name] = {
+                value: calculatedValue,
+                trend: null, // Custom formulas don't have trend data
+              };
+            } else {
+              calculatedMetrics[formulaObj.name] = null;
+            }
+          });
+
+          return {
+            period: qtr.context_info.period_label_text,
+            logo: companyLogo,
+            metrics: calculatedMetrics,
+          };
+        }),
+      };
+    }
+  );
+
+  return this.populateCardView(companyWiseCardData);
+}
+
+// Helper function to extract raw numeric value from metric data
+private getRawMetricValue(metricData: any): number | null {
+  if (!metricData) return null;
+  
+  // Try different possible property names for the raw value
+  if (typeof metricData === 'number') {
+    return metricData;
+  }
+  
+  if (metricData.raw_value !== undefined && metricData.raw_value !== null) {
+    return parseFloat(metricData.raw_value);
+  }
+  
+  if (metricData.value !== undefined && metricData.value !== null) {
+    // If value is already a number, return it
+    if (typeof metricData.value === 'number') {
+      return metricData.value;
+    }
+    
+    // If value is a string with units (like "22.51B"), parse it
+    if (typeof metricData.value === 'string') {
+      return this.parseFormattedValue(metricData.value);
+    }
+  }
+  
+  return null;
+}
+
+// Helper function to parse formatted values like "22.51B", "1.5M", etc.
+private parseFormattedValue(formattedValue: string): number | null {
+  if (!formattedValue) return null;
+  
+  const value = formattedValue.toString().trim();
+  
+  // Remove any currency symbols
+  const cleaned = value.replace(/[$,]/g, '');
+  
+  // Check for units
+  const match = cleaned.match(/^(-?[\d.]+)([KMBT])?$/i);
+  if (!match) return null;
+  
+  const number = parseFloat(match[1]);
+  const unit = match[2]?.toUpperCase();
+  
+  if (isNaN(number)) return null;
+  
+  const multipliers: { [key: string]: number } = {
+    'K': 1000,
+    'M': 1000000,
+    'B': 1000000000,
+    'T': 1000000000000
+  };
+  
+  return unit ? number * multipliers[unit] : number;
+}
+
+// Helper function to evaluate formula with keyword values
+private evaluateFormula(
+  formula: string,
+  keywordValues: { [key: string]: number }
+): number | null {
+  try {
+    let evaluableFormula = formula.trim();
+
+    // Replace each keyword with its actual value
+    Object.keys(keywordValues).forEach((keyword) => {
+      const value = keywordValues[keyword];
+      // Use word boundaries to ensure we replace whole words only
+      evaluableFormula = evaluableFormula.replace(
+        new RegExp(`\\b${keyword}\\b`, 'g'),
+        value.toString()
+      );
+    });
+
+    // Basic validation: ensure the formula only contains numbers, operators, and parentheses
+    if (!/^[\d\s+\-*/().eE]+$/.test(evaluableFormula)) {
+      console.error('Invalid formula after substitution:', evaluableFormula);
+      return null;
+    }
+
+    // Evaluate the mathematical expression
+    return eval(evaluableFormula);
+  } catch (error) {
+    console.error('Error evaluating formula:', error);
+    return null;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
 
 function snakeToTitleCase(str: string): string {

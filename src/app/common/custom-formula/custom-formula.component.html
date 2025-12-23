@@ -157,9 +157,11 @@
         placeholder="Description (optional)"
       />
 
+      <!-- keywords:this.extractKeywords(formulaValue) -->
+
       <div class="mt-2 flex flex-row gap-2">
         <button
-          [disabled]="formulaForm.invalid || formulaError"
+         
           (click)="addNewFormula()"
           type="button"
           class="add-button flex grow items-center justify-center"

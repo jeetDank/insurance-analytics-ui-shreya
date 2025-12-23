@@ -264,6 +264,7 @@
           [historicalConvo]="historicalConvo"
           (resetData)="resetData()"
           (dataReady)="showData()"
+          (updateCustomMetricView)="displayCustomFormulaData($event)"
         ></app-quary-box>
       </div>
     </mat-drawer>
@@ -546,6 +547,65 @@
 
         <!-- Cards View -->
         @if(currentTabComparison =='cards'){
+
+        <div class="space-y-4">
+          @for (item of customCardView; track $index) {
+          <div>
+            <!-- Metric Header -->
+            <h2
+              style="z-index: 9999"
+              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900 mb-4"
+            >
+              {{ item.metricName }}
+              <small class="ml-2 cursor-pointer tooltip">
+                <span class="tooltiptext text-white/60">
+                  {{ item.tooltip }}
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-info h-3.5 w-3.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 16v-4"></path>
+                  <path d="M12 8h.01"></path>
+                </svg>
+              </small>
+            </h2>
+
+            <!-- Cards Grid - Dynamic Companies -->
+            <div
+              class="grid gap-4 max-w-7xl"
+              [ngClass]="getGridClass(getUniqueCompanies(item.cards).length)"
+            >
+              @for (companyName of getUniqueCompanies(item.cards); track
+              companyName) {
+              <div class="flex max-w-md flex-col gap-4">
+                @for (card of getCardsByCompany(item.cards, companyName); track
+                card.period) {
+                <app-metric-card
+                  [logo]="card.logo"
+                  [CompanyName]="card.companyName"
+                  [period]="card.period"
+                  [metric]="card.metric"
+                  [trend]="card.trend"
+                ></app-metric-card>
+                }
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+      
 
         <div class="space-y-4">
           @for (item of cardView; track $index) {
