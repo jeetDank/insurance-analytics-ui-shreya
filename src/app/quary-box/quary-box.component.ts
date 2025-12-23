@@ -141,8 +141,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
     }
   }
 
-
-
   onAmbiguitiesUpdate(updatedAmbiguities: any[]): void {
     this.ambiguities.forEach((amb) => {
       const found = updatedAmbiguities.find(
@@ -327,7 +325,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             );
 
             console.log(companyAmbiguity);
-            
 
             if (
               (res.parsed.ambiguities && res.parsed.ambiguities.length == 0) ||
@@ -340,10 +337,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
               this.recordProcessMsg(0);
               this.recordProcessMsg(1);
 
-              
-
-
-
               this.resolveCompanies(res.parsed.companies);
             } else {
               this._dataService.setParsedQuery(res.parsed);
@@ -353,10 +346,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
               }
             }
           } catch {
-            this.recordMsg(
-            `Something went wrong. please try again.`,
-            true
-          );
+            this.recordMsg(`Something went wrong. please try again.`, true);
           }
         } else {
           this.recordMsg(
@@ -429,18 +419,19 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   }
 
   getCustomFormulas(data: any) {
-     const companies:any = this._dataService.API_DATA.COMPANY_DATA?.filter(
+    const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
       (company) => company.success
     ).map((data: any) => {
       return { name: data?.company?.name, logo: data?.company?.logo_url };
     });
 
-    let customCardData = this._dataService.fetchCustomCardsData(companies,data);
+    let customCardData = this._dataService.fetchCustomCardsData(
+      companies,
+      data
+    );
     console.log(customCardData);
 
     this.updateCustomMetricView.emit(customCardData);
-    
-   
   }
 
   startBatchAnalysis() {
@@ -460,27 +451,30 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           // here check if multiple periods are available if yes then
           // go for varience analysis other wise just show till batch analysis
 
-          if (this._dataService.API_DATA.PARSED_QUERY?.time_periods.length > 1) {
+         
+          if (
+            this._dataService.API_DATA.PARSED_QUERY?.time_periods.length > 1
+          ) {
             this.recordProcessMsg(4);
             this.startVarienceAnalysis();
           } else {
             if (this.historicalConvo == null) {
+
               this._dataService.addQueryToHistory(this.conversation);
             }
             this.recordProcessMsg(5);
+            this._dataService.API_DATA.INSIGHTS_DATA = null;
             this.dataReady.emit(true);
             this.recordMsg(
               "I've updated the dashboard.(note: Not enough data available for variance analysis)",
               true
             );
+            
           }
 
           console.log(this._dataService.API_DATA);
         } else {
-          this.recordMsg(
-              "Something went wrong. please try again.",
-              true
-            );
+          this.recordMsg('Something went wrong. please try again.', true);
         }
       },
     });
@@ -514,7 +508,13 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           }
         },
         error: (err) => {
-          this.recordMsg(
+         
+          if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory(this.conversation);
+            }
+            this.dataReady.emit(true);
+            this.recordProcessMsg(5);
+            this.recordMsg(
             err?.message ? err.message : 'Something went wrong',
             true
           );

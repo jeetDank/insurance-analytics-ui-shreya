@@ -49,6 +49,7 @@ export class DataService {
     });
 
     this.HistoryBucket$.next(history);
+    
     // localStorage.setItem('historyBucket', JSON.stringify(history));
   }
 

@@ -624,6 +624,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadHistoricalData(query: any) {
+    
     this._dataService.API_DATA = query.API_DATA;
     this.sendConvoToQueryBox(query.conversation);
     this.showData();
@@ -642,6 +643,8 @@ export class DashboardComponent implements OnInit {
     this.commonSegmentsOption = [];
     this.segmentStackedOption = [];
     this.isSideNavOpened = true;
+    this.insightsData = [];
+    this.customCardView = [];
   }
 
   exportToExcel() {
@@ -668,6 +671,8 @@ export class DashboardComponent implements OnInit {
     this.isSideNavOpened = false;
 
     this.isDataAvailable = true;
+
+    this.insightsData = [];
 
     this.companies = this._dataService.API_DATA.COMPANY_DATA?.filter(
       (company) => company.success
