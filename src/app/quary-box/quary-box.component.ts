@@ -311,6 +311,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
     this.recordMsg(userQuery, false);
 
     this.resetData.emit(true);
+    this._dataService.API_DATA.INSIGHTS_DATA =null
 
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
@@ -461,9 +462,9 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             if (this.historicalConvo == null) {
 
               this._dataService.addQueryToHistory(this.conversation);
+              
             }
             this.recordProcessMsg(5);
-            this._dataService.API_DATA.INSIGHTS_DATA = null;
             this.dataReady.emit(true);
             this.recordMsg(
               "I've updated the dashboard.(note: Not enough data available for variance analysis)",
@@ -487,12 +488,11 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
       this._apiService.varienceAnalysis(payload).subscribe({
         next: (res: any) => {
           if (res.success) {
-            if (this.historicalConvo == null) {
-              this._dataService.addQueryToHistory(this.conversation);
-            }
-
             this.recordProcessMsg(5);
             this._dataService.setInsightsData(res.data_summary);
+             if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory(this.conversation);
+            }
             this.dataReady.emit(true);
             this.recordMsg("I've updated the dashboard.", true);
           } else {
@@ -502,7 +502,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             this.dataReady.emit(true);
             this.recordProcessMsg(5);
             this.recordMsg(
-              "I've updated the dashboard. but variance analysis not loaded",
+              "I've updated the dashboard but could not load variance analysis.",
               true
             );
           }
