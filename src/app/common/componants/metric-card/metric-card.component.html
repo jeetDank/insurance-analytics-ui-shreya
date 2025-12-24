@@ -8,8 +8,14 @@
   <div>
     <div class="flex flex-row items-center">
       <h5 style="width: 15px; margin-right: 5px;">
-        <!-- <i style="font-size: 14px" class="material-icons me-2">apartment </i> -->
-        <img style="width: 100%;" [src]="logo()" alt="">
+        @if(logo()){
+        <img style="width: 100%;" [src]="logo()" alt=" " [title]="CompanyName()">
+        }
+        @else {
+
+          <i style="font-size: 14px" class="material-icons me-2">apartment </i>
+        }
+      
       </h5>
       <h5>
         {{ CompanyName() }}
@@ -36,8 +42,10 @@
       {{ metric() | textFormatter : 8 }}
     </div>
 
-    <div class="flex flex-row items-center">
-      @if (trend().positive) {
+
+    @if(trend()){
+      <div class="flex flex-row items-center">
+      @if (trend()?.positive) {
 
       <div class="flex items-center gap-1 text-xs text-green-400">
         <svg
@@ -55,7 +63,7 @@
         >
           <path d="M16 7h6v6"></path>
           <path d="m22 7-8.5 8.5-5-5L2 17"></path></svg
-        ><span> {{ trend().trend | textFormatter:5}}% </span>
+        ><span> {{ trend()?.trend | textFormatter:5}}% </span>
       </div>
 
       <span class="text-green-700"> </span>
@@ -77,9 +85,11 @@
         >
           <path d="M16 17h6v-6"></path>
           <path d="m22 17-8.5-8.5-5 5L2 7"></path></svg
-        ><span >{{ trend().trend |textFormatter:5}}%</span>
+        ><span >{{ trend()?.trend |textFormatter:5}}%</span>
       </div>
       }
     </div>
+    }
+    
   </div>
 </div>

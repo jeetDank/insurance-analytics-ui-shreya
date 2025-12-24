@@ -2,7 +2,7 @@ import { Component, input } from '@angular/core';
 import { MatChipsModule } from '@angular/material/chips';
 import { TextFormatterPipe } from '../../pipes/text-formatter.pipe';
 
-interface trend {
+interface trend  {
   trend: string;
   trendUnit: string;
   positive: boolean;
@@ -19,5 +19,5 @@ export class MetricCardComponent {
   period = input<string>('Q3 2024');
   metric = input<string>('$20.50B');
   logo = input<string>('');
-  trend = input<trend>({ trend: '3.8', trendUnit: '%', positive: false });
+  trend = input<trend | null>(null);
 }
