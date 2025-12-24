@@ -266,8 +266,11 @@
           />
         </div>
       </div>
-      <div>
-        <div class="text-xs text-red-300" >{{error}}</div>
+      <div> 
+        @if(email.trim() != '' && password.trim() != ''){
+
+          <div class="text-xs text-red-300" >{{error}}</div>
+        }
       </div>
 
       <!-- Options -->
