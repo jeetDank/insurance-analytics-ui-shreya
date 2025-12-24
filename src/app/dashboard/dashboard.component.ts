@@ -76,7 +76,7 @@ echarts.use([
     MatSnackBarModule,
     LegendDisplayComponent,
     // LucideAngularModule
-    AddMetricComponent
+    AddMetricComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -566,22 +566,20 @@ export class DashboardComponent implements OnInit {
     });
 
     this._dataService.FormulaBucket$.subscribe((data) => {
+      if (data) {
+        const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
+          (company) => company.success
+        ).map((data: any) => {
+          return { name: data?.company?.name, logo: data?.company?.logo_url };
+        });
 
-      if(data){
-         const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
-        (company) => company.success
-      ).map((data: any) => {
-        return { name: data?.company?.name, logo: data?.company?.logo_url };
-      });
+        let customCardData = this._dataService.fetchCustomCardsData(
+          companies,
+          data
+        );
 
-      let customCardData = this._dataService.fetchCustomCardsData(
-        companies,
-        data
-      );
-
-      this.customCardView = customCardData;
+        this.customCardView = customCardData;
       }
-     
     });
 
     this._dataService.HistoryBucket$.subscribe((history) => {
@@ -594,7 +592,7 @@ export class DashboardComponent implements OnInit {
   isLoaderVisible = false;
   isDataAvailable = false;
 
-  isAddMetricComponentVisible:boolean = false;
+  isAddMetricComponentVisible: boolean = false;
 
   companies: any = null;
 
@@ -652,51 +650,48 @@ export class DashboardComponent implements OnInit {
     this.showData();
   }
 
-  availableMetrics:any = [];
+  availableMetrics: any = [];
 
   convertMetricsToAddMetricFormat(
-  metrics: Array<{
-    metric: string;
-    value: number;
-    metricViewName: string;
-  }> | null
-): Array<{ id: string; name: string; description: string }> {
-  if (!metrics) {
-    return [];
+    metrics: Array<{
+      metric: string;
+      value: number;
+      metricViewName: string;
+    }> | null
+  ): Array<{ id: string; name: string; description: string }> {
+    if (!metrics) {
+      return [];
+    }
+
+    return metrics.map((metric) => ({
+      id: metric.metric,
+      name: this.toTitleCase(metric.metricViewName),
+      description: `Value: ${metric?.value}`, // Or customize as needed
+    }));
   }
 
-  return metrics.map(metric => ({
-    id: metric.metric,
-    name: this.toTitleCase( metric.metricViewName),
-    description: `Value: ${metric?.value}` // Or customize as needed
-  }));
-}
+  private toTitleCase(str: string): string {
+    if (!str) return '';
 
-private toTitleCase(str: string): string {
-  if (!str) return '';
-  
-  return str
-    .replace(/_/g, ' ') // Replace underscores with spaces
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
-}
+    return str
+      .replace(/_/g, ' ') // Replace underscores with spaces
+      .split(' ')
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
 
-
-
-  toggleAddMetricPopup(){
-
+  toggleAddMetricPopup() {
     this.isAddMetricComponentVisible = !this.isAddMetricComponentVisible;
 
-    if(this.isAddMetricComponentVisible){
-      this.availableMetrics  = this.convertMetricsToAddMetricFormat(this._dataService.fetchMetricsForFormulaComponent());
-            
+    if (this.isAddMetricComponentVisible) {
+      this.availableMetrics = this.convertMetricsToAddMetricFormat(
+        this._dataService.fetchMetricsForFormulaComponent()
+      );
     }
   }
-  closeAddMetricComponent(){
+  closeAddMetricComponent() {
     this.isAddMetricComponentVisible = false;
   }
-
 
   resetData() {
     this.isDataAvailable = false;
@@ -731,11 +726,10 @@ private toTitleCase(str: string): string {
 
   customCardView: any = [];
 
-
-  showCustomFormulaData(){
+  showCustomFormulaData() {
     const customFormulaData = this._dataService.FormulaBucket$.value;
-    if(customFormulaData){
-         const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
+    if (customFormulaData) {
+      const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
         (company) => company.success
       ).map((data: any) => {
         return { name: data?.company?.name, logo: data?.company?.logo_url };
@@ -747,11 +741,10 @@ private toTitleCase(str: string): string {
       );
 
       this.customCardView = customCardData;
-      }
+    }
   }
 
   showData() {
-  
     this.isSideNavOpened = false;
 
     this.isDataAvailable = true;
@@ -785,9 +778,7 @@ private toTitleCase(str: string): string {
     );
 
     if (isSegment == false) {
-
-        this.showCustomFormulaData()
-
+      this.showCustomFormulaData();
 
       this.cardView = this._dataService.fetchCardsData(this.companies);
 
@@ -820,23 +811,23 @@ private toTitleCase(str: string): string {
           segmentWiseStackedChartData
         );
 
-      console.log(segmentWiseStackedChartData);
-
-      // this.segmentStackedOption = this._dataService.generateSegmentCharts(
-      //   segmentWiseStackedChartData
-      // );
+      
 
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
         commonSegmentColumnData
       );
-      console.log(commonSegmentColumnData, this.commonSegmentsOption);
 
       const verticalSegmentbarData: any =
         this._dataService.fetchVerticalStackedBarChartData();
 
       this.segmentStackedOption =
         this._dataService.generateVerticalSegmentCharts(verticalSegmentbarData);
-      console.log(this.segmentStackedOption);
+
+
+      console.log("segment period," ,this.segmentPeriods);
+      console.log("stacked bar chart data ," ,this.segmentStackedOption);
+      console.log("vertical stacked bar option" ,verticalSegmentbarData);
+      console.log("verticalSegmentbarData" ,verticalSegmentbarData);
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
         this.insightsData = this._dataService.generateInsights();

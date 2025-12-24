@@ -2234,78 +2234,79 @@ export class DataService {
   }
 
   generateVerticalSegmentCharts(data: any[]) {
-    const chartConfigs: any[] = [];
+  const chartConfigs: any[] = [];
 
-    // Color palette
-    const colorPalette = [
-      '#3b82f6', // blue
-      '#10b981', // green
-      '#ef4444', // red
-      '#f59e0b', // orange
-      '#8b5cf6', // purple
-      '#ec4899', // pink
-      '#06b6d4', // cyan
-      '#84cc16', // lime
-      '#fbbf24', // amber
-      '#a78bfa', // violet
-      '#fb7185', // rose
-      '#34d399', // emerald
-    ];
+  // Color palette
+  const colorPalette = [
+    '#3b82f6', // blue
+    '#10b981', // green
+    '#ef4444', // red
+    '#f59e0b', // orange
+    '#8b5cf6', // purple
+    '#ec4899', // pink
+    '#06b6d4', // cyan
+    '#84cc16', // lime
+    '#fbbf24', // amber
+    '#a78bfa', // violet
+    '#fb7185', // rose
+    '#34d399', // emerald
+  ];
 
-    // Helper function to darken a hex color
-    function darkenColor(hex: string, percent: number = 20): string {
-      const num = parseInt(hex.replace('#', ''), 16);
-      const r = Math.max(0, ((num >> 16) & 0xff) * (1 - percent / 100));
-      const g = Math.max(0, ((num >> 8) & 0xff) * (1 - percent / 100));
-      const b = Math.max(0, (num & 0xff) * (1 - percent / 100));
-      return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
-    }
+  // Helper function to darken a hex color
+  function darkenColor(hex: string, percent: number = 20): string {
+    const num = parseInt(hex.replace('#', ''), 16);
+    const r = Math.max(0, ((num >> 16) & 0xff) * (1 - percent / 100));
+    const g = Math.max(0, ((num >> 8) & 0xff) * (1 - percent / 100));
+    const b = Math.max(0, (num & 0xff) * (1 - percent / 100));
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+  }
 
-    // Helper function to recursively extract all leaf segments
-    function extractLeafSegments(obj: any, path: string = ''): any[] {
-      const segments: any[] = [];
+  // Helper function to recursively extract all leaf segments
+  function extractLeafSegments(obj: any, path: string = ''): any[] {
+    const segments: any[] = [];
 
-      if (typeof obj !== 'object' || obj === null) {
-        return segments;
-      }
-
-      // Get all keys except 'value'
-      const childKeys = Object.keys(obj).filter((k) => k !== 'value');
-
-      // If no children (or only 'value'), this is a leaf node
-      if (childKeys.length === 0) {
-        if (obj.value !== null && obj.value !== undefined) {
-          return [
-            {
-              name: path,
-              value: obj.value,
-              path: path,
-            },
-          ];
-        }
-        return segments;
-      }
-
-      // Has children - recurse into each child
-      childKeys.forEach((key) => {
-        const child = obj[key];
-        if (child !== null && child !== undefined) {
-          const childPath = path ? `${path}.${key}` : key;
-          const childSegments = extractLeafSegments(child, childPath);
-          segments.push(...childSegments);
-        }
-      });
-
+    if (typeof obj !== 'object' || obj === null) {
       return segments;
     }
 
-    data.forEach((companyData: any) => {
-      const companyName = companyData.company;
+    // Get all keys except 'value'
+    const childKeys = Object.keys(obj).filter((k) => k !== 'value');
 
-      companyData.quarters.forEach((quarterData: any) => {
-        const period = quarterData.period;
-        const metric = quarterData.metrics[0];
+    // If no children (or only 'value'), this is a leaf node
+    if (childKeys.length === 0) {
+      if (obj.value !== null && obj.value !== undefined) {
+        return [
+          {
+            name: path,
+            value: obj.value,
+            path: path,
+          },
+        ];
+      }
+      return segments;
+    }
 
+    // Has children - recurse into each child
+    childKeys.forEach((key) => {
+      const child = obj[key];
+      if (child !== null && child !== undefined) {
+        const childPath = path ? `${path}.${key}` : key;
+        const childSegments = extractLeafSegments(child, childPath);
+        segments.push(...childSegments);
+      }
+    });
+
+    return segments;
+  }
+
+  data.forEach((companyData: any) => {
+    const companyName = companyData.company;
+
+    companyData.quarters.forEach((quarterData: any) => {
+      const period = quarterData.period;
+
+      // ✅ FIXED: Loop through ALL metrics instead of just [0]
+      quarterData.metrics.forEach((metric: any) => {
         // Get root level keys (these will be the bars)
         const rootKeys = Object.keys(metric.children);
         const categories = rootKeys.map((key) => snakeToTitleCase(key));
@@ -2339,7 +2340,8 @@ export class DataService {
               const displayName = s.path.split('.').pop();
               return displayName === segmentName;
             });
-            return segment ? segment.value / 1000000 : 0; // Convert to millions, keep negative values
+            // ✅ FIXED: Convert to billions (divide by 1,000,000,000)
+            return segment ? segment.value / 1000000000 : 0;
           });
 
           // Calculate total for this segment across all categories
@@ -2350,10 +2352,10 @@ export class DataService {
           const displayName = snakeToTitleCase(segmentName);
           const legendName = `${displayName} ($${
             segmentTotal >= 0 ? '' : '-'
-          }${Math.abs(segmentTotal).toFixed(2)}M)`;
+          }${Math.abs(segmentTotal).toFixed(2)}B)`; // ✅ Changed M to B
 
           series.push({
-            name: legendName, // Use legend name with value
+            name: legendName,
             type: 'bar',
             stack: 'total',
             barWidth: '140px',
@@ -2451,7 +2453,7 @@ export class DataService {
             if (!legendsMap.has(parentName)) {
               legendsMap.set(parentName, {
                 name: snakeToTitleCase(parentName),
-                color: colorPalette[0], // Default color for parent grouping
+                color: colorPalette[0],
                 value: 0,
                 percentage: 0,
                 children: [],
@@ -2492,7 +2494,6 @@ export class DataService {
           devicePixelRatio: window.devicePixelRatio || 1,
 
           title: {
-            // text: `${companyName} - ${period}`,
             text: ``,
             textStyle: {
               fontSize: 16,
@@ -2521,7 +2522,6 @@ export class DataService {
               let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${categoryName}</div>`;
 
               let total = 0;
-              // Show all params, including zero values
               const allParams = params;
 
               allParams.forEach((param: any) => {
@@ -2548,7 +2548,7 @@ export class DataService {
                   <div style="text-align: right; margin-left: 12px;">
                     <span style="font-weight: 600;">${
                       value >= 0 ? '$' : '-$'
-                    }${Math.abs(value).toFixed(2)}M</span>
+                    }${Math.abs(value).toFixed(2)}B</span>
                     <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(
                       1
                     )}%)</span>
@@ -2563,7 +2563,7 @@ export class DataService {
                   <span style="font-weight: 600;">Total:</span>
                   <span style="font-weight: 600;">${
                     total >= 0 ? '$' : '-$'
-                  }${Math.abs(total).toFixed(2)}M</span>
+                  }${Math.abs(total).toFixed(2)}B</span>
                 </div>
               </div>
             `;
@@ -2622,7 +2622,7 @@ export class DataService {
               color: '#d7d7d7ff',
               fontSize: 11,
               formatter: (value: number) => {
-                return value >= 0 ? `$${value}M` : `-$${Math.abs(value)}M`;
+                return value >= 0 ? `$${value}B` : `-$${Math.abs(value)}B`; // ✅ Changed M to B
               },
             },
             axisLine: {
@@ -2648,20 +2648,21 @@ export class DataService {
         chartConfigs.push({
           company: companyName,
           period: period,
-          total: parseFloat((metric.total / 1000000).toFixed(1)),
+          total: parseFloat((metric.total / 1000000000).toFixed(1)), // ✅ Convert to billions
           segments: barSegments,
           legends: {
-            total: parseFloat((metric.total / 1000000).toFixed(1)),
+            total: parseFloat((metric.total / 1000000000).toFixed(1)), // ✅ Convert to billions
             legends: legends,
           },
           config: chartConfig,
-          metric_name: metric.name,
+          metric_name: metric.metricName, // ✅ Use metricName from your data structure
         });
-      });
+      }); // ✅ Close the metrics forEach loop
     });
+  });
 
-    return chartConfigs;
-  }
+  return chartConfigs;
+}
 
   fetchCustomCardsData(
   companies: { name: string; logo: string }[],
