@@ -66,7 +66,7 @@
   </div>
 
   @if(!formulaListView){
-  <div class="mt-4 p-3" style="overflow-y: auto;">
+  <div class="mt-4 p-3" style="max-height: 400px; overflow-y: auto;">
     <form
       [formGroup]="formulaForm"
       class="myform flex flex-col gap-6"
@@ -82,7 +82,7 @@
         <textarea
           #formulaTextarea
           formControlName="formula"
-          rows="3"
+          rows="1"
           placeholder="Formula (e.g., net_income / revenue * 100)"
           (input)="onFormulaInput($event)"
           (focus)="onFormulaFocus()"
