@@ -334,3 +334,34 @@
     transform: scale(1);
   }
 }
+
+
+.tab-content {
+  flex: 1;
+  margin-top: 16px;
+  overflow: hidden;
+  max-height: 400px; // Add max-height constraint
+}
+
+.metrics-scroll-area {
+  height: 100%;
+  padding: 0 24px 24px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+}

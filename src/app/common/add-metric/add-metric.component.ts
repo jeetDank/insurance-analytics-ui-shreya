@@ -1,11 +1,21 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
+import { DataService } from '../services/data.service';
 
 interface Metric {
   id: string;
   name: string;
   description: string;
+}
+
+interface FormulaData {
+  id: number;
+  name: string;
+  formula: string;
+  description: string;
+  keywords: string[];
 }
 
 @Component({
@@ -15,37 +25,53 @@ interface Metric {
   templateUrl: './add-metric.component.html',
   styleUrl: './add-metric.component.scss',
 })
-export class AddMetricComponent {
+export class AddMetricComponent implements OnInit, OnDestroy {
   @Output() close = new EventEmitter<void>();
   @Output() metricSelected = new EventEmitter<Metric>();
 
   searchQuery = '';
   activeTab: 'sec' | 'custom' = 'sec';
 
-  @Input() secMetrics: Metric[] = [
-    // {
-    //   id: 'revenue',
-    //   name: 'Revenue',
-    //   description: 'Total revenue for the period',
-    // },
-    // {
-    //   id: 'net-income',
-    //   name: 'Net Income',
-    //   description: 'Net income after all expenses',
-    // },
-    // {
-    //   id: 'operating-income',
-    //   name: 'Operating Income',
-    //   description: 'Income from operations',
-    // },
-    // {
-    //   id: 'gross-profit',
-    //   name: 'Gross Profit',
-    //   description: 'Revenue minus cost of goods sold',
-    // },
-  ];
+  @Input() secMetrics: Metric[] = [];
 
-  @Input() customMetrics: Metric[] = [];
+  customMetrics: Metric[] = [];
+
+  private destroy$ = new Subject<void>();
+
+  constructor(public _dataService: DataService) {} // Replace 'any' with your actual DataService type
+
+  ngOnInit(): void {
+    this.loadCustomFormulas();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  /**
+   * Load custom formulas from FormulaBucket$ and convert to Metric format
+   */
+  private loadCustomFormulas(): void {
+    this._dataService.FormulaBucket$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data: FormulaData[]) => {
+        if (data && Array.isArray(data)) {
+          this.customMetrics = this.convertFormulasToMetrics(data);
+        }
+      });
+  }
+
+  /**
+   * Convert formula data to metric format
+   */
+  private convertFormulasToMetrics(formulas: FormulaData[]): Metric[] {
+    return formulas.map(formula => ({
+      id: formula.id.toString(),
+      name: formula.name,
+      description: formula.description || formula.formula
+    }));
+  }
 
   get filteredMetrics(): Metric[] {
     const metrics = this.activeTab === 'sec' ? this.secMetrics : this.customMetrics;
