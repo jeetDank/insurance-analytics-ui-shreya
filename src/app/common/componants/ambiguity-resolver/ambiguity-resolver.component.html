@@ -1,10 +1,7 @@
 <!-- ambiguity-resolver.component.html -->
 <div *ngIf="ambiguities.length > 0">
   <!-- Header with Navigation -->
-  <div
-    class="flex items-center justify-between mb-3 gap-3"
-    
-  >
+  <div class="flex items-center justify-between mb-3 gap-3">
     <p class="text-sm flex-1" [ngStyle]="{ color: 'rgba(255, 255, 255, 0.9)' }">
       Resolving
       <span [ngStyle]="{ color: 'rgb(156, 163, 175)', 'font-weight': '600' }">
@@ -93,21 +90,21 @@
     >
       {{ suggestion }}
     </button>
-
-    
-    
   </div>
+
+  <!-- Resolve Button -->
   <button
-      
-      (click)="notifyAmbiguityResolution()"
-      class="px-4 mt-2 py-2 text-sm border transition-all flex items-center gap-2"
-      [ngStyle]="{
-        'border-radius': '18px',
-        'border-color': 'rgb(156, 163, 175)',
-        'background-color': 'rgba(156, 163, 175, 0.082)',
-        color: 'rgb(156, 163, 175)'
-      }"
-    >
-      Resolve
-    </button>
+    [disabled]="pendingResolution"
+    (click)="notifyAmbiguityResolution()"
+    class="px-4 mt-2 py-2 text-sm border transition-all flex items-center gap-2"
+    [ngStyle]="{
+      'border-radius': '18px',
+      'border-color': pendingResolution ? 'rgba(156, 163, 175, 0.3)' : 'rgb(156, 163, 175)',
+      'background-color': pendingResolution ? 'rgba(156, 163, 175, 0.02)' : 'rgba(156, 163, 175, 0.082)',
+      color: pendingResolution ? 'rgba(156, 163, 175, 0.5)' : 'rgb(156, 163, 175)',
+      cursor: pendingResolution ? 'not-allowed' : 'pointer'
+    }"
+  >
+    Resolve
+  </button>
 </div>

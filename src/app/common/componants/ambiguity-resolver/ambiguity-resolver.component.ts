@@ -14,7 +14,6 @@ export interface Ambiguity {
   styleUrl: './ambiguity-resolver.component.scss'
 })
 export class AmbiguityResolverComponent {
-
   @Input() ambiguities: Ambiguity[] = [];
   @Input() timestamp: string = new Date().toLocaleTimeString('en-US', { 
     hour: '2-digit', 
@@ -23,7 +22,7 @@ export class AmbiguityResolverComponent {
   
   @Output() ambiguitiesUpdate = new EventEmitter<Ambiguity[]>();
   @Output() ambiguityResolved = new EventEmitter<boolean>();
-
+  
   currentIndex: number = 0;
 
   get currentAmbiguity(): Ambiguity | null {
@@ -40,6 +39,11 @@ export class AmbiguityResolverComponent {
 
   get canGoNext(): boolean {
     return this.currentIndex < this.totalAmbiguities - 1;
+  }
+
+  // Convert to getter - checks if ANY ambiguity is still unresolved
+  get pendingResolution(): boolean {
+    return this.ambiguities.some(amb => !amb.selected_ambiguity || amb.selected_ambiguity.trim() === "");
   }
 
   handlePrevious(): void {
@@ -60,36 +64,16 @@ export class AmbiguityResolverComponent {
       ...updatedAmbiguities[this.currentIndex],
       selected_ambiguity: suggestion
     };
+   
     this.ambiguitiesUpdate.emit(updatedAmbiguities);
   }
 
   notifyAmbiguityResolution(): void {
-    console.log(this.ambiguities);
-    
-    let pendingResolution = false;
-    this.ambiguities.forEach((amb)=>{
-      if(amb.selected_ambiguity == ""){
-        pendingResolution = true;
-      }
-      
-    })
-
-    if(pendingResolution){
-
-      this.ambiguityResolved.emit(false);
-    }
-    else{
-
-      this.ambiguityResolved.emit(true);
-    }
-
-
-
-    
+    // Only emit true - button is only clickable when all are resolved
+    this.ambiguityResolved.emit(true);
   }
 
   isSelected(suggestion: string): boolean {
     return this.currentAmbiguity?.selected_ambiguity === suggestion;
   }
-
 }
