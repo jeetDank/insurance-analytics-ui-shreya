@@ -1,4 +1,3 @@
-
 <div class="w-screen h-screen">
   <mat-toolbar class="border-r border-neutral-900">
     <!-- Menu button on the left -->
@@ -355,6 +354,7 @@
 
           <div class="ms-auto">
             <button
+              *ngIf="false"
               data-slot="dialog-trigger"
               class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2"
               type="button"
@@ -605,7 +605,6 @@
           </div>
           }
         </div>
-      
 
         <div class="space-y-4">
           @for (item of cardView; track $index) {
@@ -986,22 +985,25 @@
         <!-- Stacked View -->
         @if(currentTabSegment == 'stacked'){
         <div class="space-y-4">
-
           <p class="p-6 mt-2 mb-2">
-            Note: Segment data is sourced from XBRL filings. Information may vary from the company’s primary financial statements due to tagging inconsistencies.
+            Note: Segment data is sourced from XBRL filings. Information may
+            vary from the company’s primary financial statements due to tagging
+            inconsistencies.
           </p>
-
-
-
 
           <div
             class="rounded-xl p-6 flex flex-col flex-wrap"
             style="min-height: 400px"
           >
-            @for (chart of segmentStackedOption; track $index) {
+           @for (chart of segmentStackedOption; track $index) {
 
             <div class="text-sm font-bold mt-4 mb-2">
               {{ chart.company }} - {{ chart.period }}
+                @if (chart?.config?.series.length == 0){
+            <div class="mt-10 flex items-cetner justify-center">
+              <p class="!text-xs" >Data for selected Quarter(s) not available</p>
+            </div>
+            }
             </div>
 
             <div
@@ -1011,7 +1013,9 @@
               style="min-height: 400px; width: 100%"
             ></div>
             <div class="mb-4">
-              <app-legend-display [data]="chart.legends" ></app-legend-display>
+              @if (chart?.config?.series.length == 0){
+              <app-legend-display [data]="chart.legends"></app-legend-display>
+              }
             </div>
 
             }
@@ -1022,7 +1026,8 @@
         <!-- Bar View -->
         @if(currentTabSegment == 'bar'){ @if (commonSegmentsOption.length ==0) {
         <div style="width: 100%" class="h-50 flex items-center justify-center">
-          Single company analysis is being viewed hence comparison analysis is not available
+          Single company analysis is being viewed hence comparison analysis is
+          not available
         </div>
         }
         <div class="space-y-4">
@@ -1072,8 +1077,6 @@
                   [showTotal]="true"
                 >
                 </app-segment-table>
-
-               
               </div>
               }
             </div>
@@ -1146,9 +1149,6 @@
         ></app-loader-with-insights>
       </div>
       } @if(!isDataAvailable && !isLoaderVisible ){
-
-
-      
 
       <div class="flex flex-col items-center justify-center h-full">
         <div class="mb-8 flex justify-center gap-3">

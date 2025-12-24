@@ -39,7 +39,7 @@ export class DataService {
   addQueryToHistory(conversation: any) {
     const history = [...this.HistoryBucket$.value];
 
-    if (history.length > 1) {
+    if (history.length > 2) {
       history.shift();
     }
 

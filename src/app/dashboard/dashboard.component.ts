@@ -748,6 +748,8 @@ export class DashboardComponent implements OnInit {
 
       this.segmentStackedOption =
         this._dataService.generateVerticalSegmentCharts(verticalSegmentbarData);
+      console.log(this.segmentStackedOption);
+      
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
         this.insightsData = this._dataService.generateInsights();
