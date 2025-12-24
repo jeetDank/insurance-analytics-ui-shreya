@@ -2238,6 +2238,7 @@ export class DataService {
     }
   }
 
+
   generateVerticalSegmentCharts(data: any[]) {
     const chartConfigs: any[] = [];
 
@@ -2310,7 +2311,6 @@ export class DataService {
       companyData.quarters.forEach((quarterData: any) => {
         const period = quarterData.period;
 
-        // ✅ FIXED: Loop through ALL metrics instead of just [0]
         quarterData.metrics.forEach((metric: any) => {
           // Get root level keys (these will be the bars)
           const rootKeys = Object.keys(metric.children);
@@ -2345,7 +2345,6 @@ export class DataService {
                 const displayName = s.path.split('.').pop();
                 return displayName === segmentName;
               });
-              // ✅ FIXED: Convert to billions (divide by 1,000,000,000)
               return segment ? segment.value / 1000000000 : 0;
             });
 
@@ -2357,7 +2356,7 @@ export class DataService {
             const displayName = snakeToTitleCase(segmentName);
             const legendName = `${displayName} ($${
               segmentTotal >= 0 ? '' : '-'
-            }${Math.abs(segmentTotal).toFixed(2)}B)`; // ✅ Changed M to B
+            }${Math.abs(segmentTotal).toFixed(2)}B)`;
 
             series.push({
               name: legendName,
@@ -2512,8 +2511,7 @@ export class DataService {
             },
 
             tooltip: {
-              trigger: 'axis',
-              axisPointer: { type: 'shadow' },
+              trigger: 'item', // ✅ Changed from 'axis' to 'item'
               backgroundColor: 'rgba(15, 15, 25, 0.95)',
               borderColor: 'rgba(100, 100, 150, 0.3)',
               borderWidth: 1,
@@ -2525,55 +2523,35 @@ export class DataService {
                 fontWeight: 'normal',
               },
               formatter: (params: any) => {
-                const categoryName = params[0].name;
+                // ✅ Updated formatter for single item
+                const categoryName = params.name;
+                const seriesName = params.seriesName.split(' (')[0];
+                const value = params.value;
+                
+                // Get all values in this category to calculate percentage
+                const categoryIndex = params.dataIndex;
+                const categoryTotal = series.reduce((sum, s) => {
+                  return sum + (s.data[categoryIndex] || 0);
+                }, 0);
+                
+                const percentage = categoryTotal !== 0 
+                  ? (value / categoryTotal) * 100 
+                  : 0;
+
                 let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${categoryName}</div>`;
-
-                let total = 0;
-                const allParams = params;
-
-                allParams.forEach((param: any) => {
-                  const value = param.value;
-                  total += value;
-
-                  const totalForPercentage = allParams.reduce(
-                    (sum: number, p: any) => sum + p.value,
-                    0
-                  );
-                  const percentage =
-                    totalForPercentage !== 0
-                      ? (value / totalForPercentage) * 100
-                      : 0;
-
-                  result += `
-                <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
-                  <div style="display: flex; align-items: center; flex: 1;">
-                    <span style="display: inline-block; width: 10px; height: 10px; background: ${
-                      param.color
-                    }; border-radius: 50%; margin-right: 8px;"></span>
-                    <span>${param.seriesName.split(' (')[0]}</span>
-                  </div>
-                  <div style="text-align: right; margin-left: 12px;">
-                    <span style="font-weight: 600;">${
-                      value >= 0 ? '$' : '-$'
-                    }${Math.abs(value).toFixed(2)}B</span>
-                    <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(
-                      1
-                    )}%)</span>
-                  </div>
-                </div>
-              `;
-                });
-
+                
                 result += `
-              <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(100, 100, 150, 0.3);">
-                <div style="display: flex; justify-content: space-between;">
-                  <span style="font-weight: 600;">Total:</span>
-                  <span style="font-weight: 600;">${
-                    total >= 0 ? '$' : '-$'
-                  }${Math.abs(total).toFixed(2)}B</span>
-                </div>
-              </div>
-            `;
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
+                    <div style="display: flex; align-items: center; flex: 1;">
+                      <span style="display: inline-block; width: 10px; height: 10px; background: ${params.color}; border-radius: 50%; margin-right: 8px;"></span>
+                      <span>${seriesName}</span>
+                    </div>
+                    <div style="text-align: right; margin-left: 12px;">
+                      <span style="font-weight: 600;">${value >= 0 ? '$' : '-$'}${Math.abs(value).toFixed(2)}B</span>
+                      <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(1)}%)</span>
+                    </div>
+                  </div>
+                `;
 
                 return result;
               },
@@ -2624,13 +2602,9 @@ export class DataService {
 
             yAxis: {
               type: 'value',
+              show: false, // ✅ Hidden y-axis
               axisLabel: {
-                show: true,
-                color: '#d7d7d7ff',
-                fontSize: 11,
-                formatter: (value: number) => {
-                  return value >= 0 ? `$${value}B` : `-$${Math.abs(value)}B`; // ✅ Changed M to B
-                },
+                show: false,
               },
               axisLine: {
                 show: false,
@@ -2639,11 +2613,7 @@ export class DataService {
                 show: false,
               },
               splitLine: {
-                show: true,
-                lineStyle: {
-                  color: 'rgba(100, 100, 150, 0.1)',
-                  type: 'dashed',
-                },
+                show: false,
               },
             },
 
@@ -2655,21 +2625,23 @@ export class DataService {
           chartConfigs.push({
             company: companyName,
             period: period,
-            total: parseFloat((metric.total / 1000000000).toFixed(1)), // ✅ Convert to billions
+            total: parseFloat((metric.total / 1000000000).toFixed(1)),
             segments: barSegments,
             legends: {
-              total: parseFloat((metric.total / 1000000000).toFixed(1)), // ✅ Convert to billions
+              total: parseFloat((metric.total / 1000000000).toFixed(1)),
               legends: legends,
             },
             config: chartConfig,
-            metric_name: metric.metricName, // ✅ Use metricName from your data structure
+            metric_name: metric.metricName,
           });
-        }); // ✅ Close the metrics forEach loop
+        });
       });
     });
 
     return chartConfigs;
   }
+
+  
 
   fetchCustomCardsData(
     companies: { name: string; logo: string }[],
