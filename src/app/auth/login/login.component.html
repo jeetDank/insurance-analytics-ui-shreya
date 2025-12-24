@@ -266,6 +266,9 @@
           />
         </div>
       </div>
+      <div>
+        <div class="text-xs text-red-300" >{{error}}</div>
+      </div>
 
       <!-- Options -->
       <div class="flex items-center justify-between text-sm">
@@ -282,9 +285,9 @@
       </div>
 
       <!-- Submit -->
-      <button
+      <button [disabled]="email.trim() == '' && password.trim() == ''"
         type="submit"
-        class="w-full h-12 rounded-xl font-semibold bg-gray-400 text-zinc-900 hover:bg-gray-300 transition"
+        class="w-full h-12 rounded-xl font-semibold bg-gray-300 text-zinc-900  transition"
       >
         Sign in →
       </button>

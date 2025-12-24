@@ -12,7 +12,7 @@ export class LoginComponent {
   email = '';
   password = '';
   rememberMe = false;
-
+  error:string = "";
   constructor(private router:Router){
 
   }
@@ -24,9 +24,20 @@ export class LoginComponent {
     });
 
     if(this.email.trim() && this.password.trim()){
-      localStorage.setItem("username",this.email)
-      localStorage.setItem("password",this.password)
-      this.router.navigateByUrl('/dashboard')
+
+      if(this.email == "admin@ideastoimpacts.com" && this.password == "admin@123"){
+        localStorage.setItem("username",this.email)
+        localStorage.setItem("password",this.password)
+        this.router.navigateByUrl('/dashboard')
+      }
+      else{
+        this.error = "Invalid email address or password"
+      }
+
+     
+
+
+     
     }
 
 
