@@ -563,6 +563,25 @@ export class DashboardComponent implements OnInit {
       },
     });
 
+    this._dataService.FormulaBucket$.subscribe((data) => {
+
+      if(data){
+         const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
+        (company) => company.success
+      ).map((data: any) => {
+        return { name: data?.company?.name, logo: data?.company?.logo_url };
+      });
+
+      let customCardData = this._dataService.fetchCustomCardsData(
+        companies,
+        data
+      );
+
+      this.customCardView = customCardData;
+      }
+     
+    });
+
     this._dataService.HistoryBucket$.subscribe((history) => {
       console.log(history);
       this.historicalQueries = history;
@@ -624,7 +643,6 @@ export class DashboardComponent implements OnInit {
   }
 
   loadHistoricalData(query: any) {
-    
     this._dataService.API_DATA = query.API_DATA;
     this.sendConvoToQueryBox(query.conversation);
     this.showData();
@@ -661,13 +679,29 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  customCardView:any = [];
+  customCardView: any = [];
 
-  displayCustomFormulaData(data:any){
-    this.customCardView = data;
+
+  showCustomFormulaData(){
+    const customFormulaData = this._dataService.FormulaBucket$.value;
+    if(customFormulaData){
+         const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
+        (company) => company.success
+      ).map((data: any) => {
+        return { name: data?.company?.name, logo: data?.company?.logo_url };
+      });
+
+      let customCardData = this._dataService.fetchCustomCardsData(
+        companies,
+        customFormulaData
+      );
+
+      this.customCardView = customCardData;
+      }
   }
 
   showData() {
+  
     this.isSideNavOpened = false;
 
     this.isDataAvailable = true;
@@ -701,6 +735,10 @@ export class DashboardComponent implements OnInit {
     );
 
     if (isSegment == false) {
+
+        this.showCustomFormulaData()
+
+
       this.cardView = this._dataService.fetchCardsData(this.companies);
 
       this.chartsData = this._dataService.generateChartConfigs(this.cardView);
@@ -749,7 +787,6 @@ export class DashboardComponent implements OnInit {
       this.segmentStackedOption =
         this._dataService.generateVerticalSegmentCharts(verticalSegmentbarData);
       console.log(this.segmentStackedOption);
-      
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
         this.insightsData = this._dataService.generateInsights();

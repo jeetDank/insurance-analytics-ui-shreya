@@ -289,6 +289,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   }
 
   ngOnInit(): void {
+    
+
     this._loaderService.isLoading$.subscribe({
       next: (res) => {
         this.loaderVisible = res;
@@ -311,7 +313,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
     this.recordMsg(userQuery, false);
 
     this.resetData.emit(true);
-    this._dataService.API_DATA.INSIGHTS_DATA =null
+    this._dataService.API_DATA.INSIGHTS_DATA = null;
 
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
@@ -452,7 +454,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           // here check if multiple periods are available if yes then
           // go for varience analysis other wise just show till batch analysis
 
-         
           if (
             this._dataService.API_DATA.PARSED_QUERY?.time_periods.length > 1
           ) {
@@ -460,9 +461,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             this.startVarienceAnalysis();
           } else {
             if (this.historicalConvo == null) {
-
               this._dataService.addQueryToHistory(this.conversation);
-              
             }
             this.recordProcessMsg(5);
             this.dataReady.emit(true);
@@ -470,7 +469,6 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
               "I've updated the dashboard.(note: Not enough data available for variance analysis)",
               true
             );
-            
           }
 
           console.log(this._dataService.API_DATA);
@@ -490,7 +488,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           if (res.success) {
             this.recordProcessMsg(5);
             this._dataService.setInsightsData(res.data_summary);
-             if (this.historicalConvo == null) {
+            if (this.historicalConvo == null) {
               this._dataService.addQueryToHistory(this.conversation);
             }
             this.dataReady.emit(true);
@@ -508,13 +506,12 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           }
         },
         error: (err) => {
-         
           if (this.historicalConvo == null) {
-              this._dataService.addQueryToHistory(this.conversation);
-            }
-            this.dataReady.emit(true);
-            this.recordProcessMsg(5);
-            this.recordMsg(
+            this._dataService.addQueryToHistory(this.conversation);
+          }
+          this.dataReady.emit(true);
+          this.recordProcessMsg(5);
+          this.recordMsg(
             err?.message ? err.message : 'Something went wrong',
             true
           );

@@ -30,12 +30,24 @@ export class DataService {
     ANALYSIS_DATA: null,
     AMBIGUITY_DATA: null,
     INSIGHTS_DATA: null,
+    
   };
 
-  HistoryBucket$ = new BehaviorSubject<any[]>(
-    JSON.parse(localStorage.getItem('historyBucket') || '[]')
-  );
 
+
+
+  HistoryBucket$ = new BehaviorSubject<any[]>([])
+
+  FormulaBucket$ = new BehaviorSubject<any[]>([])
+
+
+
+
+
+  updateFunctionList(data: any) {
+    
+    this.FormulaBucket$.next(data);
+  }
   addQueryToHistory(conversation: any) {
     const history = [...this.HistoryBucket$.value];
 

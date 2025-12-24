@@ -12,6 +12,7 @@ import {
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
+import { DataService } from '../services/data.service';
 
 interface Metric {
   metric: string;
@@ -99,7 +100,7 @@ export class CustomFormulaComponent implements OnInit {
 
   @Output() formulaListChanged = new EventEmitter<CustomFormula[]>();
 
-  constructor(private snackBar: MatSnackBar, private fb: FormBuilder) {
+  constructor(private snackBar: MatSnackBar, private fb: FormBuilder,private _data:DataService) {
     this.formulaForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       formula: ['', [Validators.required]],
@@ -107,17 +108,22 @@ export class CustomFormulaComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // Calculate initial values
-    this.recalculateAllFormulas();
+ngOnInit() {
+  this._data.FormulaBucket$.subscribe((data) => {
+    console.log('FormulaBucket$ data:', data);
+    this.customFormulaList = data;
+    
+   
+    
+    // Update filtered list
+    this.filteredList = [...this.customFormulaList];
+  });
 
-    // Subscribe to formula changes for validation
-    this.formulaForm.get('formula')?.valueChanges.subscribe((value) => {
-      this.validateFormula(value);
-    });
-
-    this.searchData('');
-  }
+  this.formulaForm.get('formula')?.valueChanges.subscribe((value) => {
+    this.validateFormula(value);
+  });
+  this.searchData('')
+}
 
   extractKeywords(formula: string): string[] {
   if (!formula || formula.trim() === '') {
@@ -268,17 +274,18 @@ export class CustomFormulaComponent implements OnInit {
   }
 
   deleteFormula(formulaId: number) {
-    this.customFormulaList = this.customFormulaList.filter(
-      (formula) => formula.id !== formulaId
-    );
-    this.filteredList = [...this.customFormulaList];
-    this.emitFormulaList();
-    this.snackBar.open('Formula deleted successfully', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-    });
-  }
+  this.customFormulaList = this.customFormulaList.filter(
+    (formula) => formula.id !== formulaId
+  );
+  this.filteredList = [...this.customFormulaList]; // Update filtered list after delete
+  this.emitFormulaList();
+  
+  this.snackBar.open('Formula deleted successfully', 'Close', {
+    duration: 3000,
+    horizontalPosition: 'center',
+    verticalPosition: 'bottom',
+  });
+}
 
   editFormula(formulaId: number) {
     const formula = this.customFormulaList.find((f) => f.id === formulaId);
@@ -307,77 +314,79 @@ export class CustomFormulaComponent implements OnInit {
   }
 
   addNewFormula() {
-    if (!this.formulaForm.valid) {
-      this.snackBar.open('Please fill all required fields', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-        panelClass: ['error-snackbar'],
-      });
-      return;
-    }
+  if (!this.formulaForm.valid) {
+    this.snackBar.open('Please fill all required fields', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['error-snackbar'],
+    });
+    return;
+  }
 
-    const formulaValue = this.formulaForm.value.formula;
+  const formulaValue = this.formulaForm.value.formula;
 
-    // Validate formula before adding
-    if (!this.validateFormula(formulaValue)) {
-      this.snackBar.open(this.formulaError, 'Close', {
-        duration: 4000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-        panelClass: ['error-snackbar'],
-      });
-      return;
-    }
+  // Validate formula before adding
+  if (!this.validateFormula(formulaValue)) {
+    this.snackBar.open(this.formulaError, 'Close', {
+      duration: 4000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+      panelClass: ['error-snackbar'],
+    });
+    return;
+  }
 
-    const calculatedValue = this.calculateFormulaValue(formulaValue);
+  const calculatedValue = this.calculateFormulaValue(formulaValue);
 
-    if (this.editingFormulaId !== null) {
-      // Update existing formula
-      const index = this.customFormulaList.findIndex(
-        (f) => f.id === this.editingFormulaId
-      );
-      if (index !== -1) {
-        this.customFormulaList[index] = {
-          id: this.editingFormulaId,
-          name: this.formulaForm.value.name,
-          formula: formulaValue,
-          description: this.formulaForm.value.description,
-          calculatedValue: calculatedValue ?? undefined,
-          keywords:this.extractKeywords(formulaValue)
-        };
-      }
-      this.editingFormulaId = null;
-      this.snackBar.open('Formula updated successfully', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
-    } else {
-      // Add new formula
-      const newFormula: CustomFormula = {
-        id: Date.now(),
+  if (this.editingFormulaId !== null) {
+    // Update existing formula
+    const index = this.customFormulaList.findIndex(
+      (f) => f.id === this.editingFormulaId
+    );
+    if (index !== -1) {
+      this.customFormulaList[index] = {
+        id: this.editingFormulaId,
         name: this.formulaForm.value.name,
         formula: formulaValue,
         description: this.formulaForm.value.description,
         calculatedValue: calculatedValue ?? undefined,
-        keywords:this.extractKeywords(formulaValue)
+        keywords: this.extractKeywords(formulaValue)
       };
-
-      this.customFormulaList.push(newFormula);
-      this.filteredList = this.customFormulaList.reverse();
-      this.snackBar.open('Formula added successfully', 'Close', {
-        duration: 3000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-      });
     }
+    this.filteredList = [...this.customFormulaList]; // Update filtered list
+    this.editingFormulaId = null;
+    this.snackBar.open('Formula updated successfully', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
+  } else {
+    // Add new formula
+    const newFormula: CustomFormula = {
+      id: Date.now(),
+      name: this.formulaForm.value.name,
+      formula: formulaValue,
+      description: this.formulaForm.value.description,
+      calculatedValue: calculatedValue ?? undefined,
+      keywords: this.extractKeywords(formulaValue)
+    };
 
-    this.formulaForm.reset();
-    this.formulaError = '';
-    this.formulaListView = true;
-    this.emitFormulaList();
+    this.customFormulaList.push(newFormula);
+    this.filteredList = [...this.customFormulaList].reverse(); // Create reversed copy
+    
+    this.snackBar.open('Formula added successfully', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'center',
+      verticalPosition: 'bottom',
+    });
   }
+
+  this.formulaForm.reset();
+  this.formulaError = '';
+  this.formulaListView = true;
+  this.emitFormulaList();
+}
 
   cancelAdd() {
     this.formulaForm.reset();
@@ -387,7 +396,11 @@ export class CustomFormulaComponent implements OnInit {
   }
 
   emitFormulaList() {
-    this.formulaListChanged.emit([...this.customFormulaList]);
+    // this.formulaListChanged.emit([...this.customFormulaList]);
+
+    this._data.updateFunctionList([...this.customFormulaList])
+    
+    
   }
 
   onFormulaFocus() {
