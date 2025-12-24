@@ -39,6 +39,7 @@ import {
 import { ExcelExportService } from '../common/services/excel-export.service';
 import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
 import { Router } from '@angular/router';
+import { AddMetricComponent } from '../common/add-metric/add-metric.component';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -75,6 +76,7 @@ echarts.use([
     MatSnackBarModule,
     LegendDisplayComponent,
     // LucideAngularModule
+    AddMetricComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -592,6 +594,8 @@ export class DashboardComponent implements OnInit {
   isLoaderVisible = false;
   isDataAvailable = false;
 
+  isAddMetricComponentVisible:boolean = false;
+
   companies: any = null;
 
   metricTableData: any[] = [];
@@ -647,6 +651,52 @@ export class DashboardComponent implements OnInit {
     this.sendConvoToQueryBox(query.conversation);
     this.showData();
   }
+
+  availableMetrics:any = [];
+
+  convertMetricsToAddMetricFormat(
+  metrics: Array<{
+    metric: string;
+    value: number;
+    metricViewName: string;
+  }> | null
+): Array<{ id: string; name: string; description: string }> {
+  if (!metrics) {
+    return [];
+  }
+
+  return metrics.map(metric => ({
+    id: metric.metric,
+    name: this.toTitleCase( metric.metricViewName),
+    description: `Value: ${metric?.value}` // Or customize as needed
+  }));
+}
+
+private toTitleCase(str: string): string {
+  if (!str) return '';
+  
+  return str
+    .replace(/_/g, ' ') // Replace underscores with spaces
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
+
+
+  toggleAddMetricPopup(){
+
+    this.isAddMetricComponentVisible = !this.isAddMetricComponentVisible;
+
+    if(this.isAddMetricComponentVisible){
+      this.availableMetrics  = this.convertMetricsToAddMetricFormat(this._dataService.fetchMetricsForFormulaComponent());
+            
+    }
+  }
+  closeAddMetricComponent(){
+    this.isAddMetricComponentVisible = false;
+  }
+
 
   resetData() {
     this.isDataAvailable = false;

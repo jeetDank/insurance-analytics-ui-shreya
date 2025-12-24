@@ -1,0 +1,99 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h2 class="modal-title">Add Metric to Dashboard</h2>
+      <p class="modal-subtitle">Select a metric to add for all companies</p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-container">
+      <div class="search-wrapper">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m21 21-4.34-4.34"></path>
+          <circle cx="11" cy="11" r="8"></circle>
+        </svg>
+        <input 
+          type="text" 
+          class="search-input" 
+          placeholder="Search metrics..."
+          [(ngModel)]="searchQuery"
+        />
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <div class="tabs-list">
+        <button 
+          class="tab-trigger"
+          [class.active]="activeTab === 'sec'"
+          (click)="setActiveTab('sec')"
+        >
+          <svg class="tab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 7h6v6"></path>
+            <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+          </svg>
+          SEC Metrics ({{ secMetricsCount }})
+        </button>
+        <button 
+          class="tab-trigger"
+          [class.active]="activeTab === 'custom'"
+          (click)="setActiveTab('custom')"
+        >
+          <svg class="tab-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="16" height="20" x="4" y="2" rx="2"></rect>
+            <line x1="8" x2="16" y1="6" y2="6"></line>
+            <line x1="16" x2="16" y1="14" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M8 18h.01"></path>
+          </svg>
+          Custom Formulas ({{ customMetricsCount }})
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content" style="max-height: 400px ; overflow-y: scroll;">
+        <div class="metrics-scroll-area">
+          <div class="metrics-container">
+            <div class="metrics-list">
+              <button 
+                *ngFor="let metric of filteredMetrics"
+                class="metric-button"
+                (click)="onMetricClick(metric)"
+              >
+                <div class="metric-content">
+                  <div class="metric-info">
+                    <p class="metric-name">{{ metric.name }}</p>
+                    <p class="metric-description">{{ metric.description }}</p>
+                  </div>
+                  <svg class="metric-add-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5v14"></path>
+                  </svg>
+                </div>
+              </button>
+            </div>
+
+            <div *ngIf="filteredMetrics.length === 0" class="no-results">
+              <p>No metrics found matching "{{ searchQuery }}"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Close Button -->
+    <button class="close-button" (click)="onClose()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18"></path>
+        <path d="m6 6 12 12"></path>
+      </svg>
+    </button>
+  </div>
+</div>
