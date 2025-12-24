@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TextFormatterPipe } from '../../pipes/text-formatter.pipe';
 
 export interface TableColumn {
   header: string;
@@ -23,7 +24,7 @@ export interface TableCellContent {
 @Component({
   selector: 'app-metric-table',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,TextFormatterPipe],
   templateUrl: './metric-table.component.html',
   styleUrls: ['./metric-table.component.scss']
 })

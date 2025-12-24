@@ -18,6 +18,17 @@ export interface SegmentData {
   children?: SegmentData[];
 }
 
+export interface ProgressTracker {
+  main_title: string;
+  sub_title: string;
+  process: [
+    {
+      logo: string;
+      msg: string;
+    }
+  ];
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -30,22 +41,30 @@ export class DataService {
     ANALYSIS_DATA: null,
     AMBIGUITY_DATA: null,
     INSIGHTS_DATA: null,
-    
   };
 
+  HistoryBucket$ = new BehaviorSubject<any[]>([]);
 
+  LiveProgressTracker$ = new BehaviorSubject<ProgressTracker>({
+    main_title: 'Loading Dashboard',
+    sub_title: 'processing...',
+    process: [
+      {
+        logo: 'database',
+        msg: 'processing ',
+      },
+    ],
+  });
 
+    updateLiveProgressTracker(data:any) {
+    this.LiveProgressTracker$.next(data)
+  }
 
-  HistoryBucket$ = new BehaviorSubject<any[]>([])
-
-  FormulaBucket$ = new BehaviorSubject<any[]>([])
-
-
+  FormulaBucket$ = new BehaviorSubject<any[]>([]);
 
 
 
   updateFunctionList(data: any) {
-    
     this.FormulaBucket$.next(data);
   }
   addQueryToHistory(conversation: any) {
@@ -61,7 +80,7 @@ export class DataService {
     });
 
     this.HistoryBucket$.next(history);
-    
+
     // localStorage.setItem('historyBucket', JSON.stringify(history));
   }
 
@@ -113,19 +132,13 @@ export class DataService {
     }
   }
 
-  generateCustomeCardData(formulaData:any){
-
-    if(this.API_DATA.ANALYSIS_DATA){
-        this.API_DATA.ANALYSIS_DATA.results.forEach((company:any)=>{
-
-        })
-    }
-    else{
-
+  generateCustomeCardData(formulaData: any) {
+    if (this.API_DATA.ANALYSIS_DATA) {
+      this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {});
+    } else {
     }
 
-    this.API_DATA.ANALYSIS_DATA
-
+    this.API_DATA.ANALYSIS_DATA;
   }
 
   createAmbiguityPayload(ambiguities: any[]) {
@@ -372,10 +385,6 @@ export class DataService {
       }),
     }));
   }
-
-
-
-
 
   // Helper function to compare quarters chronologically
   private compareQuarters(periodA: string, periodB: string): number {
@@ -1687,13 +1696,10 @@ export class DataService {
         }
 
         metricData.segments.forEach((segment: any) => {
-          
-          const segmentKey:string = `${metricName}_${segment.segment_name}`;
-
-          
+          const segmentKey: string = `${metricName}_${segment.segment_name}`;
 
           // Initialize segment if it doesn't exist
-          if (!commonSegments[segmentKey]   ) {
+          if (!commonSegments[segmentKey]) {
             commonSegments[segmentKey] = {
               metric: metricName,
               segment_name: segment.segment_name,
@@ -1723,16 +1729,16 @@ export class DataService {
 
       // Check if this segment has data from multiple companies in at least one period
       const hasMultipleCompanies = Object.values(segment.periods).some(
-        
-        
-        (companies: any) => { 
-            console.log(segment);
-            
-          if(companies.length > 1 && !segment.segment_name.includes("revenue_consolidated") ){
-            return true
-          }
-          else{
-             return  false;
+        (companies: any) => {
+          console.log(segment);
+
+          if (
+            companies.length > 1 &&
+            !segment.segment_name.includes('revenue_consolidated')
+          ) {
+            return true;
+          } else {
+            return false;
           }
         }
       );
@@ -1744,7 +1750,6 @@ export class DataService {
 
     return filteredSegments;
   }
-
 
   generateCommonSegmentCharts(commonSegments: any) {
     const chartConfigs: any[] = [];
@@ -2234,310 +2239,312 @@ export class DataService {
   }
 
   generateVerticalSegmentCharts(data: any[]) {
-  const chartConfigs: any[] = [];
+    const chartConfigs: any[] = [];
 
-  // Color palette
-  const colorPalette = [
-    '#3b82f6', // blue
-    '#10b981', // green
-    '#ef4444', // red
-    '#f59e0b', // orange
-    '#8b5cf6', // purple
-    '#ec4899', // pink
-    '#06b6d4', // cyan
-    '#84cc16', // lime
-    '#fbbf24', // amber
-    '#a78bfa', // violet
-    '#fb7185', // rose
-    '#34d399', // emerald
-  ];
+    // Color palette
+    const colorPalette = [
+      '#3b82f6', // blue
+      '#10b981', // green
+      '#ef4444', // red
+      '#f59e0b', // orange
+      '#8b5cf6', // purple
+      '#ec4899', // pink
+      '#06b6d4', // cyan
+      '#84cc16', // lime
+      '#fbbf24', // amber
+      '#a78bfa', // violet
+      '#fb7185', // rose
+      '#34d399', // emerald
+    ];
 
-  // Helper function to darken a hex color
-  function darkenColor(hex: string, percent: number = 20): string {
-    const num = parseInt(hex.replace('#', ''), 16);
-    const r = Math.max(0, ((num >> 16) & 0xff) * (1 - percent / 100));
-    const g = Math.max(0, ((num >> 8) & 0xff) * (1 - percent / 100));
-    const b = Math.max(0, (num & 0xff) * (1 - percent / 100));
-    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
-  }
+    // Helper function to darken a hex color
+    function darkenColor(hex: string, percent: number = 20): string {
+      const num = parseInt(hex.replace('#', ''), 16);
+      const r = Math.max(0, ((num >> 16) & 0xff) * (1 - percent / 100));
+      const g = Math.max(0, ((num >> 8) & 0xff) * (1 - percent / 100));
+      const b = Math.max(0, (num & 0xff) * (1 - percent / 100));
+      return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+    }
 
-  // Helper function to recursively extract all leaf segments
-  function extractLeafSegments(obj: any, path: string = ''): any[] {
-    const segments: any[] = [];
+    // Helper function to recursively extract all leaf segments
+    function extractLeafSegments(obj: any, path: string = ''): any[] {
+      const segments: any[] = [];
 
-    if (typeof obj !== 'object' || obj === null) {
+      if (typeof obj !== 'object' || obj === null) {
+        return segments;
+      }
+
+      // Get all keys except 'value'
+      const childKeys = Object.keys(obj).filter((k) => k !== 'value');
+
+      // If no children (or only 'value'), this is a leaf node
+      if (childKeys.length === 0) {
+        if (obj.value !== null && obj.value !== undefined) {
+          return [
+            {
+              name: path,
+              value: obj.value,
+              path: path,
+            },
+          ];
+        }
+        return segments;
+      }
+
+      // Has children - recurse into each child
+      childKeys.forEach((key) => {
+        const child = obj[key];
+        if (child !== null && child !== undefined) {
+          const childPath = path ? `${path}.${key}` : key;
+          const childSegments = extractLeafSegments(child, childPath);
+          segments.push(...childSegments);
+        }
+      });
+
       return segments;
     }
 
-    // Get all keys except 'value'
-    const childKeys = Object.keys(obj).filter((k) => k !== 'value');
+    data.forEach((companyData: any) => {
+      const companyName = companyData.company;
 
-    // If no children (or only 'value'), this is a leaf node
-    if (childKeys.length === 0) {
-      if (obj.value !== null && obj.value !== undefined) {
-        return [
-          {
-            name: path,
-            value: obj.value,
-            path: path,
-          },
-        ];
-      }
-      return segments;
-    }
+      companyData.quarters.forEach((quarterData: any) => {
+        const period = quarterData.period;
 
-    // Has children - recurse into each child
-    childKeys.forEach((key) => {
-      const child = obj[key];
-      if (child !== null && child !== undefined) {
-        const childPath = path ? `${path}.${key}` : key;
-        const childSegments = extractLeafSegments(child, childPath);
-        segments.push(...childSegments);
-      }
-    });
+        // ✅ FIXED: Loop through ALL metrics instead of just [0]
+        quarterData.metrics.forEach((metric: any) => {
+          // Get root level keys (these will be the bars)
+          const rootKeys = Object.keys(metric.children);
+          const categories = rootKeys.map((key) => snakeToTitleCase(key));
 
-    return segments;
-  }
+          // Extract all leaf segments for each root bar
+          const barSegments: any = {};
+          const allSegmentNames = new Set<string>();
 
-  data.forEach((companyData: any) => {
-    const companyName = companyData.company;
+          rootKeys.forEach((rootKey) => {
+            const rootItem = metric.children[rootKey];
+            const leafSegments = extractLeafSegments(rootItem, rootKey);
 
-    companyData.quarters.forEach((quarterData: any) => {
-      const period = quarterData.period;
+            barSegments[rootKey] = leafSegments;
 
-      // ✅ FIXED: Loop through ALL metrics instead of just [0]
-      quarterData.metrics.forEach((metric: any) => {
-        // Get root level keys (these will be the bars)
-        const rootKeys = Object.keys(metric.children);
-        const categories = rootKeys.map((key) => snakeToTitleCase(key));
-
-        // Extract all leaf segments for each root bar
-        const barSegments: any = {};
-        const allSegmentNames = new Set<string>();
-
-        rootKeys.forEach((rootKey) => {
-          const rootItem = metric.children[rootKey];
-          const leafSegments = extractLeafSegments(rootItem, rootKey);
-
-          barSegments[rootKey] = leafSegments;
-
-          // Add segment names to the set
-          leafSegments.forEach((seg) => {
-            // Use the last part of the path as the segment name for display
-            const segmentDisplayName = seg.path.split('.').pop() || seg.name;
-            allSegmentNames.add(segmentDisplayName);
-          });
-        });
-
-        // Create a mapping of segment display names to their data
-        const segmentNames = Array.from(allSegmentNames);
-        const series: any[] = [];
-
-        segmentNames.forEach((segmentName, index) => {
-          const seriesData = rootKeys.map((rootKey) => {
-            const segments = barSegments[rootKey];
-            const segment = segments.find((s: any) => {
-              const displayName = s.path.split('.').pop();
-              return displayName === segmentName;
+            // Add segment names to the set
+            leafSegments.forEach((seg) => {
+              // Use the last part of the path as the segment name for display
+              const segmentDisplayName = seg.path.split('.').pop() || seg.name;
+              allSegmentNames.add(segmentDisplayName);
             });
-            // ✅ FIXED: Convert to billions (divide by 1,000,000,000)
-            return segment ? segment.value / 1000000000 : 0;
           });
 
-          // Calculate total for this segment across all categories
-          const segmentTotal = seriesData.reduce(
-            (sum, value) => sum + value,
-            0
-          );
-          const displayName = snakeToTitleCase(segmentName);
-          const legendName = `${displayName} ($${
-            segmentTotal >= 0 ? '' : '-'
-          }${Math.abs(segmentTotal).toFixed(2)}B)`; // ✅ Changed M to B
+          // Create a mapping of segment display names to their data
+          const segmentNames = Array.from(allSegmentNames);
+          const series: any[] = [];
 
-          series.push({
-            name: legendName,
-            type: 'bar',
-            stack: 'total',
-            barWidth: '140px',
-            stackStrategy: 'all',
-            label: {
-              show: false,
-            },
-            itemStyle: {
-              color: {
-                type: 'linear',
-                x: 0,
-                y: 0,
-                x2: 0,
-                y2: 1,
-                colorStops: [
-                  {
-                    offset: 0,
-                    color: colorPalette[index % colorPalette.length],
-                  },
-                  {
-                    offset: 1,
-                    color: colorPalette[index % colorPalette.length] + 'cc',
-                  },
-                ],
-              },
-            },
-            emphasis: {
-              itemStyle: {
-                color: colorPalette[index % colorPalette.length],
-              },
-            },
-            data: seriesData,
-          });
-        });
+          segmentNames.forEach((segmentName, index) => {
+            const seriesData = rootKeys.map((rootKey) => {
+              const segments = barSegments[rootKey];
+              const segment = segments.find((s: any) => {
+                const displayName = s.path.split('.').pop();
+                return displayName === segmentName;
+              });
+              // ✅ FIXED: Convert to billions (divide by 1,000,000,000)
+              return segment ? segment.value / 1000000000 : 0;
+            });
 
-        const legendsMap = new Map<string, any>();
-
-        // Calculate grand total across all segments
-        const grandTotal = series.reduce((sum, s) => {
-          return (
-            sum +
-            s.data.reduce(
-              (dataSum: number, value: number) => dataSum + value,
+            // Calculate total for this segment across all categories
+            const segmentTotal = seriesData.reduce(
+              (sum, value) => sum + value,
               0
-            )
-          );
-        }, 0);
+            );
+            const displayName = snakeToTitleCase(segmentName);
+            const legendName = `${displayName} ($${
+              segmentTotal >= 0 ? '' : '-'
+            }${Math.abs(segmentTotal).toFixed(2)}B)`; // ✅ Changed M to B
 
-        // Build hierarchy with colors matching the series
-        segmentNames.forEach((segmentName, index) => {
-          const segmentTotal = series[index].data.reduce(
-            (sum: number, value: number) => sum + value,
-            0
-          );
-
-          // Use the exact same color as the series
-          const segmentColor = colorPalette[index % colorPalette.length];
-
-          // Find the full path for this segment from barSegments
-          let fullPath = '';
-          for (const rootKey of rootKeys) {
-            const segments = barSegments[rootKey];
-            const segment = segments.find((s: any) => {
-              const displayName = s.path.split('.').pop();
-              return displayName === segmentName;
+            series.push({
+              name: legendName,
+              type: 'bar',
+              stack: 'total',
+              barWidth: '140px',
+              stackStrategy: 'all',
+              label: {
+                show: false,
+              },
+              itemStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [
+                    {
+                      offset: 0,
+                      color: colorPalette[index % colorPalette.length],
+                    },
+                    {
+                      offset: 1,
+                      color: colorPalette[index % colorPalette.length] + 'cc',
+                    },
+                  ],
+                },
+              },
+              emphasis: {
+                itemStyle: {
+                  color: colorPalette[index % colorPalette.length],
+                },
+              },
+              data: seriesData,
             });
-            if (segment) {
-              fullPath = segment.path;
-              break;
+          });
+
+          const legendsMap = new Map<string, any>();
+
+          // Calculate grand total across all segments
+          const grandTotal = series.reduce((sum, s) => {
+            return (
+              sum +
+              s.data.reduce(
+                (dataSum: number, value: number) => dataSum + value,
+                0
+              )
+            );
+          }, 0);
+
+          // Build hierarchy with colors matching the series
+          segmentNames.forEach((segmentName, index) => {
+            const segmentTotal = series[index].data.reduce(
+              (sum: number, value: number) => sum + value,
+              0
+            );
+
+            // Use the exact same color as the series
+            const segmentColor = colorPalette[index % colorPalette.length];
+
+            // Find the full path for this segment from barSegments
+            let fullPath = '';
+            for (const rootKey of rootKeys) {
+              const segments = barSegments[rootKey];
+              const segment = segments.find((s: any) => {
+                const displayName = s.path.split('.').pop();
+                return displayName === segmentName;
+              });
+              if (segment) {
+                fullPath = segment.path;
+                break;
+              }
             }
-          }
 
-          const pathParts = fullPath.split('.');
-          const parentName = pathParts[0];
+            const pathParts = fullPath.split('.');
+            const parentName = pathParts[0];
 
-          if (pathParts.length === 1) {
-            // Top-level segment with no parent
-            if (!legendsMap.has(parentName)) {
-              legendsMap.set(parentName, {
-                name: snakeToTitleCase(parentName),
+            if (pathParts.length === 1) {
+              // Top-level segment with no parent
+              if (!legendsMap.has(parentName)) {
+                legendsMap.set(parentName, {
+                  name: snakeToTitleCase(parentName),
+                  color: segmentColor,
+                  value: segmentTotal,
+                  percentage:
+                    grandTotal !== 0
+                      ? parseFloat(
+                          ((segmentTotal / grandTotal) * 100).toFixed(1)
+                        )
+                      : 0,
+                  children: [],
+                });
+              }
+            } else {
+              // Child segment with parent
+              const childName = pathParts[pathParts.length - 1];
+
+              // Create parent if it doesn't exist
+              if (!legendsMap.has(parentName)) {
+                legendsMap.set(parentName, {
+                  name: snakeToTitleCase(parentName),
+                  color: colorPalette[0],
+                  value: 0,
+                  percentage: 0,
+                  children: [],
+                });
+              }
+
+              const parent = legendsMap.get(parentName);
+              parent.value += segmentTotal;
+
+              // Add child with the exact color from the series
+              parent.children.push({
+                name: snakeToTitleCase(childName),
                 color: segmentColor,
-                value: segmentTotal,
+                value: parseFloat(segmentTotal.toFixed(1)),
                 percentage:
                   grandTotal !== 0
                     ? parseFloat(((segmentTotal / grandTotal) * 100).toFixed(1))
                     : 0,
-                children: [],
               });
             }
-          } else {
-            // Child segment with parent
-            const childName = pathParts[pathParts.length - 1];
+          });
 
-            // Create parent if it doesn't exist
-            if (!legendsMap.has(parentName)) {
-              legendsMap.set(parentName, {
-                name: snakeToTitleCase(parentName),
-                color: colorPalette[0],
-                value: 0,
-                percentage: 0,
-                children: [],
-              });
-            }
-
-            const parent = legendsMap.get(parentName);
-            parent.value += segmentTotal;
-
-            // Add child with the exact color from the series
-            parent.children.push({
-              name: snakeToTitleCase(childName),
-              color: segmentColor,
-              value: parseFloat(segmentTotal.toFixed(1)),
-              percentage:
+          // Update parent percentages and values after all children are added
+          legendsMap.forEach((legend) => {
+            if (legend.children.length > 0) {
+              legend.value = parseFloat(legend.value.toFixed(1));
+              legend.percentage =
                 grandTotal !== 0
-                  ? parseFloat(((segmentTotal / grandTotal) * 100).toFixed(1))
-                  : 0,
-            });
-          }
-        });
+                  ? parseFloat(((legend.value / grandTotal) * 100).toFixed(1))
+                  : 0;
+            }
+          });
 
-        // Update parent percentages and values after all children are added
-        legendsMap.forEach((legend) => {
-          if (legend.children.length > 0) {
-            legend.value = parseFloat(legend.value.toFixed(1));
-            legend.percentage =
-              grandTotal !== 0
-                ? parseFloat(((legend.value / grandTotal) * 100).toFixed(1))
-                : 0;
-          }
-        });
+          const legends = Array.from(legendsMap.values());
 
-        const legends = Array.from(legendsMap.values());
+          const chartConfig = {
+            useDirtyRect: true,
+            devicePixelRatio: window.devicePixelRatio || 1,
 
-        const chartConfig = {
-          useDirtyRect: true,
-          devicePixelRatio: window.devicePixelRatio || 1,
-
-          title: {
-            text: ``,
-            textStyle: {
-              fontSize: 16,
-              fontWeight: 600,
-              color: '#d7d7d7ff',
+            title: {
+              text: ``,
+              textStyle: {
+                fontSize: 16,
+                fontWeight: 600,
+                color: '#d7d7d7ff',
+              },
+              left: 'center',
+              top: 10,
             },
-            left: 'center',
-            top: 10,
-          },
 
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'shadow' },
-            backgroundColor: 'rgba(15, 15, 25, 0.95)',
-            borderColor: 'rgba(100, 100, 150, 0.3)',
-            borderWidth: 1,
-            borderRadius: 12,
-            padding: 12,
-            textStyle: {
-              color: '#d7d7d7ff',
-              fontSize: 12,
-              fontWeight: 'normal',
-            },
-            formatter: (params: any) => {
-              const categoryName = params[0].name;
-              let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${categoryName}</div>`;
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: { type: 'shadow' },
+              backgroundColor: 'rgba(15, 15, 25, 0.95)',
+              borderColor: 'rgba(100, 100, 150, 0.3)',
+              borderWidth: 1,
+              borderRadius: 12,
+              padding: 12,
+              textStyle: {
+                color: '#d7d7d7ff',
+                fontSize: 12,
+                fontWeight: 'normal',
+              },
+              formatter: (params: any) => {
+                const categoryName = params[0].name;
+                let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${categoryName}</div>`;
 
-              let total = 0;
-              const allParams = params;
+                let total = 0;
+                const allParams = params;
 
-              allParams.forEach((param: any) => {
-                const value = param.value;
-                total += value;
+                allParams.forEach((param: any) => {
+                  const value = param.value;
+                  total += value;
 
-                const totalForPercentage = allParams.reduce(
-                  (sum: number, p: any) => sum + p.value,
-                  0
-                );
-                const percentage =
-                  totalForPercentage !== 0
-                    ? (value / totalForPercentage) * 100
-                    : 0;
+                  const totalForPercentage = allParams.reduce(
+                    (sum: number, p: any) => sum + p.value,
+                    0
+                  );
+                  const percentage =
+                    totalForPercentage !== 0
+                      ? (value / totalForPercentage) * 100
+                      : 0;
 
-                result += `
+                  result += `
                 <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
                   <div style="display: flex; align-items: center; flex: 1;">
                     <span style="display: inline-block; width: 10px; height: 10px; background: ${
@@ -2555,9 +2562,9 @@ export class DataService {
                   </div>
                 </div>
               `;
-              });
+                });
 
-              result += `
+                result += `
               <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(100, 100, 150, 0.3);">
                 <div style="display: flex; justify-content: space-between;">
                   <span style="font-weight: 600;">Total:</span>
@@ -2568,295 +2575,276 @@ export class DataService {
               </div>
             `;
 
-              return result;
-            },
-          },
-
-          legend: {
-            data: legends.map((l) => l.name),
-            bottom: 10,
-            textStyle: {
-              color: '#d7d7d7ff',
-              fontSize: 11,
-            },
-            type: 'scroll',
-            pageIconColor: '#d7d7d7ff',
-            pageIconInactiveColor: 'rgba(100, 100, 150, 0.3)',
-            pageTextStyle: {
-              color: '#d7d7d7ff',
-            },
-          },
-
-          grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '15%',
-            top: '20%',
-            containLabel: true,
-          },
-
-          xAxis: {
-            type: 'category',
-            data: categories,
-            axisLabel: {
-              show: true,
-              color: '#d7d7d7ff',
-              fontSize: 12,
-              interval: 0,
-            },
-            axisLine: {
-              show: true,
-              lineStyle: {
-                color: 'rgba(100, 100, 150, 0.3)',
+                return result;
               },
             },
-            axisTick: {
-              show: false,
-            },
-          },
 
-          yAxis: {
-            type: 'value',
-            axisLabel: {
-              show: true,
-              color: '#d7d7d7ff',
-              fontSize: 11,
-              formatter: (value: number) => {
-                return value >= 0 ? `$${value}B` : `-$${Math.abs(value)}B`; // ✅ Changed M to B
+            legend: {
+              data: legends.map((l) => l.name),
+              bottom: 10,
+              textStyle: {
+                color: '#d7d7d7ff',
+                fontSize: 11,
+              },
+              type: 'scroll',
+              pageIconColor: '#d7d7d7ff',
+              pageIconInactiveColor: 'rgba(100, 100, 150, 0.3)',
+              pageTextStyle: {
+                color: '#d7d7d7ff',
               },
             },
-            axisLine: {
-              show: false,
+
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '15%',
+              top: '20%',
+              containLabel: true,
             },
-            axisTick: {
-              show: false,
-            },
-            splitLine: {
-              show: true,
-              lineStyle: {
-                color: 'rgba(100, 100, 150, 0.1)',
-                type: 'dashed',
+
+            xAxis: {
+              type: 'category',
+              data: categories,
+              axisLabel: {
+                show: true,
+                color: '#d7d7d7ff',
+                fontSize: 12,
+                interval: 0,
+              },
+              axisLine: {
+                show: true,
+                lineStyle: {
+                  color: 'rgba(100, 100, 150, 0.3)',
+                },
+              },
+              axisTick: {
+                show: false,
               },
             },
-          },
 
-          backgroundColor: 'transparent',
+            yAxis: {
+              type: 'value',
+              axisLabel: {
+                show: true,
+                color: '#d7d7d7ff',
+                fontSize: 11,
+                formatter: (value: number) => {
+                  return value >= 0 ? `$${value}B` : `-$${Math.abs(value)}B`; // ✅ Changed M to B
+                },
+              },
+              axisLine: {
+                show: false,
+              },
+              axisTick: {
+                show: false,
+              },
+              splitLine: {
+                show: true,
+                lineStyle: {
+                  color: 'rgba(100, 100, 150, 0.1)',
+                  type: 'dashed',
+                },
+              },
+            },
 
-          series: series,
-        };
+            backgroundColor: 'transparent',
 
-        chartConfigs.push({
-          company: companyName,
-          period: period,
-          total: parseFloat((metric.total / 1000000000).toFixed(1)), // ✅ Convert to billions
-          segments: barSegments,
-          legends: {
+            series: series,
+          };
+
+          chartConfigs.push({
+            company: companyName,
+            period: period,
             total: parseFloat((metric.total / 1000000000).toFixed(1)), // ✅ Convert to billions
-            legends: legends,
-          },
-          config: chartConfig,
-          metric_name: metric.metricName, // ✅ Use metricName from your data structure
-        });
-      }); // ✅ Close the metrics forEach loop
+            segments: barSegments,
+            legends: {
+              total: parseFloat((metric.total / 1000000000).toFixed(1)), // ✅ Convert to billions
+              legends: legends,
+            },
+            config: chartConfig,
+            metric_name: metric.metricName, // ✅ Use metricName from your data structure
+          });
+        }); // ✅ Close the metrics forEach loop
+      });
     });
-  });
 
-  return chartConfigs;
-}
+    return chartConfigs;
+  }
 
   fetchCustomCardsData(
-  companies: { name: string; logo: string }[],
-  customFormulaComponents: any[]
-) {
-  // Extract all unique keywords from all custom formulas as requested metrics
-  const allKeywords = Array.from(
-    new Set(
-      customFormulaComponents.flatMap((formula) => formula.keywords)
-    )
-  );
+    companies: { name: string; logo: string }[],
+    customFormulaComponents: any[]
+  ) {
+    // Extract all unique keywords from all custom formulas as requested metrics
+    const allKeywords = Array.from(
+      new Set(customFormulaComponents.flatMap((formula) => formula.keywords))
+    );
 
-  const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
-    (company: any) => {
-      // Find matching company logo
-      const matchedCompany = companies.find(
-        (c) =>
-          c.name
-            .toLowerCase()
-            .includes(
-              this.formatCompanyName(company.company_name).toLowerCase()
-            ) || c.name.toLowerCase() == company.company_name.toLowerCase()
-      );
-      const companyLogo = matchedCompany?.logo || '';
+    const companyWiseCardData = this.API_DATA.ANALYSIS_DATA.results.map(
+      (company: any) => {
+        // Find matching company logo
+        const matchedCompany = companies.find(
+          (c) =>
+            c.name
+              .toLowerCase()
+              .includes(
+                this.formatCompanyName(company.company_name).toLowerCase()
+              ) || c.name.toLowerCase() == company.company_name.toLowerCase()
+        );
+        const companyLogo = matchedCompany?.logo || '';
 
-      return {
-        company_name: company.company_name,
-        cik: company.cik,
-        logo: companyLogo,
-        period: company?.statements?.context_info?.period_label_text,
-        quarters: company.statements.map((qtr: any) => {
-          // First, extract all keyword metrics from all_metrics
-          const keywordMetrics: any = {};
-          allKeywords.forEach((keyword: string) => {
-            keywordMetrics[keyword] = qtr.all_metrics[keyword]; // Get raw metric data
-          });
+        return {
+          company_name: company.company_name,
+          cik: company.cik,
+          logo: companyLogo,
+          period: company?.statements?.context_info?.period_label_text,
+          quarters: company.statements.map((qtr: any) => {
+            // First, extract all keyword metrics from all_metrics
+            const keywordMetrics: any = {};
+            allKeywords.forEach((keyword: string) => {
+              keywordMetrics[keyword] = qtr.all_metrics[keyword]; // Get raw metric data
+            });
 
-          // Then calculate each custom formula
-          const calculatedMetrics: any = {};
-          customFormulaComponents.forEach((formulaObj) => {
-            const keywords = formulaObj.keywords;
+            // Then calculate each custom formula
+            const calculatedMetrics: any = {};
+            customFormulaComponents.forEach((formulaObj) => {
+              const keywords = formulaObj.keywords;
 
-            // Get values for this formula's keywords
-            const keywordValues: { [key: string]: number } = {};
-            let hasAllValues = true;
+              // Get values for this formula's keywords
+              const keywordValues: { [key: string]: number } = {};
+              let hasAllValues = true;
 
-            keywords.forEach((keyword: string) => {
-              const metricData = keywordMetrics[keyword];
-              // Extract raw numeric value from the metric data
-              const rawValue = this.getRawMetricValue(metricData);
-              
-              if (rawValue !== null && rawValue !== undefined && !isNaN(rawValue)) {
-                keywordValues[keyword] = rawValue;
+              keywords.forEach((keyword: string) => {
+                const metricData = keywordMetrics[keyword];
+                // Extract raw numeric value from the metric data
+                const rawValue = this.getRawMetricValue(metricData);
+
+                if (
+                  rawValue !== null &&
+                  rawValue !== undefined &&
+                  !isNaN(rawValue)
+                ) {
+                  keywordValues[keyword] = rawValue;
+                } else {
+                  hasAllValues = false;
+                }
+              });
+
+              // Calculate the formula result if all keyword values are available
+              if (hasAllValues && keywords.length > 0) {
+                const calculatedValue = this.evaluateFormula(
+                  formulaObj.formula,
+                  keywordValues
+                );
+                calculatedMetrics[formulaObj.name] = {
+                  value: calculatedValue,
+                  trend: null, // Custom formulas don't have trend data
+                };
               } else {
-                hasAllValues = false;
+                calculatedMetrics[formulaObj.name] = null;
               }
             });
 
-            // Calculate the formula result if all keyword values are available
-            if (hasAllValues && keywords.length > 0) {
-              const calculatedValue = this.evaluateFormula(
-                formulaObj.formula,
-                keywordValues
-              );
-              calculatedMetrics[formulaObj.name] = {
-                value: calculatedValue,
-                trend: null, // Custom formulas don't have trend data
-              };
-            } else {
-              calculatedMetrics[formulaObj.name] = null;
-            }
-          });
+            return {
+              period: qtr.context_info.period_label_text,
+              logo: companyLogo,
+              metrics: calculatedMetrics,
+            };
+          }),
+        };
+      }
+    );
 
-          return {
-            period: qtr.context_info.period_label_text,
-            logo: companyLogo,
-            metrics: calculatedMetrics,
-          };
-        }),
-      };
-    }
-  );
-
-  return this.populateCardView(companyWiseCardData);
-}
-
-// Helper function to extract raw numeric value from metric data
-private getRawMetricValue(metricData: any): number | null {
-  if (!metricData) return null;
-  
-  // Try different possible property names for the raw value
-  if (typeof metricData === 'number') {
-    return metricData;
+    return this.populateCardView(companyWiseCardData);
   }
-  
-  if (metricData.raw_value !== undefined && metricData.raw_value !== null) {
-    return parseFloat(metricData.raw_value);
-  }
-  
-  if (metricData.value !== undefined && metricData.value !== null) {
-    // If value is already a number, return it
-    if (typeof metricData.value === 'number') {
-      return metricData.value;
-    }
-    
-    // If value is a string with units (like "22.51B"), parse it
-    if (typeof metricData.value === 'string') {
-      return this.parseFormattedValue(metricData.value);
-    }
-  }
-  
-  return null;
-}
 
-// Helper function to parse formatted values like "22.51B", "1.5M", etc.
-private parseFormattedValue(formattedValue: string): number | null {
-  if (!formattedValue) return null;
-  
-  const value = formattedValue.toString().trim();
-  
-  // Remove any currency symbols
-  const cleaned = value.replace(/[$,]/g, '');
-  
-  // Check for units
-  const match = cleaned.match(/^(-?[\d.]+)([KMBT])?$/i);
-  if (!match) return null;
-  
-  const number = parseFloat(match[1]);
-  const unit = match[2]?.toUpperCase();
-  
-  if (isNaN(number)) return null;
-  
-  const multipliers: { [key: string]: number } = {
-    'K': 1000,
-    'M': 1000000,
-    'B': 1000000000,
-    'T': 1000000000000
-  };
-  
-  return unit ? number * multipliers[unit] : number;
-}
+  // Helper function to extract raw numeric value from metric data
+  private getRawMetricValue(metricData: any): number | null {
+    if (!metricData) return null;
 
-// Helper function to evaluate formula with keyword values
-private evaluateFormula(
-  formula: string,
-  keywordValues: { [key: string]: number }
-): number | null {
-  try {
-    let evaluableFormula = formula.trim();
-
-    // Replace each keyword with its actual value
-    Object.keys(keywordValues).forEach((keyword) => {
-      const value = keywordValues[keyword];
-      // Use word boundaries to ensure we replace whole words only
-      evaluableFormula = evaluableFormula.replace(
-        new RegExp(`\\b${keyword}\\b`, 'g'),
-        value.toString()
-      );
-    });
-
-    // Basic validation: ensure the formula only contains numbers, operators, and parentheses
-    if (!/^[\d\s+\-*/().eE]+$/.test(evaluableFormula)) {
-      console.error('Invalid formula after substitution:', evaluableFormula);
-      return null;
+    // Try different possible property names for the raw value
+    if (typeof metricData === 'number') {
+      return metricData;
     }
 
-    // Evaluate the mathematical expression
-    return eval(evaluableFormula);
-  } catch (error) {
-    console.error('Error evaluating formula:', error);
+    if (metricData.raw_value !== undefined && metricData.raw_value !== null) {
+      return parseFloat(metricData.raw_value);
+    }
+
+    if (metricData.value !== undefined && metricData.value !== null) {
+      // If value is already a number, return it
+      if (typeof metricData.value === 'number') {
+        return metricData.value;
+      }
+
+      // If value is a string with units (like "22.51B"), parse it
+      if (typeof metricData.value === 'string') {
+        return this.parseFormattedValue(metricData.value);
+      }
+    }
+
     return null;
   }
-}
 
+  // Helper function to parse formatted values like "22.51B", "1.5M", etc.
+  private parseFormattedValue(formattedValue: string): number | null {
+    if (!formattedValue) return null;
 
+    const value = formattedValue.toString().trim();
 
+    // Remove any currency symbols
+    const cleaned = value.replace(/[$,]/g, '');
 
+    // Check for units
+    const match = cleaned.match(/^(-?[\d.]+)([KMBT])?$/i);
+    if (!match) return null;
 
+    const number = parseFloat(match[1]);
+    const unit = match[2]?.toUpperCase();
 
+    if (isNaN(number)) return null;
 
+    const multipliers: { [key: string]: number } = {
+      K: 1000,
+      M: 1000000,
+      B: 1000000000,
+      T: 1000000000000,
+    };
 
+    return unit ? number * multipliers[unit] : number;
+  }
 
+  // Helper function to evaluate formula with keyword values
+  private evaluateFormula(
+    formula: string,
+    keywordValues: { [key: string]: number }
+  ): number | null {
+    try {
+      let evaluableFormula = formula.trim();
 
+      // Replace each keyword with its actual value
+      Object.keys(keywordValues).forEach((keyword) => {
+        const value = keywordValues[keyword];
+        // Use word boundaries to ensure we replace whole words only
+        evaluableFormula = evaluableFormula.replace(
+          new RegExp(`\\b${keyword}\\b`, 'g'),
+          value.toString()
+        );
+      });
 
+      // Basic validation: ensure the formula only contains numbers, operators, and parentheses
+      if (!/^[\d\s+\-*/().eE]+$/.test(evaluableFormula)) {
+        console.error('Invalid formula after substitution:', evaluableFormula);
+        return null;
+      }
 
-
-
-
-
-
-
-
-
-
+      // Evaluate the mathematical expression
+      return eval(evaluableFormula);
+    } catch (error) {
+      console.error('Error evaluating formula:', error);
+      return null;
+    }
+  }
 }
 
 function snakeToTitleCase(str: string): string {

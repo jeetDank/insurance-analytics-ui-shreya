@@ -18,7 +18,7 @@ export interface SegmentData {
 })
 export class SegmentTableComponent implements OnInit, OnChanges {
   @Input() data: SegmentData[] = [];
-  @Input() showTotal: boolean = true;
+  @Input() showTotal: boolean = false;
   @Input() segment_name: string = "Value";
 
   // Color palette for top-level segments
