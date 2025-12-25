@@ -577,7 +577,8 @@ export class DashboardComponent implements OnInit {
           companies,
           data
         );
-
+        console.log(customCardData);
+        
         this.customCardView = customCardData;
       }
     });
@@ -739,6 +740,9 @@ export class DashboardComponent implements OnInit {
         companies,
         customFormulaData
       );
+     
+      console.log(customCardData);
+      
 
       this.customCardView = customCardData;
     }

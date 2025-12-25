@@ -385,6 +385,93 @@ export class DataService {
       }),
     }));
   }
+  populateCustomCardView(companyData: any[]): any[] {
+    // First, we need to get all unique metrics across all companies
+    const allMetrics = this.getAllUniqueMetrics(companyData);
+
+    // Then create a card view entry for each metric
+    return allMetrics.map((metricName) => ({
+      metricName: this.formatMetricName(metricName),
+      tooltip: this.getMetricTooltip(metricName),
+      cards: companyData.flatMap((company) => {
+        // Sort quarters chronologically for each company
+        const sortedQuarters = [...company.quarters].sort((a: any, b: any) => {
+          return this.compareQuarters(a.period, b.period);
+        });
+
+        // Map through sorted quarters for each company
+        return sortedQuarters.map((quarter: any) => {
+          const metricData = quarter.metrics[metricName];
+
+          return {
+            companyName: this.formatCompanyName(company.company_name),
+            period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
+            metric: this.formatMetricValueWithPrefixPostfix(metricData),
+            logo: quarter.logo,
+            trend: {
+              trend: metricData?.trend ? metricData?.trend : 'N/A',
+              trendUnit: '%',
+              positive: metricData?.trend
+                ? metricData?.trend > 0
+                  ? true
+                  : false
+                : null,
+            },
+          };
+        });
+      }),
+    }));
+  }
+
+  /**
+   * Format metric value with prefix and postfix applied
+   */
+  private formatMetricValueWithPrefixPostfix(metricData: any): string {
+    if (!metricData || metricData.value === null || metricData.value === undefined) {
+      return 'N/A';
+    }
+
+    const value = metricData.value;
+    const prefix = metricData.prefix || '';
+    const postfix = metricData.postfix || '';
+
+    // Scale the value based on postfix
+    let scaledValue = value;
+    
+    switch (postfix) {
+      case 'B':
+        scaledValue = value / 1_000_000_000;
+        break;
+      case 'M':
+        scaledValue = value / 1_000_000;
+        break;
+      case 'K':
+        scaledValue = value / 1_000;
+        break;
+    }
+
+    // Format the number with appropriate decimal places
+    let formattedValue: string;
+    const absValue = Math.abs(scaledValue);
+    
+    if (absValue >= 100) {
+      formattedValue = scaledValue.toFixed(1);
+    } else if (absValue >= 10) {
+      formattedValue = scaledValue.toFixed(2);
+    } else if (absValue >= 1) {
+      formattedValue = scaledValue.toFixed(2);
+    } else if (absValue > 0) {
+      formattedValue = scaledValue.toFixed(3);
+    } else {
+      formattedValue = '0';
+    }
+
+    // Remove trailing zeros and decimal point if not needed
+    formattedValue = parseFloat(formattedValue).toString();
+
+    // Apply prefix and postfix
+    return `${prefix}${formattedValue}${postfix}`;
+  }
 
   // Helper function to compare quarters chronologically
   private compareQuarters(periodA: string, periodB: string): number {
@@ -2708,9 +2795,19 @@ export class DataService {
                   formulaObj.formula,
                   keywordValues
                 );
+
+                // Determine format type from formula or infer from keywords
+                const formatType = this.determineFormatType(formulaObj, keywordMetrics, keywords);
+                
+                // Get appropriate prefix and postfix based on format type and value
+                const formatting = this.getMetricFormatting(calculatedValue, formatType);
+
                 calculatedMetrics[formulaObj.name] = {
                   value: calculatedValue,
                   trend: null, // Custom formulas don't have trend data
+                  format_type: formatType,
+                  prefix: formatting.prefix,
+                  postfix: formatting.postfix,
                 };
               } else {
                 calculatedMetrics[formulaObj.name] = null;
@@ -2727,7 +2824,85 @@ export class DataService {
       }
     );
 
-    return this.populateCardView(companyWiseCardData);
+    return this.populateCustomCardView(companyWiseCardData);
+  }
+
+  /**
+   * Determine the format type for a calculated metric
+   */
+  private determineFormatType(
+    formulaObj: any,
+    keywordMetrics: any,
+    keywords: string[]
+  ): string {
+    // First check if formula object has format_type specified
+    if (formulaObj.format_type) {
+      return formulaObj.format_type;
+    }
+
+    // Otherwise, infer from the first keyword metric that has format info
+    for (const keyword of keywords) {
+      const metricData = keywordMetrics[keyword];
+      if (metricData && metricData.format_type) {
+        return metricData.format_type;
+      }
+    }
+
+    // Default to 'number' if no format type found
+    return 'number';
+  }
+
+  /**
+   * Get appropriate prefix and postfix based on value and format type
+   */
+  private getMetricFormatting(
+    value: any,
+    formatType: string
+  ): { prefix: string; postfix: string } {
+    let prefix = '';
+    let postfix = '';
+
+    const absValue = Math.abs(value);
+
+    switch (formatType.toLowerCase()) {
+      case 'currency':
+        prefix = '$';
+        // Determine scale based on value magnitude
+        if (absValue >= 1_000_000_000) {
+          postfix = 'B'; // Billions
+        } else if (absValue >= 1_000_000) {
+          postfix = 'M'; // Millions
+        } else if (absValue >= 1_000) {
+          postfix = 'K'; // Thousands
+        }
+        break;
+
+      case 'percentage':
+      case 'percent':
+        postfix = '%';
+        break;
+
+      case 'ratio':
+        postfix = 'x';
+        break;
+
+      case 'number':
+        // For large numbers, add scale
+        if (absValue >= 1_000_000_000) {
+          postfix = 'B';
+        } else if (absValue >= 1_000_000) {
+          postfix = 'M';
+        } else if (absValue >= 1_000) {
+          postfix = 'K';
+        }
+        break;
+
+      default:
+        // No prefix or postfix for unknown types
+        break;
+    }
+
+    return { prefix, postfix };
   }
 
   // Helper function to extract raw numeric value from metric data

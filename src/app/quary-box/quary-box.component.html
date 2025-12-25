@@ -158,11 +158,12 @@
         <!-- Input area (sticks to bottom) -->
         <div class="p-4 mb-12 flex items-center gap-2">
           <input
-            for="submit_button"
             type="text"
             #msg
             class="file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-white/[0.02] border-white/[0.08] text-white placeholder:text-white/30 focus:border-white/[0.15]"
             placeholder="Ask a question..."
+            (keyup.enter)="parseQuery(msg.value); msg.value = ''"
+            [disabled]="loaderVisible"
           />
 
           <button
@@ -171,7 +172,6 @@
             class="custom-mini-fab flex items-center justify-center rounded-md w-9 h-9 flex-shrink-0"
             (click)="parseQuery(msg.value); msg.value = ''"
             type="submit"
-            (keyup.enter)="parseQuery(msg.value); msg.value = ''"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -196,7 +196,10 @@
       </div>
 
       }@else{
-      <app-custom-formula (formulaListChanged)="getCustomFormulas($event)" [suggestionsMetrics]="formulaSuggestions"  ></app-custom-formula>
+      <app-custom-formula
+        (formulaListChanged)="getCustomFormulas($event)"
+        [suggestionsMetrics]="formulaSuggestions"
+      ></app-custom-formula>
       }
     </div>
   </div>
