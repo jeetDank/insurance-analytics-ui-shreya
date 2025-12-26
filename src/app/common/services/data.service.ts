@@ -2471,9 +2471,7 @@ export class DataService {
             });
           });
 
-          const legendsMap = new Map<string, any>();
-
-          // Calculate grand total across all segments
+          // ✅ Calculate grandTotal from actual segment values (sum of all leaf segments)
           const grandTotal = series.reduce((sum, s) => {
             return (
               sum +
@@ -2483,6 +2481,8 @@ export class DataService {
               )
             );
           }, 0);
+
+          const legendsMap = new Map<string, any>();
 
           // Build hierarchy with colors matching the series
           segmentNames.forEach((segmentName, index) => {
@@ -2512,7 +2512,7 @@ export class DataService {
             const parentName = pathParts[0];
 
             if (pathParts.length === 1) {
-              // Top-level segment with no parent
+              // Top-level segment with no parent - this is a leaf
               if (!legendsMap.has(parentName)) {
                 legendsMap.set(parentName, {
                   name: snakeToTitleCase(parentName),
@@ -2537,7 +2537,7 @@ export class DataService {
                   name: snakeToTitleCase(parentName),
                   color: colorPalette[0],
                   value: 0,
-                  percentage: 0,
+                  percentage: 0, // ✅ Will be calculated from children
                   children: [],
                 });
               }
@@ -2545,7 +2545,7 @@ export class DataService {
               const parent = legendsMap.get(parentName);
               parent.value += segmentTotal;
 
-              // Add child with the exact color from the series
+              // ✅ Add child with percentage calculated from grandTotal
               parent.children.push({
                 name: snakeToTitleCase(childName),
                 color: segmentColor,
@@ -2558,14 +2558,17 @@ export class DataService {
             }
           });
 
-          // Update parent percentages and values after all children are added
+          // ✅ Update parent values and percentages (parents show aggregate, but percentage is sum of children percentages)
           legendsMap.forEach((legend) => {
             if (legend.children.length > 0) {
               legend.value = parseFloat(legend.value.toFixed(1));
-              legend.percentage =
-                grandTotal !== 0
-                  ? parseFloat(((legend.value / grandTotal) * 100).toFixed(1))
-                  : 0;
+              // ✅ Parent percentage is the sum of children percentages (not recalculated)
+              legend.percentage = legend.children.reduce(
+                (sum: number, child: any) => sum + child.percentage,
+                0
+              );
+              // Round to 1 decimal place
+              legend.percentage = parseFloat(legend.percentage.toFixed(1));
             }
           });
 
@@ -2587,7 +2590,7 @@ export class DataService {
             },
 
             tooltip: {
-              trigger: 'item', // ✅ Changed from 'axis' to 'item'
+              trigger: 'item',
               backgroundColor: 'rgba(15, 15, 25, 0.95)',
               borderColor: 'rgba(100, 100, 150, 0.3)',
               borderWidth: 1,
@@ -2599,7 +2602,6 @@ export class DataService {
                 fontWeight: 'normal',
               },
               formatter: (params: any) => {
-                // ✅ Updated formatter for single item
                 const categoryName = params.name;
                 const seriesName = params.seriesName.split(' (')[0];
                 const value = params.value;
@@ -2678,7 +2680,7 @@ export class DataService {
 
             yAxis: {
               type: 'value',
-              show: false, // ✅ Hidden y-axis
+              show: false,
               axisLabel: {
                 show: false,
               },
@@ -2701,10 +2703,10 @@ export class DataService {
           chartConfigs.push({
             company: companyName,
             period: period,
-            total: parseFloat((metric.total / 1000000000).toFixed(1)),
+            total: parseFloat(grandTotal.toFixed(1)), // ✅ Use calculated grandTotal
             segments: barSegments,
             legends: {
-              total: parseFloat((metric.total / 1000000000).toFixed(1)),
+              total: parseFloat(grandTotal.toFixed(1)), // ✅ Use calculated grandTotal
               legends: legends,
             },
             config: chartConfig,
@@ -2716,7 +2718,6 @@ export class DataService {
 
     return chartConfigs;
   }
-
   
 
   fetchCustomCardsData(

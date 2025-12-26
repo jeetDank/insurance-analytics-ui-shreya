@@ -41,6 +41,7 @@ import { LegendDisplayComponent } from '../common/componants/legend-display/lege
 import { Router } from '@angular/router';
 import { AddMetricComponent } from '../common/add-metric/add-metric.component';
 import { ProgressTrackerService } from '../common/services/progress-tracker.service';
+import { DropSnakeCasePipe } from '../common/pipes/drop-snake-case.pipe';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -78,6 +79,7 @@ echarts.use([
     LegendDisplayComponent,
     // LucideAngularModule
     AddMetricComponent,
+    DropSnakeCasePipe
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',

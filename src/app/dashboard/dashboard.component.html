@@ -975,7 +975,7 @@
            @for (chart of segmentStackedOption; track $index) {
 
             <div class="text-sm font-bold mt-4 mb-2">
-              {{ chart.company }} - {{ chart.period }}
+                {{ chart.company }} - {{ chart.period }} - {{ chart.metric_name | dropSnakeCase }} 
                 @if (chart?.config?.series.length == 0){
             <div class="mt-10 flex items-cetner justify-center">
               <p class="!text-xs" >Data for selected Quarter(s) not available</p>
