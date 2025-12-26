@@ -9,7 +9,7 @@ export class ExcelExportService {
   constructor() { }
 
   exportExcel(results: any[]) {
-    console.log(results);
+    
     
     const workbook = XLSX.utils.book_new();
 
@@ -27,176 +27,182 @@ export class ExcelExportService {
     const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
     
     // Download file
-    this.downloadExcel(excelBuffer, 'financial_statements.xlsx');
+    this.downloadExcel(excelBuffer, this.getTimestampedFilename("financial_statement_"));
   }
 
   prepareMetadataSheet(results: any[]) {
-    const data: any[] = [];
-    
-    // Add header
-    data.push(['COMPANY METADATA']);
+  const data: any[] = [];
+  
+  // Add header
+  data.push(['COMPANY METADATA']);
+  data.push([]); // Empty row
+
+  results.forEach((company, companyIndex) => {
+    // Company header
+    data.push([`Company ${companyIndex + 1}: ${company.company_name || 'N/A'}`]);
     data.push([]); // Empty row
 
-    results.forEach((company, companyIndex) => {
-      // Company-level metadata
-      data.push([`Company ${companyIndex + 1}`]);
-      data.push(['CIK', company.cik || 'N/A']);
-      data.push(['Company Name', company.company_name || 'N/A']);
-      data.push(['Data Source', company.data_source || 'N/A']);
-      data.push(['Extraction Date', company.extraction_date || 'N/A']);
+    // Column headers
+    data.push(['Metadata [Key]', 'Data']);
+
+    // Company-level metadata
+    this.addMetadataRow(data, 'CIK', company.cik);
+    this.addMetadataRow(data, 'Company Name', company.company_name);
+    this.addMetadataRow(data, 'Data Source', company.data_source);
+    this.addMetadataRow(data, 'Extraction Date', company.extraction_date);
+
+    data.push([]); // Empty row
+
+    // Statement-level metadata
+    if (company.statements && company.statements.length > 0) {
+      data.push(['FILING METADATA']);
       data.push([]); // Empty row
 
-      // Statement-level metadata
-      if (company.statements && company.statements.length > 0) {
-        data.push(['FILING METADATA']);
-        data.push([]);
+      company.statements.forEach((statement: any, stmtIndex: number) => {
+        const metadata = statement.metadata || {};
 
-        // Header for statement metadata
-        data.push([
-          'Statement #',
-          'CIK',
-          'Company Name',
-          'Filing Type',
-          'Filing Date',
-          'Period End Date',
-          'Accession Number',
-          'Filing URL',
-          'HTML URL',
-          'XML URL',
-          'SEC EDGAR URL',
-          'XBRL JSON URL',
-          'Fiscal Year',
-          'Fiscal Quarter',
-          'Fiscal Period Type',
-          'Submission Type',
-          'Document Format Code',
-          'Logo URL'
-        ]);
+        // Statement header
+        data.push([`Statement #${stmtIndex + 1}`]);
+        data.push([]); // Empty row
 
-        company.statements.forEach((statement: any, stmtIndex: number) => {
-          const metadata = statement.metadata || {};
-          data.push([
-            stmtIndex + 1,
-            metadata.cik || 'N/A',
-            metadata.company_name || 'N/A',
-            metadata.filing_type || 'N/A',
-            metadata.filing_date || 'N/A',
-            metadata.period_end_date || 'N/A',
-            metadata.accession_number || 'N/A',
-            metadata.filing_url || 'N/A',
-            metadata.html_url || 'N/A',
-            metadata.xml_url || 'N/A',
-            metadata.sec_edgar_url || 'N/A',
-            metadata.xbrl_json_url || 'N/A',
-            metadata.fiscal_year || 'N/A',
-            metadata.fiscal_quarter || 'N/A',
-            metadata.fiscal_period_type || 'N/A',
-            metadata.submission_type || 'N/A',
-            metadata.document_format_code || 'N/A',
-            metadata.logo_url || 'N/A'
-          ]);
-        });
+        // Column headers for each statement
+        data.push(['Metadata', 'Data']);
+
+        // Add all metadata fields
+        this.addMetadataRow(data, 'CIK', metadata.cik);
+        this.addMetadataRow(data, 'Company Name', metadata.company_name);
+        this.addMetadataRow(data, 'Filing Type', metadata.filing_type);
+        this.addMetadataRow(data, 'Filing Date', metadata.filing_date);
+        this.addMetadataRow(data, 'Period End Date', metadata.period_end_date);
+        this.addMetadataRow(data, 'Accession Number', metadata.accession_number);
+        this.addMetadataRow(data, 'Filing URL', metadata.filing_url);
+        this.addMetadataRow(data, 'HTML URL', metadata.html_url);
+        this.addMetadataRow(data, 'XML URL', metadata.xml_url);
+        this.addMetadataRow(data, 'SEC EDGAR URL', metadata.sec_edgar_url);
+        this.addMetadataRow(data, 'XBRL JSON URL', metadata.xbrl_json_url);
+        this.addMetadataRow(data, 'Fiscal Year', metadata.fiscal_year);
+        this.addMetadataRow(data, 'Fiscal Quarter', metadata.fiscal_quarter);
+        this.addMetadataRow(data, 'Fiscal Period Type', metadata.fiscal_period_type);
+        this.addMetadataRow(data, 'Submission Type', metadata.submission_type);
+        this.addMetadataRow(data, 'Document Format Code', metadata.document_format_code);
+        this.addMetadataRow(data, 'Logo URL', metadata.logo_url);
 
         data.push([]); // Empty row
-      }
+        data.push(['─'.repeat(30)]); // Separator
+        data.push([]); // Empty row
+      });
+    }
 
-      data.push([]); // Empty row between companies
-      data.push(['─'.repeat(50)]); // Separator
-      data.push([]); // Empty row
-    });
+    // Add spacing between companies
+    data.push([]);
+    data.push(['═'.repeat(50)]); // Stronger separator
+    data.push([]);
+  });
 
-    return data;
+  return data;
+}
+
+// Helper method to add metadata row only if value exists
+private addMetadataRow(data: any[], key: string, value: any): void {
+  if (value !== null && value !== undefined && value !== '') {
+    data.push([key, value]);
   }
+}
+
+private getTimestampedFilename(baseName: string = 'financial_statements'): string {
+  const now = new Date();
+  
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  
+  // Format: financial_statements_2024-12-26_14-30-45.xlsx
+  return `${baseName}_${year}-${month}-${day}_${hours}-${minutes}-${seconds}.xlsx`;
+}
 
   prepareMetricsSheet(results: any[]) {
-    const data: any[] = [];
-    
-    // Add header
-    data.push(['COMPANY METRICS']);
+  const data: any[] = [];
+  
+  // Add header
+  data.push(['COMPANY METRICS']);
+  data.push([]); // Empty row
+
+  results.forEach((company, companyIndex) => {
+    // Company header
+    data.push([`Company: ${company.company_name || 'N/A'} (CIK: ${company.cik || 'N/A'})`]);
     data.push([]); // Empty row
 
-    results.forEach((company, companyIndex) => {
-      // Company header
-      data.push([`Company: ${company.company_name || 'N/A'} (CIK: ${company.cik || 'N/A'})`]);
+    if (!company.statements || company.statements.length === 0) {
+      data.push(['No statements available']);
+      data.push([]);
+      return;
+    }
+
+    // Process each statement
+    company.statements.forEach((statement: any, stmtIndex: number) => {
+      const period = statement.metadata?.period_end_date || 
+                    statement.metadata?.filing_date || 
+                    statement.quarter || 
+                    statement.period || 
+                    `Statement ${stmtIndex + 1}`;
+      
+      // Statement header
+      data.push([`Period: ${period}`]);
       data.push([]); // Empty row
 
-      if (!company.statements || company.statements.length === 0) {
-        data.push(['No statements available']);
-        data.push([]);
-        return;
+      // Add column headers
+      data.push(['Metric Name', 'Value']);
+
+      if (statement.all_metrics) {
+        // Iterate through each metric
+        Object.entries(statement.all_metrics).forEach(([metricName, metricData]: [string, any]) => {
+          
+          // Skip if metric data is null, undefined, or empty
+          if (metricData === null || metricData === undefined) {
+            return;
+          }
+
+          // Handle object metrics (with multiple fields)
+          if (typeof metricData === 'object' && !Array.isArray(metricData)) {
+            Object.entries(metricData).forEach(([field, value]: [string, any]) => {
+              // Skip if value is null, undefined, or empty string
+              if (value !== null && value !== undefined && value !== '') {
+                const formattedValue = typeof value === 'number' 
+                  ? value 
+                  : value;
+                data.push([`${metricName} - ${field}`, formattedValue]);
+              }
+            });
+          } 
+          // Handle primitive metrics (direct values)
+          else if (metricData !== '') {
+            const formattedValue = typeof metricData === 'number' 
+              ? metricData 
+              : metricData;
+            data.push([metricName, formattedValue]);
+          }
+        });
+      } else {
+        data.push(['No metrics available', 'N/A']);
       }
 
-      // Collect all unique metrics and their fields
-      const allMetrics = new Map<string, Set<string>>();
-      
-      company.statements.forEach((statement: any) => {
-        if (statement.all_metrics) {
-          Object.entries(statement.all_metrics).forEach(([metricName, metricData]: [string, any]) => {
-            if (!allMetrics.has(metricName)) {
-              allMetrics.set(metricName, new Set());
-            }
-            
-            // Collect all fields for this metric
-            if (typeof metricData === 'object' && metricData !== null) {
-              Object.keys(metricData).forEach(field => {
-                allMetrics.get(metricName)?.add(field);
-              });
-            }
-          });
-        }
-      });
-
-      // Create header row
-      const headerRow = ['Period/Quarter'];
-      allMetrics.forEach((fields, metricName) => {
-        fields.forEach(field => {
-          headerRow.push(`${metricName} - ${field}`);
-        });
-      });
-      data.push(headerRow);
-
-      // Add data rows for each statement
-      company.statements.forEach((statement: any, stmtIndex: number) => {
-        const period = statement.metadata?.period_end_date || 
-                      statement.metadata?.filing_date || 
-                      statement.quarter || 
-                      statement.period || 
-                      `Statement ${stmtIndex + 1}`;
-        
-        const row = [period];
-
-        allMetrics.forEach((fields, metricName) => {
-          const metricData = statement.all_metrics?.[metricName];
-          
-          fields.forEach(field => {
-            if (metricData && typeof metricData === 'object' && metricData[field] !== undefined) {
-              // Format numbers properly
-              const value = metricData[field];
-              if (typeof value === 'number') {
-                row.push(value);
-              } else {
-                row.push(value !== null ? value : 'N/A');
-              }
-            } else if (typeof metricData !== 'object') {
-              // If metric is a primitive value
-              row.push(metricData !== undefined ? metricData : 'N/A');
-            } else {
-              row.push('N/A');
-            }
-          });
-        });
-
-        data.push(row);
-      });
-
-      // Add spacing between companies
+      // Add spacing between statements
       data.push([]);
-      data.push(['─'.repeat(50)]); // Separator
+      data.push(['─'.repeat(30)]); // Separator
       data.push([]);
     });
 
-    return data;
-  }
+    // Add spacing between companies
+    data.push([]);
+    data.push(['═'.repeat(50)]); // Stronger separator
+    data.push([]);
+  });
+
+  return data;
+}
 
   downloadExcel(buffer: any, filename: string) {
     const blob = new Blob([buffer], { 

@@ -132,14 +132,14 @@ export class DataService {
     }
   }
 
-  generateCustomeCardData(formulaData: any) {
-    if (this.API_DATA.ANALYSIS_DATA) {
-      this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {});
-    } else {
-    }
+  // generateCustomeCardData(formulaData: any) {
+  //   if (this.API_DATA.ANALYSIS_DATA) {
+  //     this.API_DATA.ANALYSIS_DATA.results.forEach((company: any) => {});
+  //   } else {
+  //   }
 
-    this.API_DATA.ANALYSIS_DATA;
-  }
+  //   this.API_DATA.ANALYSIS_DATA;
+  // }
 
   createAmbiguityPayload(ambiguities: any[]) {
     let ambiguityData = ambiguities.map((ambiguity: any) => {
@@ -2734,6 +2734,12 @@ export class DataService {
     companies: { name: string; logo: string }[],
     customFormulaComponents: any[]
   ) {
+
+
+    if(this.API_DATA.ANALYSIS_DATA){
+      return [];
+    }
+
     // Extract all unique keywords from all custom formulas as requested metrics
     const allKeywords = Array.from(
       new Set(customFormulaComponents.flatMap((formula) => formula.keywords))

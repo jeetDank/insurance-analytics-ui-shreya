@@ -566,7 +566,7 @@ export class DashboardComponent implements OnInit {
     });
 
     this._dataService.FormulaBucket$.subscribe((data) => {
-      if (data) {
+      if (data && this._dataService.API_DATA.ANALYSIS_DATA ) {
         const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
           (company) => company.success
         ).map((data: any) => {
@@ -712,11 +712,15 @@ export class DashboardComponent implements OnInit {
   }
 
   exportToExcel() {
+    console.log("inside the function");
+    
     if (this._dataService.API_DATA.ANALYSIS_DATA) {
+      console.log("inside the function -> check");
       this._excelService.exportExcel(
         this._dataService.API_DATA.ANALYSIS_DATA.results
       );
     } else {
+      console.log("inside the function -> error");
       this.snackBar.open('Please enter a valid request to continue.', '', {
         horizontalPosition: 'start',
         verticalPosition: 'bottom',

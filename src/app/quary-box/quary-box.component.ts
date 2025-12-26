@@ -619,4 +619,25 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   fireUpAQueryFromSamples(query: string) {
     this.parseQuery(query);
   }
+
+  handleKeyDown(event: KeyboardEvent, textarea: HTMLTextAreaElement): void {
+  // Submit on Enter, new line on Shift+Enter
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    if (textarea.value.trim()) {
+      this.parseQuery(textarea.value);
+      textarea.value = '';
+      this.autoResize(textarea); // Reset height
+    }
+  }
+}
+
+autoResize(textarea: HTMLTextAreaElement): void {
+  // Reset height to recalculate
+  textarea.style.height = 'auto';
+  
+  // Set new height (max 100px)
+  const newHeight = Math.min(textarea.scrollHeight, 100);
+  textarea.style.height = newHeight + 'px';
+}
 }
