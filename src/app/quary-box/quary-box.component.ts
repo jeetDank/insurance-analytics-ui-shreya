@@ -34,6 +34,7 @@ import { TextLoaderComponent } from '../common/componants/text-loader/text-loade
 import { LoaderService } from '../common/services/loader.service';
 import { CommonModule } from '@angular/common';
 import { AmbiguityResolverComponent } from '../common/componants/ambiguity-resolver/ambiguity-resolver.component';
+import { ProgressTrackerService } from '../common/services/progress-tracker.service';
 
 interface conversation {
   message: string;
@@ -125,7 +126,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
     private _apiService: InsuranceAnalyticsService,
     private snackBar: MatSnackBar,
     private _dataService: DataService,
-    private _loaderService: LoaderService
+    private _loaderService: LoaderService,
+    private _liveProgressTracker:ProgressTrackerService
   ) {}
 
   ngAfterViewChecked() {
@@ -289,7 +291,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   }
 
   ngOnInit(): void {
-    
+
+   
 
     this._loaderService.isLoading$.subscribe({
       next: (res) => {
@@ -314,6 +317,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
 
     this.resetData.emit(true);
     this._dataService.API_DATA.INSIGHTS_DATA = null;
+
+    this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.PARSING);
 
     this._apiService.parseQuery({ query: userQuery }).subscribe({
       next: (res) => {
@@ -379,6 +384,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   };
 
   resolveCompanies(companies: string[]) {
+
+    this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.COMPANY_RESOLUTION);
     this._apiService
       .resolveMultipleCompanies({ company_inputs: companies })
       .subscribe({
@@ -440,8 +447,11 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   startBatchAnalysis() {
     let payload = this._dataService.fetchBatchAnalysisPayload();
 
+    this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.BATCH_ANALYSIS);
+
     this._apiService.batchAnalysis(payload).subscribe({
       next: (res: any) => {
+        this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.GENERIC);
         if (res.success) {
           let data = {
             results: res.results,
@@ -476,15 +486,20 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           this.recordMsg('Something went wrong. please try again.', true);
         }
       },
+      error:(err)=>{
+        this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.GENERIC);
+      }
     });
   }
 
   startVarienceAnalysis() {
     let payload = this._dataService.fetchVariencePayload();
+    this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.VARIANCE_ANALYSIS);
 
     if (payload) {
       this._apiService.varienceAnalysis(payload).subscribe({
         next: (res: any) => {
+          this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.GENERIC);
           if (res.success) {
             this.recordProcessMsg(5);
             this._dataService.setInsightsData(res.data_summary);
@@ -506,6 +521,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
           }
         },
         error: (err) => {
+          this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.GENERIC);
           if (this.historicalConvo == null) {
             this._dataService.addQueryToHistory(this.conversation);
           }

@@ -45,20 +45,7 @@ export class DataService {
 
   HistoryBucket$ = new BehaviorSubject<any[]>([]);
 
-  LiveProgressTracker$ = new BehaviorSubject<ProgressTracker>({
-    main_title: 'Loading Dashboard',
-    sub_title: 'processing...',
-    process: [
-      {
-        logo: 'database',
-        msg: 'processing ',
-      },
-    ],
-  });
-
-    updateLiveProgressTracker(data:any) {
-    this.LiveProgressTracker$.next(data)
-  }
+  
 
   FormulaBucket$ = new BehaviorSubject<any[]>([]);
 

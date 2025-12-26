@@ -40,6 +40,7 @@ import { ExcelExportService } from '../common/services/excel-export.service';
 import { LegendDisplayComponent } from '../common/componants/legend-display/legend-display.component';
 import { Router } from '@angular/router';
 import { AddMetricComponent } from '../common/add-metric/add-metric.component';
+import { ProgressTrackerService } from '../common/services/progress-tracker.service';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -515,7 +516,8 @@ export class DashboardComponent implements OnInit {
     private _loader: LoaderService,
     private _excelService: ExcelExportService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private _progressTracker: ProgressTrackerService
   ) {
     const username = localStorage.getItem('username');
     const password = localStorage.getItem('password');
@@ -557,8 +559,25 @@ export class DashboardComponent implements OnInit {
   historicalQueries: any = [];
   filteredHistoricalQueries: any = [];
 
+  liveProgressData = {
+    main_title: 'Building Dashboard',
+    sub_title: 'Analyzing financial data...',
+    process: [
+      {
+        icon: 'database',
+        step_name: 'processing ',
+      },
+    ],
+  };
+
   onMenuClick() {}
   ngOnInit(): void {
+    this._progressTracker.LiveProgressTracker$.subscribe({
+      next: (data) => {
+        this.liveProgressData = data;
+      },
+    });
+
     this._loader.isLoading$.subscribe({
       next: (res) => {
         this.isLoaderVisible = res;
@@ -566,7 +585,7 @@ export class DashboardComponent implements OnInit {
     });
 
     this._dataService.FormulaBucket$.subscribe((data) => {
-      if (data && this._dataService.API_DATA.ANALYSIS_DATA ) {
+      if (data && this._dataService.API_DATA.ANALYSIS_DATA) {
         const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
           (company) => company.success
         ).map((data: any) => {
@@ -578,7 +597,7 @@ export class DashboardComponent implements OnInit {
           data
         );
         console.log(customCardData);
-        
+
         this.customCardView = customCardData;
       }
     });
@@ -712,15 +731,15 @@ export class DashboardComponent implements OnInit {
   }
 
   exportToExcel() {
-    console.log("inside the function");
-    
+    console.log('inside the function');
+
     if (this._dataService.API_DATA.ANALYSIS_DATA) {
-      console.log("inside the function -> check");
+      console.log('inside the function -> check');
       this._excelService.exportExcel(
         this._dataService.API_DATA.ANALYSIS_DATA.results
       );
     } else {
-      console.log("inside the function -> error");
+      console.log('inside the function -> error');
       this.snackBar.open('Please enter a valid request to continue.', '', {
         horizontalPosition: 'start',
         verticalPosition: 'bottom',
@@ -744,9 +763,8 @@ export class DashboardComponent implements OnInit {
         companies,
         customFormulaData
       );
-     
+
       console.log(customCardData);
-      
 
       this.customCardView = customCardData;
     }
@@ -819,8 +837,6 @@ export class DashboardComponent implements OnInit {
           segmentWiseStackedChartData
         );
 
-      
-
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
         commonSegmentColumnData
       );
@@ -831,11 +847,10 @@ export class DashboardComponent implements OnInit {
       this.segmentStackedOption =
         this._dataService.generateVerticalSegmentCharts(verticalSegmentbarData);
 
-
-      console.log("segment period," ,this.segmentPeriods);
-      console.log("stacked bar chart data ," ,this.segmentStackedOption);
-      console.log("vertical stacked bar option" ,verticalSegmentbarData);
-      console.log("verticalSegmentbarData" ,verticalSegmentbarData);
+      console.log('segment period,', this.segmentPeriods);
+      console.log('stacked bar chart data ,', this.segmentStackedOption);
+      console.log('vertical stacked bar option', verticalSegmentbarData);
+      console.log('verticalSegmentbarData', verticalSegmentbarData);
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
         this.insightsData = this._dataService.generateInsights();

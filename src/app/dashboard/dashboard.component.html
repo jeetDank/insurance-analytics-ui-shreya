@@ -371,23 +371,8 @@
                 letter-spacing: normal;
               "
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-plus h-4 w-4"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="M12 5v14"></path>
-              </svg>
-              Add Metric
+              
+              Metric List
             </button>
 
             <button
@@ -583,7 +568,7 @@
               </small>
             </h2>
             <div class="text-xs text-secondary mb-2">
-              Metric List
+              Custom Metric
             </div>
 
             <!-- Cards Grid - Dynamic Companies -->
@@ -843,22 +828,7 @@
                 letter-spacing: normal;
               "
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="lucide lucide-plus h-4 w-4"
-                aria-hidden="true"
-              >
-                <path d="M5 12h14"></path>
-                <path d="M12 5v14"></path></svg
-              >Metric List
+             Metric List
             </button>
             
 
@@ -1149,9 +1119,11 @@
 
       @if(isLoaderVisible){
       <div class="flex flex-col items-center justify-center h-full">
+
         <app-loader-with-insights
-          [loaderMessage]="'Building Dashboard'"
-          [description]="'Analyzing financial data...'"
+          [loaderMessage]="liveProgressData.main_title"
+          [description]="liveProgressData.sub_title"
+          [stepWiseInfo]="liveProgressData.process"
         ></app-loader-with-insights>
       </div>
       } @if(!isDataAvailable && !isLoaderVisible ){
