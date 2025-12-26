@@ -650,6 +650,8 @@ export class DashboardComponent implements OnInit {
 
   segmentPeriods: string | null = null;
 
+  isLineChartVisible = false;
+
   selectSegmentOption(option: string) {
     this.currentTabSegment = option;
   }
@@ -771,6 +773,14 @@ export class DashboardComponent implements OnInit {
   }
 
   showData() {
+
+
+    if(this._dataService.API_DATA.PARSED_QUERY.time_periods.length > 1){
+     this.isLineChartVisible = true
+    }else{
+      this.isLineChartVisible = false
+    }
+
     this.isSideNavOpened = false;
 
     this.isDataAvailable = true;

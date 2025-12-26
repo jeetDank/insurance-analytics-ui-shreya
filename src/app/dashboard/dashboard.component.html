@@ -442,7 +442,8 @@
           </button>
 
           <!-- Line Option -->
-          <button
+          <button 
+           *ngIf="isLineChartVisible"
             (click)="selectOption('line')"
             [ngClass]="{
               active: isSelected('line'),
