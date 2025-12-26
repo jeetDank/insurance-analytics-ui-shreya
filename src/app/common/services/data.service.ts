@@ -2414,6 +2414,9 @@ export class DataService {
           const segmentNames = Array.from(allSegmentNames);
           const series: any[] = [];
 
+          // ✅ Store segment totals in ORIGINAL units (not billions yet)
+          const segmentTotalsMap = new Map<string, number>();
+
           segmentNames.forEach((segmentName, index) => {
             const seriesData = rootKeys.map((rootKey) => {
               const segments = barSegments[rootKey];
@@ -2421,18 +2424,28 @@ export class DataService {
                 const displayName = s.path.split('.').pop();
                 return displayName === segmentName;
               });
+              // ✅ Keep original value, convert to billions only for chart display
               return segment ? segment.value / 1000000000 : 0;
             });
 
-            // Calculate total for this segment across all categories
-            const segmentTotal = seriesData.reduce(
-              (sum, value) => sum + value,
-              0
-            );
+            // ✅ Calculate total for this segment in ORIGINAL units
+            const segmentTotalOriginal = rootKeys.reduce((sum, rootKey) => {
+              const segments = barSegments[rootKey];
+              const segment = segments.find((s: any) => {
+                const displayName = s.path.split('.').pop();
+                return displayName === segmentName;
+              });
+              return sum + (segment ? segment.value : 0);
+            }, 0);
+
+            segmentTotalsMap.set(segmentName, segmentTotalOriginal);
+
+            // Convert to billions for display in legend name
+            const segmentTotalBillions = segmentTotalOriginal / 1000000000;
             const displayName = snakeToTitleCase(segmentName);
             const legendName = `${displayName} ($${
-              segmentTotal >= 0 ? '' : '-'
-            }${Math.abs(segmentTotal).toFixed(2)}B)`;
+              segmentTotalBillions >= 0 ? '' : '-'
+            }${Math.abs(segmentTotalBillions).toFixed(2)}B)`;
 
             series.push({
               name: legendName,
@@ -2471,25 +2484,17 @@ export class DataService {
             });
           });
 
-          // ✅ Calculate grandTotal from actual segment values (sum of all leaf segments)
-          const grandTotal = series.reduce((sum, s) => {
-            return (
-              sum +
-              s.data.reduce(
-                (dataSum: number, value: number) => dataSum + value,
-                0
-              )
-            );
-          }, 0);
+          // ✅ Calculate grandTotal from ORIGINAL segment values
+          const grandTotalOriginal = Array.from(segmentTotalsMap.values()).reduce(
+            (sum, value) => sum + value,
+            0
+          );
 
           const legendsMap = new Map<string, any>();
 
           // Build hierarchy with colors matching the series
           segmentNames.forEach((segmentName, index) => {
-            const segmentTotal = series[index].data.reduce(
-              (sum: number, value: number) => sum + value,
-              0
-            );
+            const segmentTotalOriginal = segmentTotalsMap.get(segmentName) || 0;
 
             // Use the exact same color as the series
             const segmentColor = colorPalette[index % colorPalette.length];
@@ -2511,19 +2516,22 @@ export class DataService {
             const pathParts = fullPath.split('.');
             const parentName = pathParts[0];
 
+            // ✅ Calculate percentage using ORIGINAL values (more precision)
+            const percentage =
+              grandTotalOriginal !== 0
+                ? (segmentTotalOriginal / grandTotalOriginal) * 100
+                : 0;
+
             if (pathParts.length === 1) {
               // Top-level segment with no parent - this is a leaf
               if (!legendsMap.has(parentName)) {
                 legendsMap.set(parentName, {
                   name: snakeToTitleCase(parentName),
                   color: segmentColor,
-                  value: segmentTotal,
-                  percentage:
-                    grandTotal !== 0
-                      ? parseFloat(
-                          ((segmentTotal / grandTotal) * 100).toFixed(1)
-                        )
-                      : 0,
+                  valueOriginal: segmentTotalOriginal, // Store original
+                  value: 0, // Will be set after conversion
+                  percentage: 0, // Will be set after rounding
+                  percentageRaw: percentage, // Store raw percentage
                   children: [],
                 });
               }
@@ -2536,40 +2544,58 @@ export class DataService {
                 legendsMap.set(parentName, {
                   name: snakeToTitleCase(parentName),
                   color: colorPalette[0],
+                  valueOriginal: 0,
                   value: 0,
-                  percentage: 0, // ✅ Will be calculated from children
+                  percentage: 0,
+                  percentageRaw: 0,
                   children: [],
                 });
               }
 
               const parent = legendsMap.get(parentName);
-              parent.value += segmentTotal;
+              parent.valueOriginal += segmentTotalOriginal;
 
-              // ✅ Add child with percentage calculated from grandTotal
+              // ✅ Add child with raw percentage
               parent.children.push({
                 name: snakeToTitleCase(childName),
                 color: segmentColor,
-                value: parseFloat(segmentTotal.toFixed(1)),
-                percentage:
-                  grandTotal !== 0
-                    ? parseFloat(((segmentTotal / grandTotal) * 100).toFixed(1))
-                    : 0,
+                valueOriginal: segmentTotalOriginal,
+                value: 0, // Will be set after conversion
+                percentage: 0, // Will be set after rounding
+                percentageRaw: percentage,
               });
             }
           });
 
-          // ✅ Update parent values and percentages (parents show aggregate, but percentage is sum of children percentages)
+          // ✅ Now convert to billions and round to 4 decimal places
           legendsMap.forEach((legend) => {
             if (legend.children.length > 0) {
-              legend.value = parseFloat(legend.value.toFixed(1));
-              // ✅ Parent percentage is the sum of children percentages (not recalculated)
-              legend.percentage = legend.children.reduce(
-                (sum: number, child: any) => sum + child.percentage,
+              // Parent with children
+              legend.value = parseFloat((legend.valueOriginal / 1000000000).toFixed(4));
+              
+              // Parent percentage is sum of children's RAW percentages
+              legend.percentageRaw = legend.children.reduce(
+                (sum: number, child: any) => sum + child.percentageRaw,
                 0
               );
-              // Round to 1 decimal place
-              legend.percentage = parseFloat(legend.percentage.toFixed(1));
+              legend.percentage = parseFloat(legend.percentageRaw.toFixed(4));
+
+              // Convert children values and round percentages
+              legend.children.forEach((child: any) => {
+                child.value = parseFloat((child.valueOriginal / 1000000000).toFixed(4));
+                child.percentage = parseFloat(child.percentageRaw.toFixed(4));
+                delete child.valueOriginal;
+                delete child.percentageRaw;
+              });
+            } else {
+              // Leaf segment without children
+              legend.value = parseFloat((legend.valueOriginal / 1000000000).toFixed(4));
+              legend.percentage = parseFloat(legend.percentageRaw.toFixed(4));
             }
+            
+            // Clean up temporary fields
+            delete legend.valueOriginal;
+            delete legend.percentageRaw;
           });
 
           const legends = Array.from(legendsMap.values());
@@ -2700,13 +2726,16 @@ export class DataService {
             series: series,
           };
 
+          // ✅ Convert grandTotal to billions with 4 decimal places
+          const grandTotalBillions = parseFloat((grandTotalOriginal / 1000000000).toFixed(4));
+
           chartConfigs.push({
             company: companyName,
             period: period,
-            total: parseFloat(grandTotal.toFixed(1)), // ✅ Use calculated grandTotal
+            total: grandTotalBillions,
             segments: barSegments,
             legends: {
-              total: parseFloat(grandTotal.toFixed(1)), // ✅ Use calculated grandTotal
+              total: grandTotalBillions,
               legends: legends,
             },
             config: chartConfig,
