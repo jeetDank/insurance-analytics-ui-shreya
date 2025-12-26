@@ -585,7 +585,7 @@ export class DashboardComponent implements OnInit {
     });
 
     this._dataService.FormulaBucket$.subscribe((data) => {
-      if (data && this._dataService.API_DATA.ANALYSIS_DATA) {
+      if (data) {
         const companies: any = this._dataService.API_DATA.COMPANY_DATA?.filter(
           (company) => company.success
         ).map((data: any) => {
@@ -596,7 +596,7 @@ export class DashboardComponent implements OnInit {
           companies,
           data
         );
-        console.log(customCardData);
+        console.log(customCardData,data);
 
         this.customCardView = customCardData;
       }

@@ -52,6 +52,8 @@ export class DataService {
 
 
   updateFunctionList(data: any) {
+    console.log(data);
+    
     this.FormulaBucket$.next(data);
   }
   addQueryToHistory(conversation: any) {
@@ -2723,9 +2725,6 @@ export class DataService {
   ) {
 
 
-    if(this.API_DATA.ANALYSIS_DATA){
-      return [];
-    }
 
     // Extract all unique keywords from all custom formulas as requested metrics
     const allKeywords = Array.from(
