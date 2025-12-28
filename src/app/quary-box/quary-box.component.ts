@@ -582,6 +582,8 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
   addAmbiguitiesToConversation() {
     this.ambiguities = this._dataService.fetchAmbiguities();
 
+    this.recordMsg("Sorry, I couldn’t understand your request because it’s ambiguous. Please choose one of the suggestions below to continue.",true)
+
     this.conversation.push({
       message: ``,
       processDetail: false,

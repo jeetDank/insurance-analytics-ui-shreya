@@ -841,6 +841,9 @@ export class DashboardComponent implements OnInit {
         this._dataService.API_DATA.PARSED_QUERY.time_periods;
       this.segmentTableData = this._dataService.fetchSegmentTableData();
 
+      console.log(this.segmentTableData);
+      
+
       const segmentWiseStackedChartData: any =
         this._dataService.getSegmentWiseChartData();
 
