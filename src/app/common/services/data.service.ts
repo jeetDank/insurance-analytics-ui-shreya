@@ -1151,9 +1151,12 @@ export class DataService {
 
     // Get the parent/total value for percentage calculation
     const parentValue = metricData.value;
+      
+    // to remove consolidated from the table add this to below function 
+    // filter((segment:string)=>segment.toLowerCase() != 'consolidated')
 
     // Convert children object to array
-    Object.keys(children).filter((segment:string)=>segment.toLowerCase() != 'consolidated').forEach((childKey) => {
+    Object.keys(children).forEach((childKey) => {
       const child = children[childKey];
 
       // Check if this child has children using children_count
