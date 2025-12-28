@@ -837,8 +837,8 @@ export class DashboardComponent implements OnInit {
 
       this.referenceData = this._dataService.generateReferenceData();
 
-      this.segmentPeriods =
-        this._dataService.API_DATA.PARSED_QUERY.time_periods;
+      this.segmentPeriods =  this._dataService.API_DATA.PARSED_QUERY.time_periods;
+      
       this.segmentTableData = this._dataService.fetchSegmentTableData();
 
       console.log(this.segmentTableData);

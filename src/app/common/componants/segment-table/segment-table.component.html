@@ -18,7 +18,7 @@
   <tbody class="text-xs">
     @if (flattenedData && flattenedData.length > 0) {
       @for (row of flattenedData; track $index) {
-        @if (row.isVisible && getCleanName(row.item.metric_name) != 'Consolidated') {
+        @if (row.isVisible) {
         <tr
           style="
             border-bottom: 1px solid rgba(255, 255, 255, 0.008);

@@ -232,13 +232,13 @@ export class SegmentTableComponent implements OnInit, OnChanges {
     // Format the total
     let formattedTotal = '';
     if (total >= 1000000000) {
-      formattedTotal = `$${(total / 1000000000).toFixed(4)}B`;
+      formattedTotal = `$${(total / 1000000000).toFixed(2)}B`;
     } else if (total >= 1000000) {
-      formattedTotal = `$${(total / 1000000).toFixed(4)}M`;
+      formattedTotal = `$${(total / 1000000).toFixed(2)}M`;
     } else if (total >= 1000) {
-      formattedTotal = `$${(total / 1000).toFixed(4)}K`;
+      formattedTotal = `$${(total / 1000).toFixed(2)}K`;
     } else {
-      formattedTotal = `$${total.toFixed(4)}`;
+      formattedTotal = `$${total.toFixed(2)}`;
     }
 
     return { totalValue: formattedTotal, totalPercentage: '100.0%' };

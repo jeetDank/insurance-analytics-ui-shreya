@@ -1153,7 +1153,7 @@ export class DataService {
     const parentValue = metricData.value;
 
     // Convert children object to array
-    Object.keys(children).forEach((childKey) => {
+    Object.keys(children).filter((segment:string)=>segment.toLowerCase() != 'consolidated').forEach((childKey) => {
       const child = children[childKey];
 
       // Check if this child has children using children_count
@@ -1306,11 +1306,11 @@ export class DataService {
       parentValue === null ||
       parentValue === 0
     ) {
-      return '0.0%';
+      return '0.00%';
     }
 
     const percentage = (value / parentValue) * 100;
-    return `${percentage.toFixed(1)}%`;
+    return `${percentage.toFixed(2)}%`;
   }
 
   // Alternative: Get segment data for a specific metric and quarter
