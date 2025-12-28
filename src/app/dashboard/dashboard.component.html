@@ -962,49 +962,91 @@
 
         <!-- Stacked View -->
         @if(currentTabSegment == 'stacked'){
-        <div class="space-y-4">
-          <p class="flex items-center justify-center mt-2 mb-2">
-            Note: Segment data is sourced from XBRL filings. Information may
-            vary from the company’s primary financial statements due to tagging
-            inconsistencies.
-          </p>
 
-          <div
-            class="rounded-xl p-6 flex flex-col flex-wrap"
-            style="min-height: 400px"
-          >
-           @for (chart of segmentStackedOption; track $index) {
+          <div class="space-y-4">
+  <p class=" mt-2 mb-2">
+    Note: Segment data is sourced from XBRL filings. Information may vary from
+    the company's primary financial statements due to tagging inconsistencies.
+  </p>
 
-            <div class="text-sm font-bold mt-4 mb-2">
-                {{ chart.company }} - {{ chart.period }} - {{ chart.metric_name | dropSnakeCase }} 
-                @if (chart?.config?.series.length == 0){
-            <div class="mt-10 flex items-cetner justify-center">
-              <p class="!text-xs" >Data for selected Quarter(s) not available</p>
+  <!-- Container for all charts -->
+  <div class="rounded-xl p-6">
+    
+    <!-- Two-column grid for charts with 2 or fewer segments (DEFAULT) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      @for (chart of segmentStackedOption; track $index) {
+        @if ((chart.legends?.legends?.length || chart.config?.series?.length || 0) <= 2) {
+          <div class="flex flex-col">
+            <!-- Chart Title -->
+            <div class="text-sm font-bold mb-2">
+              {{ chart.company }} - {{ chart.period }} - {{ chart.metric_name | dropSnakeCase }}
             </div>
+
+            <!-- Chart or No Data Message -->
+            @if (chart?.config?.series.length == 0) {
+              <div class="mt-10 flex items-center justify-center rounded-xl border border-gray-700" style="min-height: 300px;">
+                <p class="!text-xs">Data for selected Quarter(s) not available</p>
+              </div>
+            } @else {
+              <div
+                class="rounded-xl"
+                echarts
+                [options]="chart.config"
+                style="min-height: 400px; width: 100%"
+              ></div>
             }
-            </div>
 
-            <div
-              class="rounded-xl"
-              echarts
-              [options]="chart.config"
-              style="min-height: 400px; width: 100%"
-            ></div>
-            <div class="mb-4">
-              
+            <!-- Legends below chart -->
+            <div class="mt-4">
               <app-legend-display [data]="chart.legends"></app-legend-display>
-              
+            </div>
+          </div>
+        }
+      }
+    </div>
+
+    <!-- Single column for charts with MORE than 2 segments -->
+    <div class="space-y-8">
+      @for (chart of segmentStackedOption; track $index) {
+        @if ((chart.legends?.legends?.length || chart.config?.series?.length || 0) > 2) {
+          <div class="flex flex-col">
+            <!-- Chart Title -->
+            <div class="text-sm font-bold mb-2">
+              {{ chart.company }} - {{ chart.period }} - {{ chart.metric_name | dropSnakeCase }}
             </div>
 
+            <!-- Chart or No Data Message -->
+            @if (chart?.config?.series.length == 0) {
+              <div class="mt-10 flex items-center justify-center rounded-xl border border-gray-700" style="min-height: 400px;">
+                <p class="!text-xs">Data for selected Quarter(s) not available</p>
+              </div>
+            } @else {
+              <div
+                class="rounded-xl"
+                echarts
+                [options]="chart.config"
+                style="min-height: 400px; width: 100%"
+              ></div>
             }
+
+            <!-- Legends below chart -->
+            <div class="mt-4">
+              <app-legend-display [data]="chart.legends"></app-legend-display>
+            </div>
           </div>
-        </div>
+        }
+      }
+    </div>
+
+  </div>
+</div>
+        
         }
 
         <!-- Bar View -->
         @if(currentTabSegment == 'bar'){ @if (commonSegmentsOption.length ==0) {
        
-        <p class="h-[100px] mt-2 mb-2 flex items-center justify-center">
+        <p class="h-[100px] mt-2 mb-2">
             Note: Single company analysis is being viewed hence comparison analysis is
           not available
           </p>
