@@ -375,13 +375,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
     });
   }
 
-  ll = {
-    name: 're',
-    suggestions: ['return_on_equity', 'retained_earnings', 'revenue'],
-    context: null,
-    resolved: false,
-    resolved_to: null,
-  };
+
 
   resolveCompanies(companies: string[]) {
 
