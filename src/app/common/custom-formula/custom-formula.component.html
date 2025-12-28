@@ -63,7 +63,17 @@
     </svg>
 
     <input #search (keyup)="searchData(search.value)" class="grow"  type="text" placeholder="Search Formulas..." />
+
+
   </div>
+
+
+
+@if(filteredList.length == 0 &&  formulaListView){
+    <div class="flex flex-col items-center justify-center h-50" >
+    <h5>Sorry, no formulas are available at the moment.</h5>
+  </div>
+}
 
   @if(!formulaListView){
   <div class="mt-4 p-3" style="max-height: 400px; overflow-y: auto;">

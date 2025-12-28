@@ -962,7 +962,7 @@
         <!-- Stacked View -->
         @if(currentTabSegment == 'stacked'){
         <div class="space-y-4">
-          <p class="p-6 mt-2 mb-2">
+          <p class="flex items-center justify-center mt-2 mb-2">
             Note: Segment data is sourced from XBRL filings. Information may
             vary from the company’s primary financial statements due to tagging
             inconsistencies.
@@ -1002,10 +1002,11 @@
 
         <!-- Bar View -->
         @if(currentTabSegment == 'bar'){ @if (commonSegmentsOption.length ==0) {
-        <div style="width: 100%" class="h-50 flex items-center justify-center">
-          Single company analysis is being viewed hence comparison analysis is
+       
+        <p class="h-[100px] mt-2 mb-2 flex items-center justify-center">
+            Note: Single company analysis is being viewed hence comparison analysis is
           not available
-        </div>
+          </p>
         }
         <div class="space-y-4">
           <div

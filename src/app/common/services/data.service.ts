@@ -1830,6 +1830,14 @@ export class DataService {
   generateCommonSegmentCharts(commonSegments: any) {
     const chartConfigs: any[] = [];
 
+    // Helper function to format numbers with commas
+    const formatNumber = (value: number, decimals: number = 1): string => {
+      return value.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    };
+
     // Color palette for companies
     const colorPalette = [
       '#3b82f6', // blue
@@ -1927,7 +1935,7 @@ export class DataService {
               color: '#d7d7d7ff',
               fontSize: 10,
               formatter: (params: any) => {
-                return params.value > 0 ? `$${params.value.toFixed(1)}M` : '';
+                return params.value > 0 ? `$${formatNumber(params.value)}M` : '';
               },
             },
           };
@@ -1973,9 +1981,7 @@ export class DataService {
                   <span>${param.seriesName}</span>
                 </div>
                 <div style="text-align: right; margin-left: 12px;">
-                  <span style="font-weight: 600;">$${param.value.toFixed(
-                    2
-                  )}M</span>
+                  <span style="font-weight: 600;">$${formatNumber(param.value, 2)}M</span>
                 </div>
               </div>
             `;
@@ -2031,7 +2037,7 @@ export class DataService {
             show: true,
             color: '#d7d7d7ff',
             fontSize: 11,
-            formatter: (value: number) => `$${value}M`,
+            formatter: (value: number) => `$${formatNumber(value, 0)}M`,
           },
           axisLine: {
             show: false,
