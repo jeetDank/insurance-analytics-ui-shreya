@@ -476,7 +476,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             this.recordProcessMsg(5);
             this.dataReady.emit(true);
             this.recordMsg(
-              "I've updated the dashboard.(note: Not enough data available for variance analysis)",
+              "The dashboard has been updated (variance analysis unavailable due to limited data).",
               true
             );
           }
