@@ -820,6 +820,9 @@ export class DashboardComponent implements OnInit {
 
       this.cardView = this._dataService.fetchCardsData(this.companies);
 
+      console.log(this.cardView);
+      
+
       this.chartsData = this._dataService.generateChartConfigs(this.cardView);
 
       this.metricTableData = this._dataService.generateMetricTableData(
@@ -833,6 +836,7 @@ export class DashboardComponent implements OnInit {
         this.insightsData = this._dataService.generateInsights();
       }
     } else {
+      this.showCustomFormulaData();
       this.isComparison = false;
 
       this.referenceData = this._dataService.generateReferenceData();

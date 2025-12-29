@@ -277,8 +277,6 @@ export class DataService {
     const currency = metricData.format_type === 'currency' ? 'USD' : '';
 
     // Calculate trend from growth rates
-    // const trend = this.calculateTrend(metricData);
-
     const trend = metricData?.qoq_growth_rate
       ? metricData?.qoq_growth_rate
       : 'N/A' + '%';
@@ -306,6 +304,10 @@ export class DataService {
         return `${(value / 1_000).toFixed(2)}K`;
       }
       return value.toFixed(2);
+    }
+
+    if (formatType === 'percentage') {
+      return `${value.toFixed(3)}%`;
     }
 
     // For other format types, return as is
@@ -756,6 +758,17 @@ export class DataService {
         }
       });
 
+      // Calculate dynamic bar width based on number of companies
+      const calculateBarWidth = (numCompanies: number): string => {
+        if (numCompanies === 1) return '40%';
+        if (numCompanies === 2) return '30%';
+        if (numCompanies === 3) return '20%';
+        if (numCompanies === 4) return '15%';
+        return '12%'; // For 5 or more companies
+      };
+
+      const barWidth = calculateBarWidth(companies.length);
+
       // Create LINE CHART series
       const lineSeries = companies.map((company, index) => {
         const color = getLineColor(index);
@@ -786,7 +799,8 @@ export class DataService {
         return {
           name: company,
           type: 'bar' as const,
-          barWidth: '40%',
+          barWidth: barWidth,
+          barGap: '10%', // Gap between bars in the same category
           itemStyle: {
             color: colorConfig.gradient,
             borderRadius: [6, 6, 0, 0],
@@ -938,6 +952,14 @@ export class DataService {
           itemHeight: 12,
         },
 
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '15%',
+          top: '10%',
+          containLabel: true,
+        },
+
         xAxis: {
           type: 'category',
           data: periods,
@@ -945,6 +967,7 @@ export class DataService {
             color: '#c0c0ff',
             fontSize: 12,
             fontWeight: '500',
+            interval: 0, // Show all labels
           },
           axisLine: {
             show: true,
@@ -952,6 +975,10 @@ export class DataService {
               color: 'rgba(160, 160, 255, 0.4)',
               width: 1.5,
             },
+          },
+          axisTick: {
+            show: true,
+            alignWithLabel: true, // Align ticks with labels
           },
           splitLine: { show: false },
         },
