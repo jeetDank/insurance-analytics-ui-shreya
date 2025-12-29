@@ -2,8 +2,8 @@
   <div class="modal-dialog" (click)="$event.stopPropagation()">
     <!-- Header -->
     <div class="modal-header">
-      <h2 class="modal-title">Add Metric to Dashboard</h2>
-      <p class="modal-subtitle">Select a metric to add for all companies</p>
+      <h2 class="modal-title">Metric List</h2>
+      <p class="modal-subtitle">List of available metrics</p>
     </div>
 
     <!-- Search -->
@@ -36,7 +36,7 @@
           </svg>
           SEC Metrics ({{ secMetricsCount }})
         </button>
-        <button 
+        <!-- <button 
           class="tab-trigger"
           [class.active]="activeTab === 'custom'"
           (click)="setActiveTab('custom')"
@@ -54,7 +54,7 @@
             <path d="M8 18h.01"></path>
           </svg>
           Custom Formulas ({{ customMetricsCount }})
-        </button>
+        </button> -->
       </div>
 
       <!-- Tab Content -->
@@ -71,12 +71,9 @@
                 <div class="metric-content">
                   <div class="metric-info">
                     <p class="metric-name">{{ metric.name }}</p>
-                    <p class="metric-description">{{ metric.description }}</p>
+                    <!-- <p class="metric-description">{{ metric.description }}</p> -->
                   </div>
-                  <svg class="metric-add-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M5 12h14"></path>
-                    <path d="M12 5v14"></path>
-                  </svg>
+                  
                 </div>
               </button>
             </div>

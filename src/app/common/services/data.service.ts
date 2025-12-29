@@ -1830,6 +1830,24 @@ export class DataService {
     return filteredSegments;
   }
 
+    getCleanName(name: string): string {
+    if (!name) return '';
+    
+    // Remove all types of brackets and their contents
+    let cleanName = name
+      .replace(/\([^)]*\)/g, '') // Remove content in parentheses
+      .replace(/\[[^\]]*\]/g, '') // Remove content in square brackets
+      .replace(/\{[^}]*\}/g, '')  // Remove content in curly braces
+      .replace(/_/g, ' ')          // Replace underscores with spaces
+      .trim();                     // Remove leading/trailing spaces
+    
+    // Apply title case
+    return cleanName
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(' ');
+  }
+
   generateCommonSegmentCharts(commonSegments: any) {
     const chartConfigs: any[] = [];
 
@@ -1886,9 +1904,24 @@ export class DataService {
       });
       const companyNames = Array.from(companyNamesSet);
 
+      // Find the maximum value to determine scale (millions or billions)
+      let maxValue = 0;
+      segments.forEach((seg: any) => {
+        seg.companies.forEach((c: any) => {
+          if (c.value > maxValue) {
+            maxValue = c.value;
+          }
+        });
+      });
+
+      // Determine scale and divisor
+      const useBillions = maxValue > 1000000000;
+      const divisor = useBillions ? 1000000000 : 1000000;
+      const suffix = useBillions ? 'B' : 'M';
+
       // Segment names for x-axis
       const segmentNames = segments.map((s: any) =>
-        snakeToTitleCase(s.segment_name)
+        this.getCleanName(s.segment_name)
       );
 
       // Create series for each company
@@ -1898,7 +1931,7 @@ export class DataService {
             const companyData = seg.companies.find(
               (c: any) => c.company_name === companyName
             );
-            return companyData ? companyData.value / 1000000 : 0; // Convert to millions
+            return companyData ? companyData.value / divisor : 0;
           });
 
           return {
@@ -1938,7 +1971,7 @@ export class DataService {
               color: '#d7d7d7ff',
               fontSize: 10,
               formatter: (params: any) => {
-                return params.value > 0 ? `$${formatNumber(params.value)}M` : '';
+                return params.value > 0 ? `$${formatNumber(params.value)}${suffix}` : '';
               },
             },
           };
@@ -1984,7 +2017,7 @@ export class DataService {
                   <span>${param.seriesName}</span>
                 </div>
                 <div style="text-align: right; margin-left: 12px;">
-                  <span style="font-weight: 600;">$${formatNumber(param.value, 2)}M</span>
+                  <span style="font-weight: 600;">$${formatNumber(param.value, 2)}${suffix}</span>
                 </div>
               </div>
             `;
@@ -2040,7 +2073,7 @@ export class DataService {
             show: true,
             color: '#d7d7d7ff',
             fontSize: 11,
-            formatter: (value: number) => `$${formatNumber(value, 0)}M`,
+            formatter: (value: number) => `$${formatNumber(value, 0)}${suffix}`,
           },
           axisLine: {
             show: false,
@@ -2352,6 +2385,15 @@ export class DataService {
       return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
     }
 
+    // Helper function to get segment display name
+    const getSegmentDisplayName = (segment: any): string => {
+      if (segment.segment_name) {
+        return this.getCleanName(segment.segment_name);
+      }
+      const displayName = segment.path.split('.').pop() || segment.name;
+      return this.getCleanName(displayName);
+    };
+
     // Helper function to recursively extract all leaf segments
     function extractLeafSegments(obj: any, path: string = ''): any[] {
       const segments: any[] = [];
@@ -2371,6 +2413,7 @@ export class DataService {
               name: path,
               value: obj.value,
               path: path,
+              segment_name: obj?.segment_name
             },
           ];
         }
@@ -2403,24 +2446,26 @@ export class DataService {
 
           // Extract all leaf segments for each root bar
           const barSegments: any = {};
-          const allSegmentNames = new Set<string>();
+          const allSegments: any[] = [];
 
           rootKeys.forEach((rootKey) => {
             const rootItem = metric.children[rootKey];
             const leafSegments = extractLeafSegments(rootItem, rootKey);
 
             barSegments[rootKey] = leafSegments;
-
-            // Add segment names to the set
-            leafSegments.forEach((seg) => {
-              // Use the last part of the path as the segment name for display
-              const segmentDisplayName = seg.path.split('.').pop() || seg.name;
-              allSegmentNames.add(segmentDisplayName);
-            });
+            allSegments.push(...leafSegments);
           });
 
-          // Create a mapping of segment display names to their data
-          const segmentNames = Array.from(allSegmentNames);
+          // Create a mapping of segment display names to their segments
+          const segmentMap = new Map<string, any>();
+          allSegments.forEach((seg) => {
+            const displayName = getSegmentDisplayName(seg);
+            if (!segmentMap.has(displayName)) {
+              segmentMap.set(displayName, seg);
+            }
+          });
+
+          const segmentNames = Array.from(segmentMap.keys());
           const series: any[] = [];
 
           // ✅ Store segment totals in ORIGINAL units (not billions yet)
@@ -2430,7 +2475,7 @@ export class DataService {
             const seriesData = rootKeys.map((rootKey) => {
               const segments = barSegments[rootKey];
               const segment = segments.find((s: any) => {
-                const displayName = s.path.split('.').pop();
+                const displayName = getSegmentDisplayName(s);
                 return displayName === segmentName;
               });
               // ✅ Keep original value, convert to billions only for chart display
@@ -2441,7 +2486,7 @@ export class DataService {
             const segmentTotalOriginal = rootKeys.reduce((sum, rootKey) => {
               const segments = barSegments[rootKey];
               const segment = segments.find((s: any) => {
-                const displayName = s.path.split('.').pop();
+                const displayName = getSegmentDisplayName(s);
                 return displayName === segmentName;
               });
               return sum + (segment ? segment.value : 0);
@@ -2451,8 +2496,7 @@ export class DataService {
 
             // Convert to billions for display in legend name
             const segmentTotalBillions = segmentTotalOriginal / 1000000000;
-            const displayName = snakeToTitleCase(segmentName);
-            const legendName = `${displayName} ($${
+            const legendName = `${segmentName} ($${
               segmentTotalBillions >= 0 ? '' : '-'
             }${Math.abs(segmentTotalBillions).toFixed(2)}B)`;
 
@@ -2508,20 +2552,11 @@ export class DataService {
             // Use the exact same color as the series
             const segmentColor = colorPalette[index % colorPalette.length];
 
-            // Find the full path for this segment from barSegments
-            let fullPath = '';
-            for (const rootKey of rootKeys) {
-              const segments = barSegments[rootKey];
-              const segment = segments.find((s: any) => {
-                const displayName = s.path.split('.').pop();
-                return displayName === segmentName;
-              });
-              if (segment) {
-                fullPath = segment.path;
-                break;
-              }
-            }
+            // Find the segment object for this segment name
+            const segment = segmentMap.get(segmentName);
+            if (!segment) return;
 
+            const fullPath = segment.path;
             const pathParts = fullPath.split('.');
             const parentName = pathParts[0];
 
@@ -2533,25 +2568,30 @@ export class DataService {
 
             if (pathParts.length === 1) {
               // Top-level segment with no parent - this is a leaf
-              if (!legendsMap.has(parentName)) {
-                legendsMap.set(parentName, {
-                  name: snakeToTitleCase(parentName),
+              const cleanParentName = segment.segment_name 
+                ? this.getCleanName(segment.segment_name)
+                : this.getCleanName(parentName);
+
+              if (!legendsMap.has(cleanParentName)) {
+                legendsMap.set(cleanParentName, {
+                  name: cleanParentName,
                   color: segmentColor,
-                  valueOriginal: segmentTotalOriginal, // Store original
-                  value: 0, // Will be set after conversion
-                  percentage: 0, // Will be set after rounding
-                  percentageRaw: percentage, // Store raw percentage
+                  valueOriginal: segmentTotalOriginal,
+                  value: 0,
+                  percentage: 0,
+                  percentageRaw: percentage,
                   children: [],
                 });
               }
             } else {
               // Child segment with parent
               const childName = pathParts[pathParts.length - 1];
+              const cleanParentName = this.getCleanName(parentName);
 
               // Create parent if it doesn't exist
-              if (!legendsMap.has(parentName)) {
-                legendsMap.set(parentName, {
-                  name: snakeToTitleCase(parentName),
+              if (!legendsMap.has(cleanParentName)) {
+                legendsMap.set(cleanParentName, {
+                  name: cleanParentName,
                   color: colorPalette[0],
                   valueOriginal: 0,
                   value: 0,
@@ -2561,16 +2601,20 @@ export class DataService {
                 });
               }
 
-              const parent = legendsMap.get(parentName);
+              const parent = legendsMap.get(cleanParentName);
               parent.valueOriginal += segmentTotalOriginal;
 
-              // ✅ Add child with raw percentage
+              // ✅ Add child with raw percentage - use segment_name if available
+              const cleanChildName = segment.segment_name
+                ? this.getCleanName(segment.segment_name)
+                : this.getCleanName(childName);
+
               parent.children.push({
-                name: snakeToTitleCase(childName),
+                name: cleanChildName,
                 color: segmentColor,
                 valueOriginal: segmentTotalOriginal,
-                value: 0, // Will be set after conversion
-                percentage: 0, // Will be set after rounding
+                value: 0,
+                percentage: 0,
                 percentageRaw: percentage,
               });
             }
@@ -2638,7 +2682,7 @@ export class DataService {
               },
               formatter: (params: any) => {
                 const categoryName = params.name;
-                const seriesName = params.seriesName.split(' (')[0];
+                const seriesName = params.seriesName.split(' (')[0]; // Already cleaned
                 const value = params.value;
                 
                 // Get all values in this category to calculate percentage
@@ -2651,7 +2695,7 @@ export class DataService {
                   ? (value / categoryTotal) * 100 
                   : 0;
 
-                let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${categoryName}</div>`;
+                let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${this.getCleanName(categoryName)}</div>`;
                 
                 result += `
                   <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">

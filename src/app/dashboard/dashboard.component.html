@@ -262,7 +262,8 @@
         <app-quary-box
           [historicalConvo]="historicalConvo"
           (resetData)="resetData()"
-          (dataReady)="showData()"></app-quary-box>
+          (dataReady)="showData()"
+        ></app-quary-box>
       </div>
     </mat-drawer>
 
@@ -371,12 +372,11 @@
                 letter-spacing: normal;
               "
             >
-              
               Metric List
             </button>
 
             <button
-            (click)="exportToExcel()"
+              (click)="exportToExcel()"
               data-slot="button"
               class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 border-white/10 text-white/70 hover:text-white hover:bg-white/[0.05]"
               style="
@@ -385,7 +385,6 @@
               "
             >
               <svg
-                
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
                 height="24"
@@ -442,8 +441,8 @@
           </button>
 
           <!-- Line Option -->
-          <button 
-           *ngIf="isLineChartVisible"
+          <button
+            *ngIf="isLineChartVisible"
             (click)="selectOption('line')"
             [ngClass]="{
               active: isSelected('line'),
@@ -542,9 +541,8 @@
               style="z-index: 9999"
               class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900 mb-4"
             >
-              {{ item.metricName  }}
+              {{ item.metricName }}
 
-             
               <small class="ml-2 cursor-pointer tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ item.tooltip }}
@@ -568,9 +566,7 @@
                 </svg>
               </small>
             </h2>
-            <div class="text-xs text-secondary mb-2">
-              Custom Metric
-            </div>
+            <div class="text-xs text-secondary mb-2">Custom Metric</div>
 
             <!-- Cards Grid - Dynamic Companies -->
             <div
@@ -587,7 +583,6 @@
                   [CompanyName]="card.companyName"
                   [period]="card.period"
                   [metric]="card.metric"
-                  
                 ></app-metric-card>
                 }
               </div>
@@ -830,9 +825,8 @@
                 letter-spacing: normal;
               "
             >
-             Metric List
+              Metric List
             </button>
-            
 
             <button
               (click)="exportToExcel()"
@@ -868,6 +862,35 @@
           style="padding: 0px 10px"
           class="pill-container rounded-md p-1 flex gap-1 mb-4"
         >
+          <button
+            (click)="selectSegmentOption('cards')"
+            [ngClass]="{
+              active: isSegmentSelected('cards'),
+              inactive: !isSegmentSelected('cards')
+            }"
+            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-layout-grid h-4 w-4"
+              aria-hidden="true"
+            >
+              <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+              <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+              <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+              <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+            </svg>
+            <div>Cards</div>
+          </button>
+
           <!-- Stacked Option -->
           <button
             (click)="selectSegmentOption('stacked')"
@@ -960,96 +983,191 @@
           </button>
         </div>
 
+        @if(currentTabSegment == 'cards' ){
+        <div class="space-y-4">
+          <div
+            *ngIf="customCardView.length == 0"
+            class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
+            style="min-height: 300px"
+          >
+            <p class="!text-xs">No custom metrics are available right now.</p>
+          </div>
+
+          @for (item of customCardView; track $index) {
+          <div>
+            <!-- Metric Header -->
+            <h2
+              style="z-index: 9999"
+              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900 mb-4"
+            >
+              {{ item.metricName }}
+
+              <small class="ml-2 cursor-pointer tooltip">
+                <span class="tooltiptext text-white/60">
+                  {{ item.tooltip }}
+                </span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-info h-3.5 w-3.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M12 16v-4"></path>
+                  <path d="M12 8h.01"></path>
+                </svg>
+              </small>
+            </h2>
+            <div class="text-xs text-secondary mb-2">Custom Metric</div>
+
+            <!-- Cards Grid - Dynamic Companies -->
+            <div
+              class="grid gap-4 max-w-7xl"
+              [ngClass]="getGridClass(getUniqueCompanies(item.cards).length)"
+            >
+              @for (companyName of getUniqueCompanies(item.cards); track
+              companyName) {
+              <div class="flex max-w-md flex-col gap-4">
+                @for (card of getCardsByCompany(item.cards, companyName); track
+                card.period) {
+                <app-metric-card
+                  [logo]="card.logo"
+                  [CompanyName]="card.companyName"
+                  [period]="card.period"
+                  [metric]="card.metric"
+                ></app-metric-card>
+                }
+              </div>
+              }
+            </div>
+          </div>
+          }
+        </div>
+        }
+
         <!-- Stacked View -->
         @if(currentTabSegment == 'stacked'){
 
-          <div class="space-y-4">
-  <p class=" mt-2 mb-2">
-    Note: Segment data is sourced from XBRL filings. Information may vary from
-    the company's primary financial statements due to tagging inconsistencies.
-  </p>
+        <div class="space-y-4">
+          <div
+            *ngIf="customCardView.length == 0"
+            class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
+            style="min-height: 50px"
+          >
+            <p class="!text-xs">
+              Note: Segment data is sourced from XBRL filings. Information may
+              vary from the company's primary financial statements due to
+              tagging inconsistencies.
+            </p>
+          </div>
 
-  <!-- Container for all charts -->
-  <div class="rounded-xl p-6">
-    
-    <!-- Two-column grid for charts with 2 or fewer segments (DEFAULT) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-      @for (chart of segmentStackedOption; track $index) {
-        @if ((chart.legends?.legends?.length || chart.config?.series?.length || 0) <= 2) {
-          <div class="flex flex-col">
-            <!-- Chart Title -->
-            <div class="text-sm font-bold mb-2">
-              {{ chart.company }} - {{ chart.period }} - {{ chart.metric_name | dropSnakeCase }}
+          <!-- Container for all charts -->
+          <div class="rounded-xl p-6">
+            <!-- Two-column grid for charts with 2 or fewer segments (DEFAULT) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              @for (chart of segmentStackedOption; track $index) { @if
+              ((chart.legends?.legends?.length || chart.config?.series?.length
+              || 0) <= 2) {
+              <div class="flex flex-col">
+                <!-- Chart Title -->
+                <div class="text-sm font-bold mb-2">
+                  {{ chart.company }} - {{ chart.period }} -
+                  {{ chart.metric_name | dropSnakeCase }}
+                </div>
+
+                <!-- Chart or No Data Message -->
+                @if (chart?.config?.series.length == 0) {
+                <div
+                  class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
+                  style="min-height: 300px"
+                >
+                  <p class="!text-xs">
+                    Data for selected Quarter(s) not available
+                  </p>
+                </div>
+                } @else {
+                <div
+                  class="rounded-xl"
+                  echarts
+                  [options]="chart.config"
+                  style="min-height: 400px; width: 100%"
+                ></div>
+                }
+
+                <!-- Legends below chart -->
+                <div class="mt-4">
+                  <app-legend-display
+                    [data]="chart.legends"
+                  ></app-legend-display>
+                </div>
+              </div>
+              } }
             </div>
 
-            <!-- Chart or No Data Message -->
-            @if (chart?.config?.series.length == 0) {
-              <div class="mt-10 flex items-center justify-center rounded-xl border border-gray-700" style="min-height: 300px;">
-                <p class="!text-xs">Data for selected Quarter(s) not available</p>
-              </div>
-            } @else {
-              <div
-                class="rounded-xl"
-                echarts
-                [options]="chart.config"
-                style="min-height: 400px; width: 100%"
-              ></div>
-            }
+            <!-- Single column for charts with MORE than 2 segments -->
+            <div class="space-y-8">
+              @for (chart of segmentStackedOption; track $index) { @if
+              ((chart.legends?.legends?.length || chart.config?.series?.length
+              || 0) > 2) {
+              <div class="flex flex-col">
+                <!-- Chart Title -->
+                <div class="text-sm font-bold mb-2">
+                  {{ chart.company }} - {{ chart.period }} -
+                  {{ chart.metric_name | dropSnakeCase }}
+                </div>
 
-            <!-- Legends below chart -->
-            <div class="mt-4">
-              <app-legend-display [data]="chart.legends"></app-legend-display>
+                <!-- Chart or No Data Message -->
+                @if (chart?.config?.series.length == 0) {
+                <div
+                  class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
+                  style="min-height: 400px"
+                >
+                  <p class="!text-xs">
+                    Data for selected Quarter(s) not available
+                  </p>
+                </div>
+                } @else {
+                <div
+                  class="rounded-xl"
+                  echarts
+                  [options]="chart.config"
+                  style="min-height: 400px; width: 100%"
+                ></div>
+                }
+
+                <!-- Legends below chart -->
+                <div class="mt-4">
+                  <app-legend-display
+                    [data]="chart.legends"
+                  ></app-legend-display>
+                </div>
+              </div>
+              } }
             </div>
           </div>
-        }
-      }
-    </div>
+        </div>
 
-    <!-- Single column for charts with MORE than 2 segments -->
-    <div class="space-y-8">
-      @for (chart of segmentStackedOption; track $index) {
-        @if ((chart.legends?.legends?.length || chart.config?.series?.length || 0) > 2) {
-          <div class="flex flex-col">
-            <!-- Chart Title -->
-            <div class="text-sm font-bold mb-2">
-              {{ chart.company }} - {{ chart.period }} - {{ chart.metric_name | dropSnakeCase }}
-            </div>
-
-            <!-- Chart or No Data Message -->
-            @if (chart?.config?.series.length == 0) {
-              <div class="mt-10 flex items-center justify-center rounded-xl border border-gray-700" style="min-height: 400px;">
-                <p class="!text-xs">Data for selected Quarter(s) not available</p>
-              </div>
-            } @else {
-              <div
-                class="rounded-xl"
-                echarts
-                [options]="chart.config"
-                style="min-height: 400px; width: 100%"
-              ></div>
-            }
-
-            <!-- Legends below chart -->
-            <div class="mt-4">
-              <app-legend-display [data]="chart.legends"></app-legend-display>
-            </div>
-          </div>
-        }
-      }
-    </div>
-
-  </div>
-</div>
-        
         }
 
         <!-- Bar View -->
         @if(currentTabSegment == 'bar'){ @if (commonSegmentsOption.length ==0) {
-       
-        <p class="h-[100px] mt-2 mb-2">
-            Note: Single company analysis is being viewed hence comparison analysis is
-          not available
+
+        <div
+          class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
+          style="min-height: 300px"
+        >
+          <p class="!text-xs">
+            Note: Single company analysis is being viewed hence comparison
+            analysis is not available
           </p>
+        </div>
         }
         <div class="space-y-4">
           <div
@@ -1164,7 +1282,6 @@
 
       @if(isLoaderVisible){
       <div class="flex flex-col items-center justify-center h-full">
-
         <app-loader-with-insights
           [loaderMessage]="liveProgressData.main_title"
           [description]="liveProgressData.sub_title"
@@ -1356,12 +1473,11 @@
     } }
   </div>
 </div>
-}
+} @if(isAddMetricComponentVisible){
 
-
-
-@if(isAddMetricComponentVisible){
-
-  <app-add-metric [secMetrics]="availableMetrics" (close)="closeAddMetricComponent()"  ></app-add-metric>
+<app-add-metric
+  [secMetrics]="availableMetrics"
+  (close)="closeAddMetricComponent()"
+></app-add-metric>
 
 }
