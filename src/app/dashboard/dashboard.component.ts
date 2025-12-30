@@ -832,6 +832,8 @@ export class DashboardComponent implements OnInit {
         this.cardView
       );
 
+      console.log(this.metricTableData);
+      
       this.referenceData = this._dataService.generateReferenceData();
 
       this.isComparison = true;

@@ -1065,15 +1065,19 @@ export class DataService {
   // }
 
   generateMetricTableData(cardData: any) {
-    const quarterRenderer = (value: any): any => ({
-      type: 'trend',
-      value: value?.value,
-      trend: {
-        direction: value?.change >= 0 ? 'up' : 'down',
-        value: `${Math.abs(value?.change).toFixed(2)}%`,
-        color: value?.change >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)',
-      },
-    });
+ const quarterRenderer = (value: any): any => ({
+  type: 'trend',
+  value: value?.value,
+  trend: {
+    direction: value?.change >= 0 ? 'up' : 'down',
+    value: value?.change !== null && 
+           value?.change !== undefined && 
+           !isNaN(value?.change) 
+      ? `${Math.abs(value.change).toFixed(2)}%`
+      : 'N/A',
+    color: value?.change >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)',
+  },
+});
 
     const tableData = cardData.map((data: any) => {
       const processedData = data.cards.map((card: any) => {
