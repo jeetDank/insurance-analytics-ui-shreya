@@ -99,12 +99,12 @@ export class ProgressTrackerService {
       process: [],
     },
     PARSING: {
-      id: Date.now(),
+      id: 1,
       main_title: 'Parsing Query',
       sub_title: 'Analyzing and structuring your request',
       process: [
         {
-          id: Date.now(),
+          id: 1.1,
           icon: 'crop_square',
           step_name: 'Analyzing and structuring your request',
         },
@@ -113,17 +113,17 @@ export class ProgressTrackerService {
     },
 
     COMPANY_RESOLUTION: {
-      id: Date.now(),
+      id: 2,
       main_title: 'Resolving Companies',
       sub_title: 'Validating and matching company identifiers',
       process: [
          {
-          id: Date.now(),
+          id: 2.1,
           icon: 'check_box',
           step_name: 'Analyzing and structuring your request',
         },
         {
-          id: Date.now(),
+          id: 2.2,
           icon: 'crop_square',
           step_name: 'Verifying company identities',
         },
@@ -132,22 +132,22 @@ export class ProgressTrackerService {
     },
 
     BATCH_ANALYSIS: {
-      id: Date.now(),
+      id: 3,
       main_title: 'Processing Financial Data',
       sub_title: 'Retrieving and analyzing financial statements',
       process: [
           {
-            id: Date.now(),
+            id: 3.1,
           icon: 'check_box',
           step_name: 'Analyzing and structuring your request',
         },
         {
-          id: Date.now(),
+          id: 3.2,
           icon: 'check_box',
           step_name: 'Verifying company identities',
         },
         {
-          id: Date.now(),
+          id: 3.3,
           icon: 'crop_square',
           step_name: 'Fetching SEC filings',
         },
@@ -161,23 +161,23 @@ export class ProgressTrackerService {
       sub_title: 'Computing period-over-period changes',
       process: [
           {
-            id: Date.now(),
+            id: 4.1,
           icon: 'check_box',
           step_name: 'Analyzing and structuring your request',
         },
         {
-          id: Date.now(),
+          id:4.2,
           icon: 'check_box',
           step_name: 'Verifying company identities',
         },
         {
-          id: Date.now(),
+          id: 4.3,
           icon: 'check_box',
           step_name: 'Retrieving and analyzing financial statements',
         },
        
         {
-          id: Date.now(),
+          id: 4.4,
           icon: 'crop_square',
           step_name: 'Computing period-over-period changes',
         },

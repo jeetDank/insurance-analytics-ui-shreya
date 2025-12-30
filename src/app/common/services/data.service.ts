@@ -45,15 +45,11 @@ export class DataService {
 
   HistoryBucket$ = new BehaviorSubject<any[]>([]);
 
-  
-
   FormulaBucket$ = new BehaviorSubject<any[]>([]);
-
-
 
   updateFunctionList(data: any) {
     console.log(data);
-    
+
     this.FormulaBucket$.next(data);
   }
   addQueryToHistory(conversation: any) {
@@ -240,7 +236,19 @@ export class DataService {
             period: qtr.context_info.period_label_text,
             logo: companyLogo, // Add logo to each quarter
             metrics: requested_metrics.reduce((acc: any, metric: any) => {
-              acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
+              
+              if (
+                metric.toLowerCase() == 'combined_ratio' ||
+                metric.toLowerCase() == 'operating_margin'
+              ) {
+                acc[metric] = this.extractMetricData(
+                  qtr.all_metrics[metric],
+                  true
+                );
+              } else {
+                acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
+              }
+
               return acc;
             }, {}),
           })),
@@ -251,7 +259,10 @@ export class DataService {
     return this.populateCardView(companyWiseCardData);
   }
 
-  extractMetricData(metricData: any): {
+  extractMetricData(
+    metricData: any,
+    isCombinedRatio = false
+  ): {
     value: string;
     unit: string;
     currency: string;
@@ -268,7 +279,12 @@ export class DataService {
     }
 
     // Extract value
-    const value = this.formatValue(metricData.value, metricData.format_type);
+    let metricValue = metricData.value;
+    if (isCombinedRatio) {
+      metricValue = metricValue * 100;
+    }
+
+    const value = this.formatValue(metricValue, metricData.format_type);
 
     // Extract unit (from xbrl_unit or unit field)
     const unit = metricData.xbrl_unit || metricData.unit || '';
@@ -307,7 +323,7 @@ export class DataService {
     }
 
     if (formatType === 'percentage') {
-      return `${value.toFixed(3)}%`;
+      return `${value.toFixed(2)}%`;
     }
 
     // For other format types, return as is
@@ -418,7 +434,11 @@ export class DataService {
    * Format metric value with prefix and postfix applied
    */
   private formatMetricValueWithPrefixPostfix(metricData: any): string {
-    if (!metricData || metricData.value === null || metricData.value === undefined) {
+    if (
+      !metricData ||
+      metricData.value === null ||
+      metricData.value === undefined
+    ) {
       return 'N/A';
     }
 
@@ -428,7 +448,7 @@ export class DataService {
 
     // Scale the value based on postfix
     let scaledValue = value;
-    
+
     switch (postfix) {
       case 'B':
         scaledValue = value / 1_000_000_000;
@@ -444,7 +464,7 @@ export class DataService {
     // Format the number with appropriate decimal places
     let formattedValue: string;
     const absValue = Math.abs(scaledValue);
-    
+
     if (absValue >= 100) {
       formattedValue = scaledValue.toFixed(1);
     } else if (absValue >= 10) {
@@ -1178,8 +1198,8 @@ export class DataService {
 
     // Get the parent/total value for percentage calculation
     const parentValue = metricData.value;
-      
-    // to remove consolidated from the table add this to below function 
+
+    // to remove consolidated from the table add this to below function
     // filter((segment:string)=>segment.toLowerCase() != 'consolidated')
 
     // Convert children object to array
@@ -1857,21 +1877,21 @@ export class DataService {
     return filteredSegments;
   }
 
-    getCleanName(name: string): string {
+  getCleanName(name: string): string {
     if (!name) return '';
-    
+
     // Remove all types of brackets and their contents
     let cleanName = name
       .replace(/\([^)]*\)/g, '') // Remove content in parentheses
       .replace(/\[[^\]]*\]/g, '') // Remove content in square brackets
-      .replace(/\{[^}]*\}/g, '')  // Remove content in curly braces
-      .replace(/_/g, ' ')          // Replace underscores with spaces
-      .trim();                     // Remove leading/trailing spaces
-    
+      .replace(/\{[^}]*\}/g, '') // Remove content in curly braces
+      .replace(/_/g, ' ') // Replace underscores with spaces
+      .trim(); // Remove leading/trailing spaces
+
     // Apply title case
     return cleanName
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ');
   }
 
@@ -1882,7 +1902,7 @@ export class DataService {
     const formatNumber = (value: number, decimals: number = 1): string => {
       return value.toLocaleString('en-US', {
         minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals
+        maximumFractionDigits: decimals,
       });
     };
 
@@ -1998,7 +2018,9 @@ export class DataService {
               color: '#d7d7d7ff',
               fontSize: 10,
               formatter: (params: any) => {
-                return params.value > 0 ? `$${formatNumber(params.value)}${suffix}` : '';
+                return params.value > 0
+                  ? `$${formatNumber(params.value)}${suffix}`
+                  : '';
               },
             },
           };
@@ -2044,7 +2066,10 @@ export class DataService {
                   <span>${param.seriesName}</span>
                 </div>
                 <div style="text-align: right; margin-left: 12px;">
-                  <span style="font-weight: 600;">$${formatNumber(param.value, 2)}${suffix}</span>
+                  <span style="font-weight: 600;">$${formatNumber(
+                    param.value,
+                    2
+                  )}${suffix}</span>
                 </div>
               </div>
             `;
@@ -2383,7 +2408,6 @@ export class DataService {
     }
   }
 
-
   generateVerticalSegmentCharts(data: any[]) {
     const chartConfigs: any[] = [];
 
@@ -2440,7 +2464,7 @@ export class DataService {
               name: path,
               value: obj.value,
               path: path,
-              segment_name: obj?.segment_name
+              segment_name: obj?.segment_name,
             },
           ];
         }
@@ -2565,10 +2589,9 @@ export class DataService {
           });
 
           // ✅ Calculate grandTotal from ORIGINAL segment values
-          const grandTotalOriginal = Array.from(segmentTotalsMap.values()).reduce(
-            (sum, value) => sum + value,
-            0
-          );
+          const grandTotalOriginal = Array.from(
+            segmentTotalsMap.values()
+          ).reduce((sum, value) => sum + value, 0);
 
           const legendsMap = new Map<string, any>();
 
@@ -2595,7 +2618,7 @@ export class DataService {
 
             if (pathParts.length === 1) {
               // Top-level segment with no parent - this is a leaf
-              const cleanParentName = segment.segment_name 
+              const cleanParentName = segment.segment_name
                 ? this.getCleanName(segment.segment_name)
                 : this.getCleanName(parentName);
 
@@ -2651,8 +2674,10 @@ export class DataService {
           legendsMap.forEach((legend) => {
             if (legend.children.length > 0) {
               // Parent with children
-              legend.value = parseFloat((legend.valueOriginal / 1000000000).toFixed(4));
-              
+              legend.value = parseFloat(
+                (legend.valueOriginal / 1000000000).toFixed(4)
+              );
+
               // Parent percentage is sum of children's RAW percentages
               legend.percentageRaw = legend.children.reduce(
                 (sum: number, child: any) => sum + child.percentageRaw,
@@ -2662,17 +2687,21 @@ export class DataService {
 
               // Convert children values and round percentages
               legend.children.forEach((child: any) => {
-                child.value = parseFloat((child.valueOriginal / 1000000000).toFixed(4));
+                child.value = parseFloat(
+                  (child.valueOriginal / 1000000000).toFixed(4)
+                );
                 child.percentage = parseFloat(child.percentageRaw.toFixed(4));
                 delete child.valueOriginal;
                 delete child.percentageRaw;
               });
             } else {
               // Leaf segment without children
-              legend.value = parseFloat((legend.valueOriginal / 1000000000).toFixed(4));
+              legend.value = parseFloat(
+                (legend.valueOriginal / 1000000000).toFixed(4)
+              );
               legend.percentage = parseFloat(legend.percentageRaw.toFixed(4));
             }
-            
+
             // Clean up temporary fields
             delete legend.valueOriginal;
             delete legend.percentageRaw;
@@ -2711,28 +2740,35 @@ export class DataService {
                 const categoryName = params.name;
                 const seriesName = params.seriesName.split(' (')[0]; // Already cleaned
                 const value = params.value;
-                
+
                 // Get all values in this category to calculate percentage
                 const categoryIndex = params.dataIndex;
                 const categoryTotal = series.reduce((sum, s) => {
                   return sum + (s.data[categoryIndex] || 0);
                 }, 0);
-                
-                const percentage = categoryTotal !== 0 
-                  ? (value / categoryTotal) * 100 
-                  : 0;
 
-                let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${this.getCleanName(categoryName)}</div>`;
-                
+                const percentage =
+                  categoryTotal !== 0 ? (value / categoryTotal) * 100 : 0;
+
+                let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${this.getCleanName(
+                  categoryName
+                )}</div>`;
+
                 result += `
                   <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
                     <div style="display: flex; align-items: center; flex: 1;">
-                      <span style="display: inline-block; width: 10px; height: 10px; background: ${params.color}; border-radius: 50%; margin-right: 8px;"></span>
+                      <span style="display: inline-block; width: 10px; height: 10px; background: ${
+                        params.color
+                      }; border-radius: 50%; margin-right: 8px;"></span>
                       <span>${seriesName}</span>
                     </div>
                     <div style="text-align: right; margin-left: 12px;">
-                      <span style="font-weight: 600;">${value >= 0 ? '$' : '-$'}${Math.abs(value).toFixed(2)}B</span>
-                      <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(1)}%)</span>
+                      <span style="font-weight: 600;">${
+                        value >= 0 ? '$' : '-$'
+                      }${Math.abs(value).toFixed(2)}B</span>
+                      <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(
+                        1
+                      )}%)</span>
                     </div>
                   </div>
                 `;
@@ -2807,7 +2843,9 @@ export class DataService {
           };
 
           // ✅ Convert grandTotal to billions with 4 decimal places
-          const grandTotalBillions = parseFloat((grandTotalOriginal / 1000000000).toFixed(4));
+          const grandTotalBillions = parseFloat(
+            (grandTotalOriginal / 1000000000).toFixed(4)
+          );
 
           chartConfigs.push({
             company: companyName,
@@ -2827,15 +2865,11 @@ export class DataService {
 
     return chartConfigs;
   }
-  
 
   fetchCustomCardsData(
     companies: { name: string; logo: string }[],
     customFormulaComponents: any[]
   ) {
-
-
-
     // Extract all unique keywords from all custom formulas as requested metrics
     const allKeywords = Array.from(
       new Set(customFormulaComponents.flatMap((formula) => formula.keywords))
@@ -2899,10 +2933,17 @@ export class DataService {
                 );
 
                 // Determine format type from formula or infer from keywords
-                const formatType = this.determineFormatType(formulaObj, keywordMetrics, keywords);
-                
+                const formatType = this.determineFormatType(
+                  formulaObj,
+                  keywordMetrics,
+                  keywords
+                );
+
                 // Get appropriate prefix and postfix based on format type and value
-                const formatting = this.getMetricFormatting(calculatedValue, formatType);
+                const formatting = this.getMetricFormatting(
+                  calculatedValue,
+                  formatType
+                );
 
                 calculatedMetrics[formulaObj.name] = {
                   value: calculatedValue,
