@@ -106,7 +106,7 @@
           @for(suggestion of filteredSuggestions; track suggestion.metric) {
           <div
             class="suggestion-item"
-            (click)="selectSuggestion(suggestion, formulaTextarea)"
+            (click)="selectSuggestion(suggestion, formulaTextarea,description)"
           >
             <div class="flex justify-between items-center w-full">
               <div>
@@ -161,11 +161,19 @@
         </div> -->
       </div>
 
-      <input
+      <!-- <input
+        #description
         formControlName="description"
         type="text"
         placeholder="Description (optional)"
-      />
+      /> -->
+
+      <textarea
+          #description
+        formControlName="description"
+        type="text"
+          placeholder="Formula Description"
+        ></textarea>
 
       <!-- keywords:this.extractKeywords(formulaValue) -->
 

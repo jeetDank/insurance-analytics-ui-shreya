@@ -721,6 +721,11 @@ export class DataService {
       return { value: numericValue, unit: '' };
     }
 
+    // Helper function to check if a value is valid
+    function isValidValue(value: any): boolean {
+      return value !== null && value !== undefined && !isNaN(value);
+    }
+
     // Helper function to detect dominant unit and format Y-axis
     function getYAxisFormatter(cards: any[]): {
       formatter: (value: number) => string;
@@ -731,17 +736,20 @@ export class DataService {
 
       if (sampleMetric.includes('%')) {
         return {
-          formatter: (value: number) => `${value.toFixed(1)}%`,
+          formatter: (value: number) => 
+            isValidValue(value) ? `${value.toFixed(1)}%` : 'N/A',
           unit: '%',
         };
       } else if (sampleMetric.includes('B') || sampleMetric.includes('M')) {
         return {
-          formatter: (value: number) => `$${value.toFixed(2)}B`,
+          formatter: (value: number) => 
+            isValidValue(value) ? `$${value.toFixed(2)}B` : 'N/A',
           unit: 'B',
         };
       }
       return {
-        formatter: (value: number) => value.toFixed(2),
+        formatter: (value: number) => 
+          isValidValue(value) ? value.toFixed(2) : 'N/A',
         unit: '',
       };
     }
@@ -859,8 +867,10 @@ export class DataService {
             if (!Array.isArray(params)) params = [params];
             let result = `<strong>${params[0].axisValue}</strong><br/>`;
             params.forEach((item: any) => {
-              if (item.value !== null) {
-                const formattedValue = yAxisConfig.formatter(item.value);
+              if (item.value !== null && item.value !== undefined) {
+                const formattedValue = isValidValue(item.value) 
+                  ? yAxisConfig.formatter(item.value)
+                  : 'N/A';
                 result += `${item.marker} ${item.seriesName}: <strong>${formattedValue}</strong><br/>`;
               }
             });
@@ -950,8 +960,10 @@ export class DataService {
             if (!Array.isArray(params)) params = [params];
             let result = `<strong>${params[0].axisValue}</strong><br/>`;
             params.forEach((item: any) => {
-              if (item.value !== null) {
-                const formattedValue = yAxisConfig.formatter(item.value);
+              if (item.value !== null && item.value !== undefined) {
+                const formattedValue = isValidValue(item.value) 
+                  ? yAxisConfig.formatter(item.value)
+                  : 'N/A';
                 result += `${item.marker} ${item.seriesName}: <strong>${formattedValue}</strong><br/>`;
               }
             });
@@ -2320,6 +2332,7 @@ export class DataService {
         metric: string;
         value: number;
         metricViewName: string;
+        description:string;
       }
     >();
 
@@ -2336,6 +2349,7 @@ export class DataService {
           metric: metricKey,
           value: metricData.value,
           metricViewName: metricData.name,
+          description: metricData.description
         });
       }
     );

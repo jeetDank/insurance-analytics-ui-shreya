@@ -20,6 +20,7 @@ interface Metric {
   metricViewName: string;
   quarter: string;
   company: string;
+  description:string;
 }
 
 interface CustomFormula {
@@ -168,10 +169,16 @@ ngOnInit() {
     this.validateFormula(value);
   }
 
-  selectSuggestion(metric: Metric, textarea: HTMLTextAreaElement) {
+  selectSuggestion(metric: Metric, textarea: HTMLTextAreaElement,description:HTMLTextAreaElement) {
     const value = textarea.value;
     const beforeCursor = value.substring(0, this.cursorPosition);
     const afterCursor = value.substring(this.cursorPosition);
+
+    if(metric.description){
+
+      description.value += metric.description
+    }
+
 
     // Replace the current word with the selected metric
     const words = beforeCursor.split(/[\s\+\-\*\/\(\)]/);
