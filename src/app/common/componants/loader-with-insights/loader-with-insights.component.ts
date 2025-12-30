@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 interface stepsWiseInfo {
   icon: string;
   step_name: string;
+  id:string
 }
 
 @Component({
@@ -21,14 +22,17 @@ export class LoaderWithInsightsComponent implements OnInit {
     {
       icon: 'table_rows',
       step_name: 'Fetching SEC filings',
+      id:'',
     },
     {
       icon: 'insert_chart',
       step_name: 'Processing Metrics',
+      id:'',
     },
     {
       icon: 'trending_up',
       step_name: 'Generating Insights',
+      id:'',
     },
   ]);
 

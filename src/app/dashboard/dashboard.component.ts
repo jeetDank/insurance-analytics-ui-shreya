@@ -568,6 +568,7 @@ export class DashboardComponent implements OnInit {
       {
         icon: 'database',
         step_name: 'processing ',
+        id:''
       },
     ],
   };
@@ -577,6 +578,8 @@ export class DashboardComponent implements OnInit {
     this._progressTracker.LiveProgressTracker$.subscribe({
       next: (data) => {
         this.liveProgressData = data;
+        console.log(this.liveProgressData);
+        
       },
     });
 

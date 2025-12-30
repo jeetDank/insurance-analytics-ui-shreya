@@ -9,13 +9,13 @@
   </div>
 
 <div class="steps-container flex flex-col items-start min-h-[200px]">
-  @for (step of stepWiseInfo(); track $index) { 
-    @if ($index < visibleSteps()) {
+  @for (step of stepWiseInfo(); track step.id) { 
+    
       <div class="flex flex-row items-center gap-2 slide-up mb-2">
         <i class="material-icons text-blue-600 self-start">{{ step.icon }}</i>
         <p class="text-left">{{ step.step_name }}</p>
       </div>
-    } 
+    
   }
 </div>
 </div>

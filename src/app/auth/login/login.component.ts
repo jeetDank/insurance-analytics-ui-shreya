@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
@@ -8,7 +8,7 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './login.component.html',
   imports:[CommonModule,FormsModule,RouterModule]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   email = '';
   password = '';
   rememberMe = false;
@@ -42,5 +42,16 @@ export class LoginComponent {
 
 
 
+  }
+
+  ngOnInit(): void {
+
+   const username =  localStorage.getItem("username"); 
+   const password = localStorage.getItem("password");
+   
+   if(username && password){
+    this.router.navigateByUrl('/dashboard')
+   }
+   
   }
 }

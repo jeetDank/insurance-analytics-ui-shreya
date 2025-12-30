@@ -1,14 +1,15 @@
 <!-- ambiguity-resolver.component.html -->
 <div *ngIf="ambiguities.length > 0">
   <!-- Header with Navigation -->
-  <div class="flex items-center justify-between mb-3 gap-3">
+  <div class="flex flex-col  mb-3 gap-3">
     <p class="text-sm flex-1" [ngStyle]="{ color: 'rgba(255, 255, 255, 0.9)' }">
-      Sorry, I didn’t understand the
+      Didn't understand 
       <span [ngStyle]="{ color: 'rgb(156, 163, 175)', 'font-weight': '600' }">
-        "{{ currentAmbiguity?.query }}"
+        "{{ currentAmbiguity?.query }}".
       </span>
-      Did you mean one of these?
+      
     </p>
+    <p class="text-sm">Did you mean one of these?</p>
 
     <!-- Pagination Controls -->
   </div>
