@@ -1,12 +1,10 @@
 <!-- <div class="text-sm font-semibold mb-3">
   Total: $ {{ data.total ? data.total.toFixed(2) : 'N/A' }}B
 </div> -->
-<div class="space-y-1 grid grid-cols-2 gap-2">
-  <!-- TOTAL -->
-  
+<div class="flex flex-wrap justify-center gap-8 w-full">
   <!-- PARENTS -->
   @for (legend of data.legends; track legend.name) {
-  <div class="space-y-0.5">
+  <div class="space-y-0.5 w-full sm:w-[300px] max-w-[450px] ">
     <!-- Parent Row -->
     <div
       class="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-white/5 border-l-4"
