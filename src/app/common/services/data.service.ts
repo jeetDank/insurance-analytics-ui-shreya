@@ -2962,13 +2962,13 @@ export class DataService {
                   calculatedValue,
                   formatType
                 );
-
+                
                 calculatedMetrics[formulaObj.name] = {
                   value: calculatedValue,
                   trend: null, // Custom formulas don't have trend data
                   format_type: formatType,
-                  prefix: formatting.prefix,
-                  postfix: formatting.postfix,
+                  prefix: formulaObj.prefix ? formulaObj.prefix : '',
+                  postfix: formulaObj.postfix ? formulaObj.postfix : '' ,
                 };
               } else {
                 calculatedMetrics[formulaObj.name] = null;

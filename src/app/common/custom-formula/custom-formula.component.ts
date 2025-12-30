@@ -29,7 +29,9 @@ interface CustomFormula {
   formula: string;
   description: string;
   calculatedValue?: number;
-  keywords:any[]
+  keywords:any[],
+  prefix:string,
+  postfix:string
 }
 
 @Component({
@@ -107,6 +109,8 @@ export class CustomFormulaComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(2)]],
       formula: ['', [Validators.required]],
       description: [''],
+      prefix:[''],
+      postfix:[''],
     });
   }
 
@@ -305,6 +309,8 @@ ngOnInit() {
       description: formula.description,
       formula: formula.formula,
       name: formula.name,
+      prefix:formula.prefix,
+      postfix:formula.postfix
     });
 
     this.snackBar.open('Edit mode activated', 'Close', {
@@ -359,7 +365,9 @@ ngOnInit() {
         formula: formulaValue,
         description: this.formulaForm.value.description,
         calculatedValue: calculatedValue ?? undefined,
-        keywords: this.extractKeywords(formulaValue)
+        keywords: this.extractKeywords(formulaValue),
+        prefix:this.formulaForm.value.prefix,
+        postfix:this.formulaForm.value.postfix,
       };
     }
     this.filteredList = [...this.customFormulaList]; // Update filtered list
@@ -377,7 +385,9 @@ ngOnInit() {
       formula: formulaValue,
       description: this.formulaForm.value.description,
       calculatedValue: calculatedValue ?? undefined,
-      keywords: this.extractKeywords(formulaValue)
+      keywords: this.extractKeywords(formulaValue),
+      prefix:this.formulaForm.value.prefix,
+      postfix:this.formulaForm.value.postfix
     };
 
     this.customFormulaList.push(newFormula);

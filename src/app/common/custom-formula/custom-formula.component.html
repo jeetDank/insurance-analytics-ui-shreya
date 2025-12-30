@@ -76,7 +76,7 @@
 }
 
   @if(!formulaListView){
-  <div class="mt-4 p-3" style="max-height: 400px; overflow-y: auto;">
+  <div class="mt-4 p-3" style="max-height: 300px; overflow-y: auto;">
     <form
       [formGroup]="formulaForm"
       class="myform flex flex-col gap-6"
@@ -161,12 +161,9 @@
         </div> -->
       </div>
 
-      <!-- <input
-        #description
-        formControlName="description"
-        type="text"
-        placeholder="Description (optional)"
-      /> -->
+     
+
+     
 
       <textarea
           #description
@@ -174,6 +171,22 @@
         type="text"
           placeholder="Formula Description"
         ></textarea>
+
+         <div class="flex gap-2">
+         <input
+        #prefix
+        formControlName="prefix"
+        type="text"
+        placeholder="Prefix"
+      />
+         <input
+        #postfix
+        formControlName="postfix"
+        type="text"
+        placeholder="Postfix"
+      />
+
+      </div>
 
       <!-- keywords:this.extractKeywords(formulaValue) -->
 
