@@ -1,6 +1,6 @@
-<div  class="mt-5 p-4" >
+<div class="mt-5 p-4">
   <!-- Header Section -->
-  <div  class="flex items-center flex-wrap justify-between w-full mb-4">
+  <div class="flex items-center flex-wrap justify-between w-full mb-4">
     <div class="flex items-center gap-2">
       <span class="flex items-center">
         <svg
@@ -42,8 +42,7 @@
     </div>
   </div>
 
-
-  <div class="flex flex-row custom-search-box items-center">
+  <div class="flex flex-row  items-center rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40  outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -62,21 +61,21 @@
       <circle cx="11" cy="11" r="8"></circle>
     </svg>
 
-    <input #search (keyup)="searchData(search.value)" class="grow"  type="text" placeholder="Search Formulas..." />
-
-
+    <input
+      #search
+      (keyup)="searchData(search.value)"
+      class="grow "
+      type="text"
+      placeholder="Search Formulas..."
+    />
   </div>
 
-
-
-@if(filteredList.length == 0 &&  formulaListView){
-    <div class="flex flex-col items-center justify-center h-50" >
+  @if(filteredList.length == 0 && formulaListView){
+  <div class="flex flex-col items-center justify-center h-50">
     <h5>Sorry, no formulas are available at the moment.</h5>
   </div>
-}
-
-  @if(!formulaListView){
-  <div class="mt-4 p-3" style="max-height: 300px; overflow-y: auto;">
+  } @if(!formulaListView){
+  <div class="mt-4 p-3" style="max-height: 300px; overflow-y: auto">
     <form
       [formGroup]="formulaForm"
       class="myform flex flex-col gap-6"
@@ -86,6 +85,7 @@
         formControlName="name"
         type="text"
         placeholder="Formula Name (e.g., ROE)"
+        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
       />
 
       <div class="relative">
@@ -97,7 +97,7 @@
           (input)="onFormulaInput($event)"
           (focus)="onFormulaFocus()"
           (blur)="onFormulaBlur()"
-          class="w-full"
+          class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
         ></textarea>
 
         <!-- Suggestions Dropdown -->
@@ -116,11 +116,7 @@
                 <div class="text-xs text-neutral-500">
                   {{ suggestion.metric }}
                 </div>
-                
               </div>
-              <!-- <div class="text-xs text-neutral-400">
-                {{ suggestion.value | number }}
-              </div> -->
             </div>
           </div>
           }
@@ -149,50 +145,35 @@
           {{ formulaError }}
         </div>
         }
-
-        <!-- Helper Text -->
-        <!-- <div class="text-xs text-neutral-500 mt-2">
-          Available metrics: @for(metric of suggestionsMetrics; track
-          metric.metric; let last = $last) {
-          <span class="text-neutral-400"
-            >{{ metric.metric }}@if(!last){, }</span
-          >
-          }
-        </div> -->
       </div>
-
-     
-
-     
 
       <textarea
-          #description
+        #description
         formControlName="description"
         type="text"
-          placeholder="Formula Description"
-        ></textarea>
+        placeholder="Formula Description"
+        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300 "
+      ></textarea>
 
-         <div class="flex gap-2">
-         <input
-        #prefix
-        formControlName="prefix"
-        type="text"
-        placeholder="Prefix"
-      />
-         <input
-        #postfix
-        formControlName="postfix"
-        type="text"
-        placeholder="Postfix"
-      />
-
+      <div class="flex gap-2">
+        <input
+          #prefix
+          formControlName="prefix"
+          type="text"
+          placeholder="Prefix"
+          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
+        />
+        <input
+          #postfix
+          formControlName="postfix"
+          type="text"
+          placeholder="Postfix"
+          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
+        />
       </div>
-
-      <!-- keywords:this.extractKeywords(formulaValue) -->
 
       <div class="mt-2 flex flex-row gap-2">
         <button
-         
           (click)="addNewFormula()"
           type="button"
           class="add-button flex grow items-center justify-center"

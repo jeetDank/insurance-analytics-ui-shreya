@@ -166,14 +166,14 @@
             [disabled]="loaderVisible"
           /> -->
           <textarea
-            #msg
-            rows="1"
-            class="file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex min-h-[36px] max-h-[100px] w-full min-w-0 rounded-md border px-3 py-2 text-base transition-[color,box-shadow]  resize-none overflow-y-auto file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-white/[0.02] border-white/[0.08] text-white placeholder:text-white/30 focus:border-white/[0.15] outline outline-2  outline-neutral-500 focus:outline focus:outline-e focus:outline-neutral-300"
-            placeholder="Ask a question..."
-            (keydown)="handleKeyDown($event, msg)"
-            (input)="autoResize(msg)"
-            [disabled]="loaderVisible"
-          ></textarea>
+  #msg
+  rows="1"
+  class="file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex min-h-[36px] max-h-[100px] w-full min-w-0 rounded-md border px-3 py-2 text-base transition-[color,box-shadow] resize-none overflow-y-auto file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/30 focus:border-white/[0.35] outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
+  placeholder="Ask a question..."
+  (keydown)="handleKeyDown($event, msg)"
+  (input)="autoResize(msg)"
+  [disabled]="loaderVisible"
+></textarea>
 
           <button
             [disabled]="loaderVisible"
