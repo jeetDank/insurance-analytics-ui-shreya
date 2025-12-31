@@ -237,17 +237,17 @@ export class DataService {
             logo: companyLogo, // Add logo to each quarter
             metrics: requested_metrics.reduce((acc: any, metric: any) => {
               
-              if (
-                metric.toLowerCase() == 'combined_ratio' ||
-                metric.toLowerCase() == 'operating_margin'
-              ) {
-                acc[metric] = this.extractMetricData(
-                  qtr.all_metrics[metric],
-                  true
-                );
-              } else {
-                acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
-              }
+              // if (
+              //   metric.toLowerCase() == 'combined_ratio' ||
+              //   metric.toLowerCase() == 'operating_margin'
+              // ) {
+              //   acc[metric] = this.extractMetricData(
+              //     qtr.all_metrics[metric],
+              //     true
+              //   );
+              // } else {
+              // }
+              acc[metric] = this.extractMetricData(qtr.all_metrics[metric]);
 
               return acc;
             }, {}),
@@ -323,7 +323,13 @@ export class DataService {
     }
 
     if (formatType === 'percentage') {
-      return `${value.toFixed(2)}%`;
+      let calculated =  value * 100
+      if(calculated){
+        return `${calculated.toFixed(2)}%`;
+      }
+      else{
+        return 'N/A'
+      }
     }
 
     // For other format types, return as is
