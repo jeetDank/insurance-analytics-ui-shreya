@@ -1225,7 +1225,7 @@ export class DataService {
     // filter((segment:string)=>segment.toLowerCase() != 'consolidated')
 
     // Convert children object to array
-    Object.keys(children).forEach((childKey) => {
+    Object.keys(children).filter((segment:string)=>segment.toLowerCase() != 'consolidated').forEach((childKey) => {
       const child = children[childKey];
 
       // Check if this child has children using children_count
