@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <div class="flex flex-row  items-center rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40  outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300">
+  <div class="flex flex-row  items-center rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300 ">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -64,7 +64,7 @@
     <input
       #search
       (keyup)="searchData(search.value)"
-      class="grow "
+      class="grow outline-none"
       type="text"
       placeholder="Search Formulas..."
     />
@@ -85,7 +85,7 @@
         formControlName="name"
         type="text"
         placeholder="Formula Name (e.g., ROE)"
-        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
+        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
       />
 
       <div class="relative">
@@ -97,7 +97,7 @@
           (input)="onFormulaInput($event)"
           (focus)="onFormulaFocus()"
           (blur)="onFormulaBlur()"
-          class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
+          class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
         ></textarea>
 
         <!-- Suggestions Dropdown -->
@@ -152,7 +152,7 @@
         formControlName="description"
         type="text"
         placeholder="Formula Description"
-        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300 "
+        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300 "
       ></textarea>
 
       <div class="flex gap-2">
@@ -161,14 +161,14 @@
           formControlName="prefix"
           type="text"
           placeholder="Prefix"
-          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
+          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
         />
         <input
           #postfix
           formControlName="postfix"
           type="text"
           placeholder="Postfix"
-          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:border-white/[0.35] focus:outline-neutral-300"
+          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
         />
       </div>
 

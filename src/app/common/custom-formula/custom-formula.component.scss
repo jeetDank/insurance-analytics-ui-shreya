@@ -7,7 +7,7 @@ border-radius: 8px;
 }
 
 .custom-search-box:focus-within{
-    outline: 4px solid #ffffff14;
+    // outline: 4px solid #ffffff14;
 }
 
 
@@ -19,10 +19,10 @@ width: 100%;
 
 }
 
-.myform input:focus-within,textarea:focus-within{
-    outline: 4px solid #ffffff14;
+// .myform input:focus-within,textarea:focus-within{
+//     outline: 4px solid #ffffff14;
 
-}
+// }
 
 textarea{
     padding: 10px;
