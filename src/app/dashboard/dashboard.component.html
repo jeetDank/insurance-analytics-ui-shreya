@@ -1077,7 +1077,7 @@
         } }
 
         <!-- AI Insights Section (Common for both views) -->
-
+        <!-- AI Insights Section (Common for both views) -->
         <div class="flex flex-row align-center mt-5 mb-3 gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -1102,23 +1102,39 @@
           </svg>
           <h2 class="mb-4">AI-Powered Insights</h2>
         </div>
-        @if (this.insightsData.length !=0) {
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          @for (insight of insightsData; track $index) {
-          <app-insights-card
-            [icon]="insight.icon"
-            [title]="insight.title"
-            [description]="insight.description"
-            [source]="insight.source"
-          />
-          }
-        </div>
-        } @else { @if(varianceAnalysisLoader){
+
+        <!-- Show loader when loading -->
+        @if(varianceAnalysisLoader) {
         <mat-spinner class="mb-4" [diameter]="20"></mat-spinner>
         <p class="mt-2 mb-2">Analyzing period-over-period changes…</p>
-        }@else{
+        }
 
-        <p class="mb-2">Generate AI-driven insights analyzing quarter-over-quarter variance.</p>
+        <!-- Show insights when available -->
+        @if ( this.insightsData.length != 0) {
+        <!-- <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    @for (insight of insightsData; track $index) {
+      <app-insights-card
+        [icon]="insight.icon"
+        [title]="insight.title"
+        [description]="insight.description"
+        [source]="insight.source"
+      />
+    }
+  </div> -->
+
+      @if(this.insightsAnalysis) {
+  <div class="mb-5 border border-neutral-900 p-5" style="max-height: 500px; overflow-y: auto;">
+    <markdown [data]="insightsAnalysis"></markdown>
+  </div>
+}
+      
+        }
+
+        <!-- Always show button when not loading -->
+        @if(!varianceAnalysisLoader) {
+        <p class="mb-2">
+          Generate AI-driven insights analyzing quarter-over-quarter variance.
+        </p>
 
         <button
           (click)="startVarienceAnalysis()"
@@ -1135,13 +1151,17 @@
             letter-spacing: normal;
           "
         >
-          Generate AI Insights
+          {{
+            this.insightsData.length != 0
+              ? "Regenerate AI Insights"
+              : "Generate AI Insights"
+          }}
         </button>
-        } } } @if(referenceData.length > 0){
+        } @if(referenceData.length > 0){
         <div class="mt-5">
           <app-references [refData]="referenceData"></app-references>
         </div>
-        }
+        } }
       </div>
 
       @if(isLoaderVisible && varianceAnalysisLoader == false){

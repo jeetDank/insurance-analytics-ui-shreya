@@ -44,7 +44,7 @@ import { ProgressTrackerService } from '../common/services/progress-tracker.serv
 import { DropSnakeCasePipe } from '../common/pipes/drop-snake-case.pipe';
 import { InsuranceAnalyticsService } from '../common/services/insurance-analytics.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
+import { MarkdownModule } from 'ngx-markdown';
 // Configure ECharts with both renderers
 echarts.use([
   BarChart,
@@ -83,6 +83,7 @@ echarts.use([
     AddMetricComponent,
     DropSnakeCasePipe,
     MatProgressSpinnerModule,
+    MarkdownModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -514,7 +515,8 @@ export class DashboardComponent implements OnInit {
     ],
   };
 
-  insightsData: any = [];
+  insightsData: any[] = [];
+  insightsAnalysis: any = null;
 
   constructor(
     private _apiService: InsuranceAnalyticsService,
@@ -718,6 +720,7 @@ export class DashboardComponent implements OnInit {
     this.segmentStackedOption = [];
     this.isSideNavOpened = true;
     this.insightsData = [];
+    this.insightsAnalysis = null
     this.customCardView = [];
   }
 
@@ -823,8 +826,10 @@ export class DashboardComponent implements OnInit {
       this.referenceData = this._dataService.generateReferenceData();
 
       this.isComparison = true;
-      if (this._dataService.API_DATA.INSIGHTS_DATA) {
-        this.insightsData = this._dataService.generateInsights();
+      if (this._dataService.API_DATA.INSIGHTS_DATA?.data) {
+        const data = this._dataService.generateInsights()
+        this.insightsData = data.data;
+        this.insightsAnalysis = data.analysis;
       }
     } else {
       this.showCustomFormulaData();
@@ -863,7 +868,9 @@ export class DashboardComponent implements OnInit {
       console.log('verticalSegmentbarData', verticalSegmentbarData);
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
-        this.insightsData = this._dataService.generateInsights();
+        const data  = this._dataService.generateInsights();
+        this.insightsAnalysis = data.analysis;
+        this.insightsData = data.data;
       }
     }
   }
@@ -1037,9 +1044,11 @@ export class DashboardComponent implements OnInit {
           // this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.GENERIC);
           if (res.success) {
             // this.recordProcessMsg(5);
-            this._dataService.setInsightsData(res.data_summary);
+            this._dataService.setInsightsData({ data: res.data_summary,analysis: res.analysis});
             if (this._dataService.API_DATA.INSIGHTS_DATA) {
-              this.insightsData = this._dataService.generateInsights();
+              const data :any = this._dataService.generateInsights();
+              this.insightsData = data.data;
+              this.insightsAnalysis = data.analysis;
             }
 
             this.snackBar.open(

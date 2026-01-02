@@ -80,6 +80,7 @@ export class DataService {
   }
   setInsightsData(data: any) {
     this.API_DATA.INSIGHTS_DATA = data;
+    
   }
 
   clearData() {
@@ -1408,7 +1409,7 @@ export class DataService {
   }
 
   generateInsights() {
-    const data: any = this.API_DATA.INSIGHTS_DATA;
+    const data: any = this.API_DATA.INSIGHTS_DATA.data;
     const insightsData = [];
     const companies = Object.keys(data);
 
@@ -1550,7 +1551,7 @@ export class DataService {
       });
     }
 
-    return insightsData;
+    return {data:insightsData,analysis:this.API_DATA.INSIGHTS_DATA.analysis} ;
   }
 
   getSegmentWiseChartData() {

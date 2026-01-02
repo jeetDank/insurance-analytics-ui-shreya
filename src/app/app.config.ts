@@ -6,7 +6,8 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { httpLoaderInterceptorInterceptor } from './interceptors/http-loader-interceptor.interceptor';
 import { errorInterceptor } from './interceptors/error-interceptor.interceptor';
+import { provideMarkdown } from 'ngx-markdown';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideHttpClient(withInterceptors([httpLoaderInterceptorInterceptor,errorInterceptor])),provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideAnimations(), ]
+  providers: [provideMarkdown(),provideHttpClient(withInterceptors([httpLoaderInterceptorInterceptor,errorInterceptor])),provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes),provideAnimations(), ]
 };
