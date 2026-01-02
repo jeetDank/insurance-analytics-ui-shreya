@@ -462,7 +462,9 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             this._dataService.API_DATA.PARSED_QUERY?.time_periods.length > 1
           ) {
             this.recordProcessMsg(4);
-            this.startVarienceAnalysis();
+            this.recordProcessMsg(5);
+            this.dataReady.emit(true);
+            // this.startVarienceAnalysis();
           } else {
             if (this.historicalConvo == null) {
               this._dataService.addQueryToHistory(this.conversation);
@@ -486,6 +488,11 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
     });
   }
 
+
+  captureVarianceAnalysisTrigger(){
+    
+  }
+
   startVarienceAnalysis() {
     let payload = this._dataService.fetchVariencePayload();
     this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.VARIANCE_ANALYSIS);
@@ -495,23 +502,23 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
         next: (res: any) => {
           this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.GENERIC);
           if (res.success) {
-            this.recordProcessMsg(5);
+            // this.recordProcessMsg(5);
             this._dataService.setInsightsData(res.data_summary);
             if (this.historicalConvo == null) {
               this._dataService.addQueryToHistory(this.conversation);
             }
-            this.dataReady.emit(true);
+            // this.dataReady.emit(true);
             this.recordMsg("I've updated the dashboard.", true);
           } else {
             if (this.historicalConvo == null) {
               this._dataService.addQueryToHistory(this.conversation);
             }
-            this.dataReady.emit(true);
-            this.recordProcessMsg(5);
-            this.recordMsg(
-              "I've updated the dashboard but could not load variance analysis.",
-              true
-            );
+            // this.dataReady.emit(true);
+            // this.recordProcessMsg(5);
+            // this.recordMsg(
+            //   "I've updated the dashboard but could not load variance analysis.",
+            //   true
+            // );
           }
         },
         error: (err) => {

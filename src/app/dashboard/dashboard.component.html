@@ -4,26 +4,26 @@
 
     <div>
       <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-sparkles h-4 w-4"
-          aria-hidden="true"
-          style="color: rgb(148, 163, 184)"
-        >
-          <path
-            d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
-          ></path>
-          <path d="M20 2v4"></path>
-          <path d="M22 4h-4"></path>
-          <circle cx="4" cy="20" r="2"></circle>
-        </svg>
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-sparkles h-4 w-4"
+        aria-hidden="true"
+        style="color: rgb(148, 163, 184)"
+      >
+        <path
+          d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
+        ></path>
+        <path d="M20 2v4"></path>
+        <path d="M22 4h-4"></path>
+        <circle cx="4" cy="20" r="2"></circle>
+      </svg>
     </div>
 
     <!-- App title/logo -->
@@ -76,8 +76,8 @@
       aria-controls="radix-:r0:"
       data-state="closed"
     >
-    Logout
-  </button>
+      Logout
+    </button>
   </mat-toolbar>
   <mat-drawer-container class="drawer-container" autosize>
     <mat-drawer
@@ -178,7 +178,7 @@
                   {{ company.name }}@if($index < companies.length-1){ , }
                 </div>
               </div>
-               }
+              }
             </h1>
 
             <p>Quarterly Metric comparison</p>
@@ -368,7 +368,7 @@
 
         <div class="space-y-4">
           <div
-            *ngIf="cardView.length == 0 "
+            *ngIf="cardView.length == 0"
             class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
             style="min-height: 300px"
           >
@@ -642,7 +642,7 @@
                   {{ company.name }}@if($index < companies.length-1){ , }
                 </div>
               </div>
-               }
+              }
             </h1>
 
             <p>Segment Analysis</p>
@@ -1078,8 +1078,6 @@
 
         <!-- AI Insights Section (Common for both views) -->
 
-        @if (this.insightsData.length !=0) {
-
         <div class="flex flex-row align-center mt-5 mb-3 gap-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -1104,7 +1102,7 @@
           </svg>
           <h2 class="mb-4">AI-Powered Insights</h2>
         </div>
-
+        @if (this.insightsData.length !=0) {
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           @for (insight of insightsData; track $index) {
           <app-insights-card
@@ -1115,16 +1113,38 @@
           />
           }
         </div>
-        }
+        } @else { @if(varianceAnalysisLoader){
+        <mat-spinner class="mb-4" [diameter]="20"></mat-spinner>
+        <p class="mt-2 mb-2">Analyzing period-over-period changes…</p>
+        }@else{
 
+        <p class="mb-2">Generate AI-driven insights analyzing quarter-over-quarter variance.</p>
+
+        <button
+          (click)="startVarienceAnalysis()"
+          class="cursor-pointer line-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2"
+          type="button"
+          style="
+            background-color: rgb(156, 163, 175);
+            color: rgb(0, 0, 0);
+            border-radius: 8px;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+              Inter, sans-serif;
+            font-weight: 500;
+            text-transform: none;
+            letter-spacing: normal;
+          "
+        >
+          Generate AI Insights
+        </button>
+        } } } @if(referenceData.length > 0){
         <div class="mt-5">
           <app-references [refData]="referenceData"></app-references>
         </div>
-
         }
       </div>
 
-      @if(isLoaderVisible){
+      @if(isLoaderVisible && varianceAnalysisLoader == false){
       <div class="flex flex-col items-center justify-center h-full">
         <app-loader-with-insights
           [loaderMessage]="liveProgressData.main_title"

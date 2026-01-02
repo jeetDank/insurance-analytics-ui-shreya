@@ -42,6 +42,8 @@ import { Router } from '@angular/router';
 import { AddMetricComponent } from '../common/add-metric/add-metric.component';
 import { ProgressTrackerService } from '../common/services/progress-tracker.service';
 import { DropSnakeCasePipe } from '../common/pipes/drop-snake-case.pipe';
+import { InsuranceAnalyticsService } from '../common/services/insurance-analytics.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // Configure ECharts with both renderers
 echarts.use([
@@ -79,7 +81,8 @@ echarts.use([
     LegendDisplayComponent,
     // LucideAngularModule
     AddMetricComponent,
-    DropSnakeCasePipe
+    DropSnakeCasePipe,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -514,6 +517,7 @@ export class DashboardComponent implements OnInit {
   insightsData: any = [];
 
   constructor(
+    private _apiService: InsuranceAnalyticsService,
     private _dataService: DataService,
     private _loader: LoaderService,
     private _excelService: ExcelExportService,
@@ -568,7 +572,7 @@ export class DashboardComponent implements OnInit {
       {
         icon: 'database',
         step_name: 'processing ',
-        id:''
+        id: '',
       },
     ],
   };
@@ -579,7 +583,6 @@ export class DashboardComponent implements OnInit {
       next: (data) => {
         this.liveProgressData = data;
         console.log(this.liveProgressData);
-        
       },
     });
 
@@ -601,7 +604,7 @@ export class DashboardComponent implements OnInit {
           companies,
           data
         );
-        console.log(customCardData,data);
+        console.log(customCardData, data);
 
         this.customCardView = customCardData;
       }
@@ -624,26 +627,7 @@ export class DashboardComponent implements OnInit {
   metricTableData: any[] = [];
 
   referenceData: any = [
-    {
-      companyName: 'AllState',
-      quarterlyLinks: [
-        {
-          linkLabel: '10-Q Q3 2024',
-          link: '',
-          icon: 'open_in_new',
-        },
-        {
-          linkLabel: '10-Q Q2 2024',
-          link: '',
-          icon: 'open_in_new',
-        },
-        {
-          linkLabel: '10-Q Q1 2024',
-          link: '',
-          icon: 'open_in_new',
-        },
-      ],
-    },
+    
   ];
 
   processedCardView: any = null;
@@ -777,19 +761,16 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  logout(){
-    
-   localStorage.clear();
-   this.router.navigateByUrl('/login')
+  logout() {
+    localStorage.clear();
+    this.router.navigateByUrl('/login');
   }
 
   showData() {
-
-
-    if(this._dataService.API_DATA.PARSED_QUERY.time_periods.length > 1){
-     this.isLineChartVisible = true
-    }else{
-      this.isLineChartVisible = false
+    if (this._dataService.API_DATA.PARSED_QUERY.time_periods.length > 1) {
+      this.isLineChartVisible = true;
+    } else {
+      this.isLineChartVisible = false;
     }
 
     this.isSideNavOpened = false;
@@ -830,7 +811,6 @@ export class DashboardComponent implements OnInit {
       this.cardView = this._dataService.fetchCardsData(this.companies);
 
       console.log(this.cardView);
-      
 
       this.chartsData = this._dataService.generateChartConfigs(this.cardView);
 
@@ -839,7 +819,7 @@ export class DashboardComponent implements OnInit {
       );
 
       console.log(this.metricTableData);
-      
+
       this.referenceData = this._dataService.generateReferenceData();
 
       this.isComparison = true;
@@ -852,12 +832,12 @@ export class DashboardComponent implements OnInit {
 
       this.referenceData = this._dataService.generateReferenceData();
 
-      this.segmentPeriods =  this._dataService.API_DATA.PARSED_QUERY.time_periods;
-      
+      this.segmentPeriods =
+        this._dataService.API_DATA.PARSED_QUERY.time_periods;
+
       this.segmentTableData = this._dataService.fetchSegmentTableData();
 
       console.log(this.segmentTableData);
-      
 
       const segmentWiseStackedChartData: any =
         this._dataService.getSegmentWiseChartData();
@@ -1025,5 +1005,84 @@ export class DashboardComponent implements OnInit {
         return rawQueryMatch || referenceDateMatch || metricsMatch;
       }
     );
+  }
+
+  varianceAnalysisLoader: boolean = false;
+
+  startVarienceAnalysis() {
+
+    if(this._dataService.API_DATA.PARSED_QUERY.time_periods && this._dataService.API_DATA.PARSED_QUERY.time_periods.length <= 1 ){
+      this.snackBar.open(
+              'Variance analysis requires multi-quarter data. There is currently insufficient data to generate AI insights.',
+              '',
+              {
+                horizontalPosition: 'center',
+                verticalPosition: 'bottom',
+                duration: 5000,
+              }
+            );
+
+        return
+
+    }
+
+    this.varianceAnalysisLoader = true;
+    let payload = this._dataService.fetchVariencePayload();
+    // this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.VARIANCE_ANALYSIS);
+
+    if (payload) {
+      this._apiService.varienceAnalysis(payload).subscribe({
+        next: (res: any) => {
+          this.varianceAnalysisLoader = false;
+          // this._liveProgressTracker.updateLiveProgressTracker(this._liveProgressTracker.liveProgressConst.GENERIC);
+          if (res.success) {
+            // this.recordProcessMsg(5);
+            this._dataService.setInsightsData(res.data_summary);
+            if (this._dataService.API_DATA.INSIGHTS_DATA) {
+              this.insightsData = this._dataService.generateInsights();
+            }
+
+            this.snackBar.open(
+              'AI Insights have been added to the dashboard.',
+              '',
+              {
+                horizontalPosition: 'start',
+                verticalPosition: 'bottom',
+                duration: 3000,
+              }
+            );
+
+            if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory([]);
+            }
+          } else {
+            this.snackBar.open('Sorry, Could not load AI Insights.', '', {
+              horizontalPosition: 'start',
+              verticalPosition: 'bottom',
+              duration: 3000,
+            });
+            if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory([]);
+            }
+          }
+        },
+        error: (err) => {
+          this.varianceAnalysisLoader = false;
+          this.snackBar.open(
+            'Something went wrong while fetching AI insights',
+            '',
+            {
+              horizontalPosition: 'start',
+              verticalPosition: 'bottom',
+              duration: 3000,
+            }
+          );
+          if (this.historicalConvo == null) {
+            this._dataService.addQueryToHistory([]);
+          }
+        },
+      });
+    } else {
+    }
   }
 }
