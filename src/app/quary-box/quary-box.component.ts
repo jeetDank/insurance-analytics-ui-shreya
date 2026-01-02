@@ -464,6 +464,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             this.recordProcessMsg(4);
             this.recordProcessMsg(5);
             this.dataReady.emit(true);
+             this.recordMsg(
+              "I have updated the dashboard.",
+              true
+            );
             // this.startVarienceAnalysis();
           } else {
             if (this.historicalConvo == null) {
