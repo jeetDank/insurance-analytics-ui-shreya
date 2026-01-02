@@ -43,7 +43,7 @@ export class DataService {
     INSIGHTS_DATA: null,
   };
 
-  HistoryBucket$ = new BehaviorSubject<any[]>([]);
+  HistoryBucket$ = new BehaviorSubject<any>([]);
 
   FormulaBucket$ = new BehaviorSubject<any[]>([]);
 
@@ -59,10 +59,18 @@ export class DataService {
       history.shift();
     }
 
-    history.push({
+    if(conversation.length == 0 ){
+      history.push({
+      conversation:this.HistoryBucket$.value.conversation,
+      API_DATA: { ...this.API_DATA },
+    });
+    }else{
+       history.push({
       conversation,
       API_DATA: { ...this.API_DATA },
     });
+    }
+    
 
     this.HistoryBucket$.next(history);
 
