@@ -35,6 +35,61 @@ span i{
   font-size: 18px !important;
 }
 
+// ============================================================================
+// THEME VARIABLES
+// ============================================================================
+
+// Default (Dark Theme)
+:root {
+  --color-background: #0a0a0c;
+  --color-text-primary: rgba(255, 255, 255, 0.95);
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-card-bg: rgba(255, 255, 255, 0.04);
+}
+
+// Light Theme
+:root:not(.dark-theme) {
+  // Text Colors
+  --color-text-primary: rgba(0, 0, 0, 0.9);
+  --color-text-secondary: rgba(0, 0, 0, 0.6);
+  --color-text-muted: rgba(0, 0, 0, 0.5);
+  --color-text-helper: rgba(0, 0, 0, 0.5);
+  --color-text-tertiary: rgba(0, 0, 0, 0.4);
+  --color-text-timestamp: rgba(0, 0, 0, 0.3);
+  
+  // Background Colors
+  --color-background: #f5f5f5;
+  --color-card-bg: #ffffff;
+  --color-user-message-bg: rgba(0, 0, 0, 0.08);
+  --color-ai-message-bg: rgba(0, 0, 0, 0.04);
+  --color-active-bg: rgba(0, 0, 0, 0.06);
+  --color-hover-bg: rgba(0, 0, 0, 0.05);
+  --color-input-bg: rgba(0, 0, 0, 0.02);
+  --color-header-bg: rgba(0, 0, 0, 0.03);
+  --color-even-row-bg: rgba(0, 0, 0, 0.015);
+  --color-odd-row-bg: rgba(0, 0, 0, 0.005);
+  --color-badge-bg: rgba(0, 0, 0, 0.05);
+  --color-progress-bg: rgba(0, 0, 0, 0.08);
+  --color-sample-prompt-bg: rgba(0, 0, 0, 0.02);
+  
+  // Border Colors
+  --color-border: rgba(0, 0, 0, 0.1);
+  --color-border-strong: rgba(0, 0, 0, 0.2);
+  --color-border-medium: rgba(0, 0, 0, 0.15);
+  --color-border-subtle: rgba(0, 0, 0, 0.08);
+  --color-input-border: rgba(0, 0, 0, 0.15);
+  
+  // Button Colors
+  --color-button-bg: rgba(0, 0, 0, 0.02);
+  --color-button-hover: rgba(0, 0, 0, 0.06);
+  --color-button-border: rgba(0, 0, 0, 0.15);
+  --color-button-text: rgba(0, 0, 0, 0.85);
+  --color-button-disabled-border: rgba(0, 0, 0, 0.08);
+  --color-button-disabled-text: rgba(0, 0, 0, 0.4);
+}
+
 body {
   margin: 0;
   padding: 0;
@@ -203,7 +258,7 @@ hr {
 
 .icon-box{
   padding: 10px;
-  background-color: #ffffff06;
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.06));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -214,37 +269,37 @@ hr {
 }
 
 .icon-color{
-color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .text-primary{
-color: rgba(255, 255, 255, 0.95);
+  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
 }
 
 .text-secondary{
-  color: #ffffff8c
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.55));
 }
 
 .text-muted{
-  color: #ffffff4d;
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.3));
 }
 
 .sub-text{
-  color:#fff6;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.4));
 }
+
 .font-grey2{
-  color:#ffffff0d
+  color: var(--color-border-subtle, rgba(255, 255, 255, 0.05));
 }
 
 .card_background{
-  background-color: #FFFFFF14;
-   width:284px;
-
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.08));
+  width: 284px;
 }
 
 .system_background{
-    background-color: #FFFFFF0A;
-    width:250px;
+  background-color: var(--color-input-bg, rgba(255, 255, 255, 0.04));
+  width: 250px;
 }
 
 
@@ -259,7 +314,7 @@ color: rgb(202, 2, 2);
 
 
 // ============================================================================
-// CUSTOM SCROLLBAR - Dark Theme
+// CUSTOM SCROLLBAR
 // ============================================================================
 
 // Webkit browsers (Chrome, Safari, Edge)
@@ -279,11 +334,11 @@ color: rgb(202, 2, 2);
   border: 2px solid var(--color-background, rgba(121, 121, 121, 0.3));
   
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(128, 128, 128, 0.5);
   }
   
   &:active {
-    background: var(--color-primary, #606060);
+    background: rgba(128, 128, 128, 0.7);
   }
 }
 
@@ -294,11 +349,27 @@ color: rgb(202, 2, 2);
 // Firefox
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.04) #0a0a0c;
+  scrollbar-color: rgba(128, 128, 128, 0.3) var(--color-background);
+}
+
+// Light theme scrollbar
+:root:not(.dark-theme) {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--color-background);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.3);
+    }
+    
+    &:active {
+      background: rgba(0, 0, 0, 0.4);
+    }
+  }
 }
 
 .card-background{
-  background-color: #1d1d1d;
+  background-color: var(--color-card-bg, #1d1d1d);
 }
 
 .mat-mdc-form-field input,

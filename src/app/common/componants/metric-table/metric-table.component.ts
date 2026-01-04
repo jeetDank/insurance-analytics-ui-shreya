@@ -33,6 +33,17 @@ export class MetricTableComponent {
   getRowBackground(index: number): string {
   return index % 2 === 0 ? '#1f1f21' : '#131315';
 }
+getTrendColorClass(color?: string): string {
+  switch (color) {
+    case 'green':
+      return 'trend-color-green';
+    case 'red':
+      return 'trend-color-red';
+    case 'gray':
+    default:
+      return 'trend-color-gray';
+  }
+}
 
 quarterRenderer = (value: any): TableCellContent => ({
   type: 'trend',

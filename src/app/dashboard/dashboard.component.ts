@@ -71,7 +71,7 @@ echarts.use([
     MatToolbarModule,
     MatIconModule,
     MatSlideToggleModule,
-    InsightsCardComponent,
+    // InsightsCardComponent,
     ReferencesComponent,
     NgxEchartsDirective,
     MetricTableComponent,
@@ -95,7 +95,7 @@ echarts.use([
   ],
 })
 export class DashboardComponent implements OnInit {
-  isDarkTheme = true;
+  isDarkTheme = false;
   isSideNavOpened = true;
 
   // Common chart configuration for crisp rendering
@@ -546,7 +546,7 @@ export class DashboardComponent implements OnInit {
     }
     this.applyTheme();
 
-    document.documentElement.classList.add('dark-theme');
+    // document.documentElement.classList.add('dark-theme');
   }
 
   toggleTheme(): void {
@@ -555,6 +555,7 @@ export class DashboardComponent implements OnInit {
   }
 
   private applyTheme(): void {
+     document.documentElement.classList.remove('dark-theme')
     if (this.isDarkTheme) {
       document.documentElement.classList.add('dark-theme');
       localStorage.setItem('theme', 'dark');

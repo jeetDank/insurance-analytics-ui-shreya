@@ -1,7 +1,11 @@
 <div
-  [class]="isProcess()?'my-3 border system_background border-neutral-900':'my-3 card-background border border-neutral-900'"
-  style="width:284px;border-radius: 18px;padding: 16px;overflow-y: auto;overflow-x: hidden;"
-  [ngClass]="isSystemMsg() ? 'me-auto' : 'ms-auto'"
+  class="my-3"
+  [ngClass]="{
+    'msg-bubble-system': isProcess(),
+    'msg-bubble-user': !isProcess(),
+    'me-auto': isSystemMsg(),
+    'ms-auto': !isSystemMsg()
+  }"
 >
   <div class="">
     <ng-content></ng-content>

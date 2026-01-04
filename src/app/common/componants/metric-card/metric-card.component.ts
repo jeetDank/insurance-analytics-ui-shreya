@@ -10,7 +10,10 @@ interface trend  {
 
 @Component({
   selector: 'app-metric-card',
-  imports: [MatChipsModule,TextFormatterPipe],
+  imports: [
+    MatChipsModule,
+    TextFormatterPipe
+  ],
   templateUrl: './metric-card.component.html',
   styleUrl: './metric-card.component.scss',
 })

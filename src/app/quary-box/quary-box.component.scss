@@ -20,34 +20,235 @@
         outlined-outline-color: rgba(255, 255, 255, 0.162),
         outlined-focus-outline-color: rgba(255, 255, 255, 0.288),
         outlined-hover-outline-color: rgba(255, 255, 255, 0.288),
-        outlined-label-text-size:875rem
+        outlined-label-text-size: 0.875rem
       )
     );
-    @include mat.progress-bar-overrides((
-    active-indicator-color: #94a3b8,
-    track-color: rgba(255, 255, 255, 0.162),
-  ));
-   
+    @include mat.progress-bar-overrides(
+      (
+        active-indicator-color: #94a3b8,
+        track-color: rgba(255, 255, 255, 0.162),
+      )
+    );
   }
 }
 
-.custom-mini-fab {
-  background-color: #94a3b8; 
-  color: black;
-  border-radius: 5px;
-}
+// ============================================================================
+// LAYOUT COMPONENTS
+// ============================================================================
 
-mat-tab-group {
+.sidebar-container {
   height: 100%;
-  display: flex; /* Make the tab group a flex container */
-  flex-direction: column; /* Arrange header and body in a column */
+  width: 100%;
+  border-right: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  display: flex;
+  flex-direction: column;
 }
 
-/* For Angular Material 15+ */
-::ng-deep .mat-mdc-tab-body-wrapper {
-  flex: 1 1 100%; /* Allow the body wrapper to grow and take up remaining space */
+.sidebar-header {
+  flex: none;
+  padding-top: 1.25rem;
+  padding-bottom: 1rem;
 }
 
+.header-content {
+  margin-bottom: 1rem;
+  padding: 0 32px;
+}
+
+.header-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  color: var(--color-text-primary);
+}
+
+.header-icon {
+  color: var(--color-text-secondary, rgb(148, 163, 184));
+}
+
+.header-subtitle {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-text-muted, rgba(255, 255, 255, 0.4));
+}
+
+.content-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+// ============================================================================
+// PILL TOGGLE BUTTONS
+// ============================================================================
+
+.pill-container {
+  outline: none;
+  background-color: var(--color-input-bg, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.033));
+  display: flex;
+  margin: 16px 16px 0;
+  padding: 3px;
+  border-radius: 9999px;
+  gap: 0.25rem;
+}
+
+.pill-button {
+  width: 170px;
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 500;
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+}
+
+button.active {
+  background-color: var(--color-active-bg, #222);
+  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+button.inactive {
+  background-color: transparent;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+}
+
+button.inactive:hover {
+  color: var(--color-text-primary, rgba(255, 255, 255, 0.8));
+}
+
+// ============================================================================
+// CHAT COMPONENTS
+// ============================================================================
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding: 24px;
+}
+
+.sample-prompt-header {
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.sample-prompt-button {
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.08));
+  background-color: var(--color-sample-prompt-bg, rgba(255, 255, 255, 0.02));
+  transition: all 0.3s;
+  border-radius: 20px;
+  padding: 20px;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+
+  &:hover {
+    border-color: var(--color-border-medium, rgba(255, 255, 255, 0.15));
+    background-color: var(--color-hover-bg, rgba(255, 255, 255, 0.04));
+  }
+}
+
+.sample-prompt-text {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.8));
+  transition: color 0.3s;
+
+  .sample-prompt-button:hover & {
+    color: var(--color-text-primary, white);
+  }
+}
+
+.process-bubble {
+  background-color: var(--color-card-bg, #2c2c2c);
+}
+
+.message-text {
+  text-align: left;
+  color: var(--color-text-primary);
+}
+
+// ============================================================================
+// INPUT AREA
+// ============================================================================
+
+.input-container {
+  padding: 1rem;
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-input {
+  flex: 1;
+  min-height: 36px;
+  max-height: 100px;
+  width: 100%;
+  min-width: 0;
+  border-radius: 0.375rem;
+  border: 1px solid var(--color-input-border, rgba(255, 255, 255, 0.2));
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+  resize: none;
+  overflow-y: auto;
+  background-color: var(--color-input-bg, rgba(255, 255, 255, 0.05));
+  color: var(--color-text-primary, white);
+  outline: 2px solid transparent;
+
+  &::placeholder {
+    color: var(--color-text-muted, rgba(255, 255, 255, 0.3));
+  }
+
+  &:focus {
+    border-color: var(--color-border-strong, rgba(255, 255, 255, 0.35));
+    outline: 2px solid var(--color-border-medium, rgba(255, 255, 255, 0.3));
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  flex-shrink: 0;
+  background-color: #94a3b8;
+  color: black;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover:not(:disabled) {
+    background-color: #cbd5e1;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
 
 .animate-slide-in {
   animation: slideIn 0.3s ease-out;
@@ -64,19 +265,10 @@ mat-tab-group {
   }
 }
 
-// Smooth scroll behavior
-.scroll-smooth {
-  scroll-behavior: smooth;
-}
-
-.animate-slide-in {
-  animation: slideIn 0.3s ease-out;
-}
-
 .step-wrapper {
   animation: stepSlideIn 0.4s ease-out forwards;
   opacity: 0;
-  
+
   app-step {
     transition: all 0.3s ease;
   }
@@ -86,21 +278,11 @@ mat-tab-group {
   app-step::ng-deep .my-3 {
     border-left-color: white !important;
     border-left-width: 3px;
-    
-    h5, h6 {
+
+    h5,
+    h6 {
       color: white !important;
     }
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }
 
@@ -115,52 +297,45 @@ mat-tab-group {
   }
 }
 
-// Smooth scroll behavior
-.scroll-smooth {
-  scroll-behavior: smooth;
+// ============================================================================
+// MATERIAL COMPONENTS
+// ============================================================================
+
+mat-tab-group {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-// Smooth progress bar transition
+::ng-deep .mat-mdc-tab-body-wrapper {
+  flex: 1 1 100%;
+}
+
 mat-progress-bar {
   transition: all 0.3s ease-out;
 }
 
+// ============================================================================
+// LIGHT THEME OVERRIDES
+// ============================================================================
 
+:root:not(.dark-theme) {
+  .pill-container {
+    background-color: var(--color-input-bg, rgba(0, 0, 0, 0.02));
+    border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  }
 
-.pill-container {
-  outline: none;
-    background-color: rgba(255, 255, 255, 0.02);
-    border:1px solid rgba(255, 255, 255, 0.033);
-  display: flex;
-  margin: 16px 16px 0;
-  padding: 3px;
-}
+  button.active {
+    background-color: var(--color-active-bg, rgba(0, 0, 0, 0.06));
+    color: var(--color-text-primary, rgba(0, 0, 0, 0.9));
+  }
 
-.pill-container button{
-  flex-grow: 1;
-  padding: 4px 8px;
-}
+  button.inactive {
+    background-color: transparent;
+    color: var(--color-text-secondary, rgba(0, 0, 0, 0.6));
+  }
 
-
-button.active {
-  background-color: #222;
-  color: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-button.inactive {
-  background-color: transparent;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-button.inactive:hover {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-
-
-
-
-button p{
-      color: #ffffffcc;
+  button.inactive:hover {
+    color: var(--color-text-primary, rgba(0, 0, 0, 0.85));
+  }
 }

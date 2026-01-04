@@ -1,50 +1,40 @@
 <!-- ambiguity-resolver.component.html -->
 <div *ngIf="ambiguities.length > 0">
   <!-- Header with Navigation -->
-  <div class="flex flex-col  mb-3 gap-3">
-    <p class="text-sm flex-1" [ngStyle]="{ color: 'rgba(255, 255, 255, 0.9)' }">
+  <div class="flex flex-col mb-3 gap-3">
+    <p class="text-sm flex-1 ambiguity-text-primary">
       Didn't understand 
-      <span [ngStyle]="{ color: 'rgb(156, 163, 175)', 'font-weight': '600' }">
+      <span class="ambiguity-text-highlight">
         "{{ currentAmbiguity?.query }}".
       </span>
-      
     </p>
     <p class="text-sm">Did you mean one of these?</p>
-
-    <!-- Pagination Controls -->
   </div>
 
   <!-- Suggestions -->
   <div class="flex flex-col gap-2 mb-4">
     <button
-
       *ngFor="let suggestion of currentAmbiguity?.suggestions"
       (click)="handleSuggestionClick(suggestion)"
-      class="text-left px-4 py-2 text-sm border rounded-[18px] transition-all"
+      class="text-left px-4 py-2 text-sm transition-all"
       [ngClass]="{
-        'border-white/[0.05] bg-white/[0.05] text-white/90':
-          isSelected(suggestion),
-        'border-white/[0.024] bg-white/[0.02] text-white/85':
-          !isSelected(suggestion)
+        'suggestion-btn-selected': isSelected(suggestion),
+        'suggestion-btn': !isSelected(suggestion)
       }"
     >
       {{ suggestion }}
     </button>
   </div>
 
-  <!-- Resolve Button -->
-
-  <div *ngIf="totalAmbiguities > 1" class="flex items-center gap-2 ">
+  <!-- Pagination Controls -->
+  <div *ngIf="totalAmbiguities > 1" class="flex items-center gap-2">
     <button
       (click)="handlePrevious()"
       [disabled]="!canGoPrevious"
       class="p-1 rounded transition-all"
-      [ngStyle]="{
-        color: canGoPrevious
-          ? 'rgb(156, 163, 175)'
-          : 'rgba(156, 163, 175, 0.3)',
-        'background-color': 'transparent',
-        cursor: canGoPrevious ? 'pointer' : 'not-allowed'
+      [ngClass]="{
+        'nav-btn-enabled': canGoPrevious,
+        'nav-btn-disabled': !canGoPrevious
       }"
     >
       <svg
@@ -65,8 +55,7 @@
 
     <span
       style="line-height: 2"
-      class="text-xs min-w-[40px] text-center"
-      [ngStyle]="{ color: 'rgba(255, 255, 255, 0.5)' }"
+      class="text-xs min-w-[40px] text-center ambiguity-text-muted"
     >
       {{ currentIndex + 1 }} / {{ totalAmbiguities }}
     </span>
@@ -75,10 +64,9 @@
       (click)="handleNext()"
       [disabled]="!canGoNext"
       class="p-1 rounded transition-all"
-      [ngStyle]="{
-        color: canGoNext ? 'rgb(156, 163, 175)' : 'rgba(156, 163, 175, 0.3)',
-        'background-color': 'transparent',
-        cursor: canGoNext ? 'pointer' : 'not-allowed'
+      [ngClass]="{
+        'nav-btn-enabled': canGoNext,
+        'nav-btn-disabled': !canGoNext
       }"
     >
       <svg
@@ -98,22 +86,15 @@
     </button>
   </div>
 
-  <button *ngIf="!pendingResolution"
+  <!-- Resolve Button -->
+  <button
+    *ngIf="!pendingResolution"
     [disabled]="pendingResolution"
     (click)="notifyAmbiguityResolution()"
-    class="px-4 mt-2 py-2 text-sm border transition-all flex items-center gap-2"
-    [ngStyle]="{
-      'border-radius': '18px',
-      'border-color': pendingResolution
-        ? 'rgba(156, 163, 175, 0.3)'
-        : 'rgb(156, 163, 175)',
-      'background-color': pendingResolution
-        ? 'rgba(156, 163, 175, 0.02)'
-        : 'rgba(156, 163, 175, 0.082)',
-      color: pendingResolution
-        ? 'rgba(156, 163, 175, 0.5)'
-        : 'rgb(156, 163, 175)',
-      cursor: pendingResolution ? 'not-allowed' : 'pointer'
+    class="px-4 mt-2 py-2 text-sm transition-all flex items-center gap-2"
+    [ngClass]="{
+      'confirm-btn': !pendingResolution,
+      'confirm-btn-disabled': pendingResolution
     }"
   >
     Confirm Choices

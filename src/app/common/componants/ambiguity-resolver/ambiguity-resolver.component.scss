@@ -6,6 +6,123 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.resolver{
+.resolver {
   width: 250px;
+}
+
+// // Text colors
+// .ambiguity-text-primary {
+//   color: rgba(255, 255, 255, 0.9);
+// }
+
+// .ambiguity-text-secondary {
+//   color: rgba(255, 255, 255, 0.85);
+// }
+
+// .ambiguity-text-muted {
+//   color: rgba(255, 255, 255, 0.5);
+// }
+
+.ambiguity-text-highlight {
+  color: rgb(156, 163, 175);
+  font-weight: 600;
+}
+
+// Suggestion buttons
+.suggestion-btn {
+  border-radius: 18px;
+  border-width: 1px;
+  border-style: solid;
+  background-color: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.024);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.suggestion-btn-selected {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+// Navigation buttons
+.nav-btn-enabled {
+  color: rgb(156, 163, 175);
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.nav-btn-disabled {
+  color: rgba(156, 163, 175, 0.3);
+  background-color: transparent;
+  cursor: not-allowed;
+}
+
+// Confirm button
+.confirm-btn {
+  border-radius: 18px;
+  border-width: 1px;
+  border-style: solid;
+  background-color: rgba(156, 163, 175, 0.082);
+  border-color: rgb(156, 163, 175);
+  color: rgb(156, 163, 175);
+  cursor: pointer;
+}
+
+.confirm-btn-disabled {
+  background-color: rgba(156, 163, 175, 0.02);
+  border-color: rgba(156, 163, 175, 0.3);
+  color: rgba(156, 163, 175, 0.5);
+  cursor: not-allowed;
+}
+
+// Light theme
+:root:not(.dark-theme) {
+  .ambiguity-text-primary {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .ambiguity-text-secondary {
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  .ambiguity-text-muted {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .ambiguity-text-highlight {
+    color: rgb(100, 116, 139);
+    font-weight: 600;
+  }
+
+  .suggestion-btn {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  .suggestion-btn-selected {
+    background-color: rgba(0, 0, 0, 0.06);
+    border-color: rgba(0, 0, 0, 0.12);
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .nav-btn-enabled {
+    color: rgb(100, 116, 139);
+  }
+
+  .nav-btn-disabled {
+    color: rgba(100, 116, 139, 0.3);
+  }
+
+  .confirm-btn {
+    background-color: rgba(100, 116, 139, 0.082);
+    border-color: rgb(100, 116, 139);
+    color: rgb(100, 116, 139);
+  }
+
+  .confirm-btn-disabled {
+    background-color: rgba(100, 116, 139, 0.02);
+    border-color: rgba(100, 116, 139, 0.3);
+    color: rgba(100, 116, 139, 0.5);
+  }
 }

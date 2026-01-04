@@ -1,8 +1,8 @@
-<div class="mt-5 p-4">
+<div class="formula-container">
   <!-- Header Section -->
-  <div class="flex items-center flex-wrap justify-between w-full mb-4">
-    <div class="flex items-center gap-2">
-      <span class="flex items-center">
+  <div class="formula-header">
+    <div class="header-left">
+      <span class="header-icon-wrapper">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -13,9 +13,8 @@
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="lucide lucide-calculator h-4 w-4"
+          class="lucide lucide-calculator h-4 w-4 header-icon"
           aria-hidden="true"
-          style="color: rgb(156, 163, 175)"
         >
           <rect width="16" height="20" x="4" y="2" rx="2"></rect>
           <line x1="8" x2="16" y1="6" y2="6"></line>
@@ -29,20 +28,20 @@
           <path d="M8 18h.01"></path>
         </svg>
       </span>
-      <h4 class="">Custom Formulas</h4>
+      <h4>Custom Formulas</h4>
     </div>
     <span
       (click)="toggleFormulaView()"
-      class="flex items-center p-2 hover:bg-neutral-800 rounded cursor-pointer transition-colors"
+      class="toggle-button"
     >
       <i class="material-icons">{{ formulaListView ? "add" : "close" }}</i>
     </span>
-    <div class="text-xs sub-text grow mt-2">
+    <div class="header-description">
       Create and manage custom metrics
     </div>
   </div>
 
-  <div class="flex flex-row  items-center rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300 ">
+  <div class="search-container">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -53,9 +52,8 @@
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="lucide lucide-search h-3.5 w-3.5 ms-1"
+      class="lucide lucide-search h-3.5 w-3.5 ms-1 search-icon"
       aria-hidden="true"
-      style="color: rgba(255, 255, 255, 0.4)"
     >
       <path d="m21 21-4.34-4.34"></path>
       <circle cx="11" cy="11" r="8"></circle>
@@ -64,28 +62,28 @@
     <input
       #search
       (keyup)="searchData(search.value)"
-      class="grow outline-none"
+      class="search-input"
       type="text"
       placeholder="Search Formulas..."
     />
   </div>
 
   @if(filteredList.length == 0 && formulaListView){
-  <div class="flex flex-col items-center justify-center h-50">
+  <div class="empty-state">
     <h5>Sorry, no formulas are available at the moment.</h5>
   </div>
   } @if(!formulaListView){
-  <div class="mt-4 p-3" style="max-height: 300px; overflow-y: auto">
+  <div class="form-wrapper">
     <form
       [formGroup]="formulaForm"
-      class="myform flex flex-col gap-6"
+      class="formula-form"
       action=""
     >
       <input
         formControlName="name"
         type="text"
         placeholder="Formula Name (e.g., ROE)"
-        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
+        class="form-input"
       />
 
       <div class="relative">
@@ -97,7 +95,7 @@
           (input)="onFormulaInput($event)"
           (focus)="onFormulaFocus()"
           (blur)="onFormulaBlur()"
-          class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
+          class="form-textarea"
         ></textarea>
 
         <!-- Suggestions Dropdown -->
@@ -108,12 +106,12 @@
             class="suggestion-item"
             (click)="selectSuggestion(suggestion, formulaTextarea,description)"
           >
-            <div class="flex justify-between items-center w-full">
+            <div class="suggestion-content">
               <div>
-                <div class="font-medium text-sm">
+                <div class="suggestion-title">
                   {{ suggestion.metricViewName }}
                 </div>
-                <div class="text-xs text-neutral-500">
+                <div class="suggestion-subtitle">
                   {{ suggestion.metric }}
                 </div>
               </div>
@@ -152,7 +150,7 @@
         formControlName="description"
         type="text"
         placeholder="Formula Description"
-        class="w-full rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300 "
+        class="form-textarea"
       ></textarea>
 
       <div class="flex gap-2">
@@ -161,22 +159,22 @@
           formControlName="prefix"
           type="text"
           placeholder="Prefix"
-          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
+          class="form-input form-input-half"
         />
         <input
           #postfix
           formControlName="postfix"
           type="text"
           placeholder="Postfix"
-          class="flex-1 rounded-md border bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/40 px-3 py-2 outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
+          class="form-input form-input-half"
         />
       </div>
 
-      <div class="mt-2 flex flex-row gap-2">
+      <div class="form-actions">
         <button
           (click)="addNewFormula()"
           type="button"
-          class="add-button flex grow items-center justify-center"
+          class="add-button"
           [class.opacity-50]="formulaForm.invalid || formulaError"
         >
           <svg
@@ -196,29 +194,29 @@
           </svg>
           <span>{{ editingFormulaId !== null ? "Update" : "Add" }}</span>
         </button>
-        <button type="button" (click)="toggleFormulaView()">
+        <button type="button" class="cancel-button" (click)="toggleFormulaView()">
           <i style="font-size: 16" class="material-icons">close</i>
         </button>
       </div>
     </form>
   </div>
   } @if (formulaListView) {
-  <div class="mt-4 list-bg">
+  <div class="formula-list">
     @for (item of filteredList; track item.id) {
-    <div class="p-3">
-      <div class="flex justify-between items-start">
-        <div class="flex-1">
-          <div class="text-sm font-semibold">{{ item.name }}</div>
+    <div class="formula-item">
+      <div class="formula-item-header">
+        <div class="formula-item-content">
+          <div class="formula-item-name">{{ item.name }}</div>
           @if(item.calculatedValue !== undefined) {
-          <div class="text-lg font-bold text-blue-400 mt-1">
+          <div class="formula-item-value">
             {{ item.calculatedValue | number : "1.2-2" }}
           </div>
           }
         </div>
-        <div class="flex gap-2">
+        <div class="formula-item-actions">
           <button
             (click)="editFormula(item.id)"
-            class="text-neutral-400 text-md hover:text-neutral-300"
+            class="action-button action-button-edit"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +239,7 @@
 
           <button
             (click)="deleteFormula(item.id)"
-            class="text-neutral-400 text-md hover:text-red-300"
+            class="action-button action-button-delete"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -266,11 +264,11 @@
         </div>
       </div>
       <div>
-        <p class="!text-xs mt-1" style="font-family: space-mono">
+        <p class="formula-item-formula">
           {{ item.formula }}
         </p>
       </div>
-      <div class="text-xs mt-2 mb-2 text-neutral-500">
+      <div class="formula-item-description">
         {{ item.description }}
       </div>
     </div>

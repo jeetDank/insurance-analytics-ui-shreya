@@ -1,9 +1,9 @@
-<div class="h-full w-full border-r border-neutral-900 flex flex-col">
+<div class="sidebar-container">
   <!-- sidebar header starts here (30% space) -->
 
-  <div class="flex-none pt-5 pb-4">
-    <div class="mb-4" style="padding: 0px 32px">
-      <h1 class="m-0 flex items-center gap-2 mb-1">
+  <div class="sidebar-header">
+    <div class="header-content">
+      <h1 class="header-title">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -14,9 +14,8 @@
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class="lucide lucide-sparkles h-4 w-4"
+          class="lucide lucide-sparkles h-4 w-4 header-icon"
           aria-hidden="true"
-          style="color: rgb(148, 163, 184)"
         >
           <path
             d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
@@ -27,7 +26,7 @@
         </svg>
         Financial Assistant
       </h1>
-      <h5 class="block !text-xs !text-white/40">
+      <h5 class="header-subtitle">
         Ask questions about insurance companies
       </h5>
     </div>
@@ -35,11 +34,8 @@
   <!-- sidebar header ends here -->
 
   <!-- chat box and formula editor starts here (70% space) -->
-  <div class="flex-1 overflow-hidden">
-    <div
-      style="padding: 0px 32px"
-      class="pill-container rounded-full p-1 mb-2 flex gap-1"
-    >
+  <div class="content-wrapper">
+    <div class="pill-container">
       <!-- Option 1 -->
       <button
         (click)="selectOption('chat')"
@@ -47,8 +43,7 @@
           active: isSelected('chat'),
           inactive: !isSelected('chat')
         }"
-        style="width: 170px"
-        class="px-6 py-2 rounded-full font-medium transition-all duration-300"
+        class="pill-button"
       >
         Chat
       </button>
@@ -60,8 +55,7 @@
           active: isSelected('formula'),
           inactive: !isSelected('formula')
         }"
-        style="width: 170px"
-        class="px-6 py-2 rounded-full font-medium transition-all duration-300"
+        class="pill-button"
       >
         Formula
       </button>
@@ -69,17 +63,16 @@
 
     <div class="h-full mt-2">
       @if (currentTab == 'chat') {
-      <div class="flex flex-col h-full">
+      <div class="chat-container">
         <!-- Chat messages area -->
         <div
           #chatContainer
-          class="flex-1 overflow-y-auto scroll-smooth"
-          style="padding: 24px 24px"
+          class="messages-area"
         >
           @if(conversation.length == 0){
 
           <div>
-            <p class="text-white/60 text-sm mb-4">
+            <p class="sample-prompt-header">
               Get started with a sample prompt:
             </p>
 
@@ -87,10 +80,9 @@
               @for(sample of sampleQueries; track $index ){
               <button
                 (click)="fireUpAQueryFromSamples(sample.query)"
-                class="w-full text-left border border-white/[0.08] bg-white/[0.02] transition-all hover:border-white/[0.15] hover:bg-white/[0.04] group"
-                style="border-radius: 20px; border-width: 1px; padding: 20px"
+                class="sample-prompt-button"
               >
-                <p class="text-sm text-white/80 group-hover:text-white">
+                <p class="sample-prompt-text">
                   {{ sample.query }}
                 </p>
               </button>
@@ -105,7 +97,7 @@
             @if (item.processDetail) {
             <app-msg-bubble
               [isProcess]="true"
-              style="background-color: #2c2c2c"
+              class="process-bubble"
               [isSystemMsg]="item.systemMsg"
               [timestamp]="item.timestamp"
             >
@@ -146,7 +138,7 @@
               [isSystemMsg]="item.systemMsg"
               [timestamp]="item.timestamp"
             >
-              <p class="text-left text-primary">{{ item.message }}</p>
+              <p class="message-text">{{ item.message }}</p>
             </app-msg-bubble>
             }
           </div>
@@ -156,29 +148,21 @@
         </div>
 
         <!-- Input area (sticks to bottom) -->
-        <div class="p-4 mb-12 flex items-center gap-2">
-          <!-- <input
-            type="text"
-            #msg
-            class="file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex h-9 w-full min-w-0 rounded-md border px-3 py-1 text-base transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-white/[0.02] border-white/[0.08] text-white placeholder:text-white/30 focus:border-white/[0.15]"
-            placeholder="Ask a question..."
-            (keyup.enter)="parseQuery(msg.value); msg.value = ''"
-            [disabled]="loaderVisible"
-          /> -->
+        <div class="input-container">
           <textarea
-  #msg
-  rows="1"
-  class="file:text-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 flex min-h-[36px] max-h-[100px] w-full min-w-0 rounded-md border px-3 py-2 text-base transition-[color,box-shadow] resize-none overflow-y-auto file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-white/[0.05] border-white/[0.2] text-white placeholder:text-white/30 focus:border-white/[0.35] outline outline-2 outline-transparent focus:outline focus:outline-e focus:outline-neutral-300"
-  placeholder="Ask a question..."
-  (keydown)="handleKeyDown($event, msg)"
-  (input)="autoResize(msg)"
-  [disabled]="loaderVisible"
-></textarea>
+            #msg
+            rows="1"
+            class="chat-input"
+            placeholder="Ask a question..."
+            (keydown)="handleKeyDown($event, msg)"
+            (input)="autoResize(msg)"
+            [disabled]="loaderVisible"
+          ></textarea>
 
           <button
             [disabled]="loaderVisible"
             name="submit_button"
-            class="custom-mini-fab flex items-center justify-center rounded-md w-9 h-9 flex-shrink-0"
+            class="submit-button"
             (click)="parseQuery(msg.value); msg.value = ''; autoResize(msg)"
             type="submit"
           >

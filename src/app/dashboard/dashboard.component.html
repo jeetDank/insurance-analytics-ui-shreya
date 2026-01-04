@@ -1,8 +1,7 @@
-<div class="w-screen h-screen">
-  <mat-toolbar class="border-r border-neutral-900">
-    <!-- Menu button on the left -->
-
-    <div>
+<div class="dashboard-container">
+  <mat-toolbar class="dashboard-toolbar">
+    <!-- Logo icon -->
+    <div class="toolbar-logo">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -15,7 +14,6 @@
         stroke-linejoin="round"
         class="lucide lucide-sparkles h-4 w-4"
         aria-hidden="true"
-        style="color: rgb(148, 163, 184)"
       >
         <path
           d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
@@ -27,25 +25,21 @@
     </div>
 
     <!-- App title/logo -->
-    <div class="flex flex-col ms-2 me-auto">
-      <h4 class="ms-5">Strategy Analytics</h4>
-      <h5 class="ms-5" style="font-size: 12px">
+    <div class="toolbar-title-wrapper">
+      <h4 class="toolbar-title">Strategy Analytics</h4>
+      <h5 class="toolbar-subtitle">
         Financial Intelligence Dashboard
       </h5>
     </div>
 
-    <!-- Spacer to push content to the right -->
+    <!-- Spacer -->
     <span class="spacer"></span>
 
+    <!-- History button -->
     <button
       (click)="toggleHistorySidebar()"
-      data-slot="sheet-trigger"
-      class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 text-white/60 hover:text-white hover:bg-white/[0.05]"
+      class="toolbar-btn"
       type="button"
-      aria-haspopup="dialog"
-      aria-expanded="false"
-      aria-controls="radix-:r0:"
-      data-state="closed"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -62,32 +56,80 @@
       >
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
         <path d="M3 3v5h5"></path>
-        <path d="M12 7v5l4 2"></path></svg
-      ><span class="hidden sm:inline">History</span>
+        <path d="M12 7v5l4 2"></path>
+      </svg>
+      <span class="toolbar-btn-text">History</span>
     </button>
 
+    <!-- Theme Toggle Button -->
+    <button
+      (click)="toggleTheme()"
+      [title]="isDarkTheme ? 'Switch to light theme' : 'Switch to dark theme'"
+      class="toolbar-btn theme-toggle-btn"
+      type="button"
+    >
+      <!-- Sun icon for dark theme -->
+      <svg
+        *ngIf="isDarkTheme"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-sun h-4 w-4"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="m4.93 4.93 1.41 1.41"></path>
+        <path d="m17.66 17.66 1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="m6.34 17.66-1.41 1.41"></path>
+        <path d="m19.07 4.93-1.41 1.41"></path>
+      </svg>
+      <!-- Moon icon for light theme -->
+      <svg
+        *ngIf="!isDarkTheme"
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-moon h-4 w-4"
+        aria-hidden="true"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+      </svg>
+      <span class="toolbar-btn-text">{{ isDarkTheme ? 'Light' : 'Dark' }}</span>
+    </button>
+
+    <!-- Logout button -->
     <button
       (click)="logout()"
-      data-slot="sheet-trigger"
-      class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:hover:bg-accent/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 text-white/60 hover:text-white hover:bg-white/[0.05]"
+      class="toolbar-btn"
       type="button"
-      aria-haspopup="dialog"
-      aria-expanded="false"
-      aria-controls="radix-:r0:"
-      data-state="closed"
     >
       Logout
     </button>
   </mat-toolbar>
+
   <mat-drawer-container class="drawer-container" autosize>
     <mat-drawer
       [opened]="isSideNavOpened"
-      class=""
       #drawer
-      style="border-radius: 0"
       mode="side"
     >
-      <div class="h-full drawer rounded-none">
+      <div class="drawer-content">
         <app-quary-box
           [historicalConvo]="historicalConvo"
           (resetData)="resetData()"
@@ -96,25 +138,13 @@
       </div>
     </mat-drawer>
 
-    <div class="h-full content">
+    <div class="main-content">
+      <!-- Drawer toggle button -->
       <button
         (click)="drawer.toggle()"
-        class="fixed left-0 top-1/2 -translate-y-1/2 z-10 transition-all duration-300 ease-in-out"
+        class="drawer-toggle-btn"
         [title]="drawer.opened ? 'Collapse chat panel' : 'Expand chat panel'"
         [style.left.px]="drawer.opened ? 385 : 0"
-        style="
-          width: 24px;
-          height: 48px;
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 0px 8px 8px 0px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: rgba(255, 255, 255, 0.6);
-        "
       >
         <!-- Left chevron when opened -->
         <svg
@@ -153,69 +183,39 @@
         </svg>
       </button>
 
-      <div class="p-5">
-        <!-- content -->
-
-        @if( isDataAvailable ){
+      <div class="content-wrapper">
+        <!-- Content sections -->
+        @if(isDataAvailable) {
 
         <!-- COMPARISON VIEW -->
-        @if(isComparison){
-        <div
-          class="flex flex-row align-center flex-wrap"
-          style="margin-bottom: 32px"
-        >
+        @if(isComparison) {
+        <div class="section-header">
           <div>
-            <h1 class="!text-2xl">
-              @for(company of companies; track $index ){
+            <h1 class="text-2xl">
+              @for(company of companies; track $index) {
               <div class="flex items-center flex-row">
-                <!-- <img
-                  style="width: 100%; height: 100%"
-                  [src]="company.logo"
-                  alt=""
-                /> -->
                 <i class="material-icons me-2">apartment</i>
                 <div>
-                  {{ company.name }}@if($index < companies.length-1){ , }
+                  {{ company.name }}@if($index < companies.length-1) { , }
                 </div>
               </div>
               }
             </h1>
-
             <p>Quarterly Metric comparison</p>
           </div>
 
-          <div class="ms-auto flex items-center">
+          <div class="section-actions">
             <button
               (click)="toggleAddMetricPopup()"
-              data-slot="dialog-trigger"
-              class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2"
+              class="action-button-primary"
               type="button"
-              aria-haspopup="dialog"
-              aria-expanded="false"
-              aria-controls="radix-:r9:"
-              data-state="closed"
-              style="
-                background-color: rgb(156, 163, 175);
-                color: rgb(0, 0, 0);
-                border-radius: 8px;
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                  Inter, sans-serif;
-                font-weight: 500;
-                text-transform: none;
-                letter-spacing: normal;
-              "
             >
               Metric List
             </button>
 
             <button
               (click)="exportToExcel()"
-              data-slot="button"
-              class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 border-white/10 text-white/70 hover:text-white hover:bg-white/[0.05]"
-              style="
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                  Inter, sans-serif;
-              "
+              class="action-button-secondary"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -239,10 +239,7 @@
           </div>
         </div>
 
-        <div
-          style="padding: 0px 10px"
-          class="pill-container rounded-md p-1 flex gap-1 mb-4"
-        >
+        <div class="pill-container">
           <!-- Cards Option -->
           <button
             (click)="selectOption('cards')"
@@ -364,26 +361,22 @@
         </div>
 
         <!-- Cards View -->
-        @if(currentTabComparison =='cards'){
+        @if(currentTabComparison =='cards') {
 
         <div class="space-y-4">
           <div
             *ngIf="cardView.length == 0"
-            class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
-            style="min-height: 300px"
+            class="no-data-message"
           >
-            <p class="!text-xs">No custom metrics are available right now.</p>
+            <p>No custom metrics are available right now.</p>
           </div>
           @for (item of customCardView; track $index) {
           <div>
             <!-- Metric Header -->
-            <h2
-              style="z-index: 9999"
-              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900 mb-4"
-            >
+            <h2 class="metric-header">
               {{ item.metricName }}
 
-              <small class="ml-2 cursor-pointer tooltip">
+              <small class="metric-info-icon tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ item.tooltip }}
                 </span>
@@ -406,7 +399,7 @@
                 </svg>
               </small>
             </h2>
-            <div class="text-xs text-secondary mb-2">Custom Metric</div>
+            <div class="custom-metric-label">Custom Metric</div>
 
             <!-- Cards Grid - Dynamic Companies -->
             <div
@@ -436,12 +429,9 @@
           @for (item of cardView; track $index) {
           <div>
             <!-- Metric Header -->
-            <h2
-              style="z-index: 9999"
-              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900 mb-4"
-            >
+            <h2 class="metric-header">
               {{ item.metricName }}
-              <small class="ml-2 cursor-pointer tooltip">
+              <small class="metric-info-icon tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ item.tooltip }}
                 </span>
@@ -493,16 +483,12 @@
         }
 
         <!-- Line View -->
-        @if(currentTabComparison=='line'){ @for(chart of chartsData;track $index
-        ) {
-        <div class="!mt-4">
-          <h2
-            style="z-index: 9999"
-            class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
-          >
+        @if(currentTabComparison=='line') { @for(chart of chartsData; track $index) {
+        <div class="mt-4">
+          <h2 class="metric-header mb-4">
             {{ chart.metric_name }}
 
-            <small class="ml-2 cursor-pointer tooltip">
+            <small class="metric-info-icon tooltip">
               <span class="tooltiptext text-white/60">
                 {{ chart.tooltip }}
               </span>
@@ -526,25 +512,20 @@
             </small>
           </h2>
           <div
-            class="rounded-xl"
+            class="chart-wrapper"
             echarts
             [options]="chart.line_chart_config"
-            style="height: 400px"
           ></div>
         </div>
         } }
 
         <!-- Bar View -->
-        @if(currentTabComparison=='bar'){ @for(chart of chartsData;track $index
-        ) {
+        @if(currentTabComparison=='bar') { @for(chart of chartsData; track $index) {
         <div>
-          <h2
-            style="z-index: 9999"
-            class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
-          >
+          <h2 class="metric-header mb-4">
             {{ chart.metric_name }}
 
-            <small class="ml-2 cursor-pointer tooltip">
+            <small class="metric-info-icon tooltip">
               <span class="tooltiptext text-white/60">
                 {{ chart.tooltip }}
               </span>
@@ -568,27 +549,23 @@
             </small>
           </h2>
           <div
-            class="rounded-xl"
+            class="chart-wrapper"
             echarts
             [options]="chart.bar_chart_config"
-            style="height: 400px"
           ></div>
         </div>
         } }
 
         <!-- Table View -->
-        @if(currentTabComparison == 'table'){
+        @if(currentTabComparison == 'table') {
         <div>
-          @if(metricTableData.length > 0){
+          @if(metricTableData.length > 0) {
           <div class="space-y-4">
-            @for(table of metricTableData;track $index){
-            <h2
-              style="z-index: 9999"
-              class="flex flex-row items-center mb-4 font-space-mono text-lg font-semibold text-gray-900"
-            >
+            @for(table of metricTableData; track $index) {
+            <h2 class="metric-header mb-4">
               {{ table.metric_name }}
 
-              <small class="ml-2 cursor-pointer tooltip">
+              <small class="metric-info-icon tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ table?.tooltip }}
                 </span>
@@ -623,63 +600,34 @@
         } }
 
         <!-- SEGMENT VIEW -->
-        @if(!isComparison){
-        <div
-          class="flex flex-row align-center flex-wrap"
-          style="margin-bottom: 32px"
-        >
+        @if(!isComparison) {
+        <div class="section-header">
           <div>
-            <h1 class="!text-2xl">
-              @for(company of companies; track $index ){
+            <h1 class="text-2xl">
+              @for(company of companies; track $index) {
               <div class="flex items-center flex-row">
-                <!-- <img
-                  style="width: 100%; height: 100%"
-                  [src]="company.logo"
-                  alt=""
-                /> -->
                 <i class="material-icons me-2">apartment</i>
                 <div>
-                  {{ company.name }}@if($index < companies.length-1){ , }
+                  {{ company.name }}@if($index < companies.length-1) { , }
                 </div>
               </div>
               }
             </h1>
-
             <p>Segment Analysis</p>
           </div>
 
-          <div class="ms-auto flex items-center">
+          <div class="section-actions">
             <button
               (click)="toggleAddMetricPopup()"
-              data-slot="dialog-trigger"
-              class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2"
+              class="action-button-primary"
               type="button"
-              aria-haspopup="dialog"
-              aria-expanded="false"
-              aria-controls="radix-:r9:"
-              data-state="closed"
-              style="
-                background-color: rgb(156, 163, 175);
-                color: rgb(0, 0, 0);
-                border-radius: 8px;
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                  Inter, sans-serif;
-                font-weight: 500;
-                text-transform: none;
-                letter-spacing: normal;
-              "
             >
               Metric List
             </button>
 
             <button
               (click)="exportToExcel()"
-              data-slot="button"
-              class="ms-2 inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border bg-background dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2 border-white/10 text-white/70 hover:text-white hover:bg-white/[0.05]"
-              style="
-                font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-                  Inter, sans-serif;
-              "
+              class="action-button-secondary"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -696,16 +644,14 @@
               >
                 <path d="M12 15V3"></path>
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <path d="m7 10 5 5 5-5"></path></svg
-              >Export to Excel
+                <path d="m7 10 5 5 5-5"></path>
+              </svg>
+              Export to Excel
             </button>
           </div>
         </div>
 
-        <div
-          style="padding: 0px 10px"
-          class="pill-container rounded-md p-1 flex gap-1 mb-4"
-        >
+        <div class="pill-container">
           <button
             (click)="selectSegmentOption('cards')"
             [ngClass]="{
@@ -827,26 +773,22 @@
           </button>
         </div>
 
-        @if(currentTabSegment == 'cards' ){
+        @if(currentTabSegment == 'cards') {
         <div class="space-y-4">
           <div
             *ngIf="customCardView.length == 0"
-            class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
-            style="min-height: 300px"
+            class="no-data-message"
           >
-            <p class="!text-xs">No custom metrics are available right now.</p>
+            <p>No custom metrics are available right now.</p>
           </div>
 
           @for (item of customCardView; track $index) {
           <div>
             <!-- Metric Header -->
-            <h2
-              style="z-index: 9999"
-              class="flex flex-row items-center font-space-mono text-lg font-semibold text-gray-900 mb-4"
-            >
+            <h2 class="metric-header">
               {{ item.metricName }}
 
-              <small class="ml-2 cursor-pointer tooltip">
+              <small class="metric-info-icon tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ item.tooltip }}
                 </span>
@@ -869,7 +811,7 @@
                 </svg>
               </small>
             </h2>
-            <div class="text-xs text-secondary mb-2">Custom Metric</div>
+            <div class="custom-metric-label">Custom Metric</div>
 
             <!-- Cards Grid - Dynamic Companies -->
             <div
@@ -897,15 +839,15 @@
         }
 
         <!-- Stacked View -->
-        @if(currentTabSegment == 'stacked'){
+        @if(currentTabSegment == 'stacked') {
 
         <div class="space-y-4">
           <div
             *ngIf="customCardView.length == 0"
-            class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
+            class="no-data-message"
             style="min-height: 50px"
           >
-            <p class="!text-xs">
+            <p>
               Note: Segment data is sourced from XBRL filings. Information may
               vary from the company's primary financial statements due to
               tagging inconsistencies.
@@ -913,7 +855,7 @@
           </div>
 
           <!-- Container for all charts -->
-          <div class="rounded-xl p-6">
+          <div class="chart-container">
             <!-- Two-column grid for charts with 2 or fewer segments (DEFAULT) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               @for (chart of segmentStackedOption; track $index) { @if
@@ -921,24 +863,21 @@
               || 0) <= 2) {
               <div class="flex flex-col">
                 <!-- Chart Title -->
-                <div class="text-sm font-bold mb-2">
+                <div class="chart-title">
                   {{ chart.company }} - {{ chart.period }} -
                   {{ chart.metric_name | dropSnakeCase }}
                 </div>
 
                 <!-- Chart or No Data Message -->
                 @if (chart?.config?.series.length == 0) {
-                <div
-                  class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
-                  style="min-height: 300px"
-                >
-                  <p class="!text-xs">
+                <div class="no-data-message">
+                  <p>
                     Data for selected Quarter(s) not available
                   </p>
                 </div>
                 } @else {
                 <div
-                  class="rounded-xl"
+                  class="chart-wrapper"
                   echarts
                   [options]="chart.config"
                   style="min-height: 400px; width: 100%"
@@ -962,24 +901,21 @@
               || 0) > 2) {
               <div class="flex flex-col">
                 <!-- Chart Title -->
-                <div class="text-sm font-bold mb-2">
+                <div class="chart-title">
                   {{ chart.company }} - {{ chart.period }} -
                   {{ chart.metric_name | dropSnakeCase }}
                 </div>
 
                 <!-- Chart or No Data Message -->
                 @if (chart?.config?.series.length == 0) {
-                <div
-                  class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
-                  style="min-height: 400px"
-                >
-                  <p class="!text-xs">
+                <div class="no-data-message" style="min-height: 400px">
+                  <p>
                     Data for selected Quarter(s) not available
                   </p>
                 </div>
                 } @else {
                 <div
-                  class="rounded-xl"
+                  class="chart-wrapper"
                   echarts
                   [options]="chart.config"
                   style="min-height: 400px; width: 100%"
@@ -1001,31 +937,23 @@
         }
 
         <!-- Bar View -->
-        @if(currentTabSegment == 'bar'){ @if (commonSegmentsOption.length ==0) {
+        @if(currentTabSegment == 'bar') { @if (commonSegmentsOption.length == 0) {
 
-        <div
-          class="mt-10 flex items-center justify-center rounded-xl border border-gray-700"
-          style="min-height: 300px"
-        >
-          <p class="!text-xs">
+        <div class="no-data-message">
+          <p>
             Note: Single company analysis is being viewed hence comparison
             analysis is not available
           </p>
         </div>
         }
         <div class="space-y-4">
-          <div
-            class="rounded-xl p-6 flex flex-col flex-wrap"
-            style="min-height: 200px"
-          >
+          <div class="chart-container" style="min-height: 200px">
             @for (chart of commonSegmentsOption; track $index) {
-            <div class="text-sm mb-2 mt-2">
-              <div class="text-sm font-bold">
-                <!-- {{ chart.segment_name }} - {{ chart.period }} -->
-              </div>
+            <div class="chart-title mt-2 mb-2">
+              <!-- {{ chart.segment_name }} - {{ chart.period }} -->
             </div>
             <div
-              class="rounded-xl"
+              class="chart-wrapper"
               echarts
               [options]="chart.config"
               style="height: 500px; width: 100%"
@@ -1037,7 +965,7 @@
         }
 
         <!-- Table View -->
-        @if(currentTabSegment == 'table'){
+        @if(currentTabSegment == 'table') {
         <div class="space-y-6">
           @if(segmentTableData && segmentTableData.length > 0) { @for(company of
           segmentTableData; track company.company_name) {
@@ -1066,10 +994,7 @@
             }
           </div>
           } } @else {
-          <div
-            class="rounded-xl p-6 flex items-center justify-center"
-            style="min-height: 400px"
-          >
+          <div class="chart-container" style="min-height: 400px">
             <p class="text-white/60">No segment data available</p>
           </div>
           }
@@ -1077,8 +1002,7 @@
         } }
 
         <!-- AI Insights Section (Common for both views) -->
-        <!-- AI Insights Section (Common for both views) -->
-        <div class="flex flex-row align-center mt-5 mb-3 gap-2">
+        <div class="insights-header">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -1091,7 +1015,6 @@
             stroke-linejoin="round"
             class="lucide lucide-sparkles h-5 w-5"
             aria-hidden="true"
-            style="color: rgb(156, 163, 175)"
           >
             <path
               d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"
@@ -1100,7 +1023,7 @@
             <path d="M22 4h-4"></path>
             <circle cx="4" cy="20" r="2"></circle>
           </svg>
-          <h2 class="mb-4">AI-Powered Insights</h2>
+          <h2>AI-Powered Insights</h2>
         </div>
 
         <!-- Show loader when loading -->
@@ -1110,46 +1033,24 @@
         }
 
         <!-- Show insights when available -->
-        @if ( this.insightsData.length != 0) {
-        <!-- <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-    @for (insight of insightsData; track $index) {
-      <app-insights-card
-        [icon]="insight.icon"
-        [title]="insight.title"
-        [description]="insight.description"
-        [source]="insight.source"
-      />
-    }
-  </div> -->
-
-      @if(this.insightsAnalysis) {
-  <div class="mb-5 border border-neutral-900 p-5" style="max-height: 500px; overflow-y: auto;">
-    <markdown [data]="insightsAnalysis"></markdown>
-  </div>
-}
-      
+        @if (this.insightsData.length != 0) {
+          @if(this.insightsAnalysis) {
+            <div class="insights-content">
+              <markdown [data]="insightsAnalysis"></markdown>
+            </div>
+          }
         }
 
         <!-- Always show button when not loading -->
         @if(!varianceAnalysisLoader) {
-        <p class="mb-2">
+        <p class="insights-description">
           Generate AI-driven insights analyzing quarter-over-quarter variance.
         </p>
 
         <button
           (click)="startVarienceAnalysis()"
-          class="cursor-pointer line-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg:not([class*='size-'])]:size-4 shrink-0 [&amp;_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive bg-primary text-primary-foreground hover:bg-primary/90 h-8 rounded-md px-3 has-[&gt;svg]:px-2.5 gap-2"
+          class="action-button-primary"
           type="button"
-          style="
-            background-color: rgb(156, 163, 175);
-            color: rgb(0, 0, 0);
-            border-radius: 8px;
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-              Inter, sans-serif;
-            font-weight: 500;
-            text-transform: none;
-            letter-spacing: normal;
-          "
         >
           {{
             this.insightsData.length != 0
@@ -1157,34 +1058,32 @@
               : "Generate AI Insights"
           }}
         </button>
-        } @if(referenceData.length > 0){
+        } 
+        
+        @if(referenceData.length > 0) {
         <div class="mt-5">
           <app-references [refData]="referenceData"></app-references>
         </div>
-        } }
+        } 
+        
+        }
       </div>
 
-      @if(isLoaderVisible && varianceAnalysisLoader == false){
-      <div class="flex flex-col items-center justify-center h-full">
+      @if(isLoaderVisible && varianceAnalysisLoader == false) {
+      <div class="loader-container">
         <app-loader-with-insights
           [loaderMessage]="liveProgressData.main_title"
           [description]="liveProgressData.sub_title"
           [stepWiseInfo]="liveProgressData.process"
         ></app-loader-with-insights>
       </div>
-      } @if(!isDataAvailable && !isLoaderVisible ){
+      } 
+      
+      @if(!isDataAvailable && !isLoaderVisible) {
 
-      <div class="flex flex-col items-center justify-center h-full">
-        <div class="mb-8 flex justify-center gap-3">
-          <div
-            class="w-14 h-14 flex items-center justify-center border"
-            style="
-              border-color: rgba(255, 255, 255, 0.04);
-              background: rgba(255, 255, 255, 0.024);
-              border-radius: 20px;
-              border-width: 1px;
-            "
-          >
+      <div class="empty-state">
+        <div class="empty-state-icons">
+          <div class="empty-state-icon-box">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -1195,9 +1094,8 @@
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="lucide lucide-chart-column w-6 h-6"
+              class="lucide lucide-chart-column w-6 h-6 empty-state-icon"
               aria-hidden="true"
-              style="color: rgb(148, 163, 184)"
             >
               <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
               <path d="M18 17V9"></path>
@@ -1205,15 +1103,7 @@
               <path d="M8 17v-3"></path>
             </svg>
           </div>
-          <div
-            class="w-14 h-14 flex items-center justify-center border"
-            style="
-              border-color: rgba(255, 255, 255, 0.04);
-              background: rgba(255, 255, 255, 0.024);
-              border-radius: 20px;
-              border-width: 1px;
-            "
-          >
+          <div class="empty-state-icon-box">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -1224,9 +1114,8 @@
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
-              class="lucide lucide-trending-up w-6 h-6"
+              class="lucide lucide-trending-up w-6 h-6 empty-state-icon"
               aria-hidden="true"
-              style="color: rgb(148, 163, 184)"
             >
               <path d="M16 7h6v6"></path>
               <path d="m22 7-8.5 8.5-5-5L2 17"></path>
@@ -1234,8 +1123,8 @@
           </div>
         </div>
 
-        <h1 class="mb-3">Start Your Analysis</h1>
-        <p class="w-lg text-center">
+        <h1 class="empty-state-title">Start Your Analysis</h1>
+        <p class="empty-state-description">
           Select a sample prompt from the left panel or enter your own query to
           begin analyzing quarterly financial metrics across insurance companies
         </p>
@@ -1245,33 +1134,27 @@
   </mat-drawer-container>
 </div>
 
-<!-- 
-
-<div>
-
-  <i-lucide [img]="FileIcon" class="my-icon"></i-lucide>
-</div> -->
-
+<!-- History Sidebar -->
 @if (isHistorySidebarOpen) {
 <div
-  class="history-container"
+  class="history-overlay"
   [class.show]="showHistorySidebar"
   (click)="closeHistorySidebar()"
 >
   <div
-    class="history-sidebar p-4"
+    class="history-sidebar"
     [class.show]="showHistorySidebar"
     (click)="$event.stopPropagation()"
   >
     <!-- Header with close button -->
-    <div class="mb-5 flex justify-between items-start">
+    <div class="history-header">
       <div>
-        <h2 class="text-md">Dashboard History</h2>
-        <p>Search and load previously created dashboard</p>
+        <h2 class="history-title">Dashboard History</h2>
+        <p class="history-subtitle">Search and load previously created dashboard</p>
       </div>
       <button
         (click)="closeHistorySidebar()"
-        class="p-2 hover:bg-[#ffffff0d] rounded-lg transition-colors"
+        class="history-close-btn"
       >
         <svg
           width="20"
@@ -1287,7 +1170,8 @@
       </button>
     </div>
 
-    <div class="mb-5 flex flex-row custom-search-box items-center">
+    <!-- Search box -->
+    <div class="history-search-box">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -1298,9 +1182,8 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        class="lucide lucide-search h-3.5 w-3.5 ms-1"
+        class="lucide lucide-search h-3.5 w-3.5 ms-1 history-search-icon"
         aria-hidden="true"
-        style="color: rgba(255, 255, 255, 0.4)"
       >
         <path d="m21 21-4.34-4.34"></path>
         <circle cx="11" cy="11" r="8"></circle>
@@ -1309,59 +1192,62 @@
       <input
         #search
         (keyup)="searchHistoricalQuery(search.value)"
-        class="grow outline-none"
+        class="history-search-input"
         type="text"
         placeholder="Search previous queries..."
       />
     </div>
 
-    @for(query of filteredHistoricalQueries;track $index){
-    @if(query?.API_DATA?.ANALYSIS_DATA){
-    <div class="query" (click)="loadHistoricalData(query)">
-      <h3 class="text-md mb-2">
-        {{ query?.API_DATA?.PARSED_QUERY?.raw_query }}
-      </h3>
-      <div class="mb-2 flex flex-row gap-2 items-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-calendar h-3 w-3"
-          aria-hidden="true"
-        >
-          <path d="M8 2v4"></path>
-          <path d="M16 2v4"></path>
-          <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-          <path d="M3 10h18"></path>
-        </svg>
-        <span class="text-sm sub-text">{{
-          query?.API_DATA?.PARSED_QUERY?.time_config?.reference_date
-        }}</span>
-      </div>
+    <!-- Query list -->
+    @for(query of filteredHistoricalQueries; track $index) {
+      @if(query?.API_DATA?.ANALYSIS_DATA) {
+        <div class="history-query-item" (click)="loadHistoricalData(query)">
+          <h3 class="history-query-title">
+            {{ query?.API_DATA?.PARSED_QUERY?.raw_query }}
+          </h3>
+          <div class="history-query-date">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-calendar h-3 w-3"
+              aria-hidden="true"
+            >
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+              <path d="M3 10h18"></path>
+            </svg>
+            <span class="history-query-date-text">
+              {{ query?.API_DATA?.PARSED_QUERY?.time_config?.reference_date }}
+            </span>
+          </div>
 
-      <!-- requested metrics -->
-      <div class="flex flex-row flex-wrap align-center gap-2">
-        @for(metric of query?.API_DATA?.PARSED_QUERY?.metrics;track metric ){
-        <div class="chip pt-1 pb-1 ps-2 pe-2">
-          <h5>{{ metric }}</h5>
+          <!-- Requested metrics -->
+          <div class="history-query-metrics">
+            @for(metric of query?.API_DATA?.PARSED_QUERY?.metrics; track metric) {
+              <div class="history-metric-chip">
+                <h5>{{ metric }}</h5>
+              </div>
+            }
+          </div>
         </div>
-        }
-      </div>
-    </div>
-    } }
+      }
+    }
   </div>
 </div>
-} @if(isAddMetricComponentVisible){
+}
 
-<app-add-metric
-  [secMetrics]="availableMetrics"
-  (close)="closeAddMetricComponent()"
-></app-add-metric>
-
+<!-- Add Metric Component -->
+@if(isAddMetricComponentVisible) {
+  <app-add-metric
+    [secMetrics]="availableMetrics"
+    (close)="closeAddMetricComponent()"
+  ></app-add-metric>
 }

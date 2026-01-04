@@ -1,95 +1,70 @@
 <div
-  class="card-style g-card text-card-foreground flex flex-col gap-6 rounded-xl border h-full transition-all duration-300 hover:bg-white/[0.03] relative overflow-hidden"
+  class="card-style flex flex-col gap-6 h-full transition-all duration-300 relative overflow-hidden"
 >
-  <div
-    class="absolute top-0 left-0 w-1 h-full"
-    style="background: rgb(156, 163, 175)"
-  ></div>
+  <div class="absolute top-0 left-0 w-1 h-full status-bar-left"></div>
+  
   <div>
     <div class="flex flex-row items-center">
-      <!-- <h5 style="width: 15px; margin-right: 5px;">
-        @if(logo()){
-        <img style="width: 100%;" [src]="logo()" alt=" " [title]="CompanyName()">
-        }
-        @else {
-
-          <i style="font-size: 14px" class="material-icons me-2">apartment </i>
-        }
+      <p>{{ CompanyName() }}</p>
       
-      </h5> -->
-      <p>
-        {{ CompanyName() }}
-      </p>
-
       <div class="ms-auto">
         <span
           data-slot="badge"
-          class="inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap [&amp;&gt;svg]:size-3 gap-1 [&amp;&gt;svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden text-foreground [a&amp;]:hover:bg-accent [a&amp;]:hover:text-accent-foreground shrink-0"
-          style="
-            background-color: rgba(156, 163, 175, 0.082);
-            border-color: rgba(156, 163, 175, 0.25);
-            color: rgba(255, 255, 255, 0.835);
-            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
-              Inter, sans-serif;
-          "
+          class="period-badge inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap gap-1 transition-[color,box-shadow] overflow-hidden shrink-0"
         >
-          {{ period() }}</span
-        >
+          {{ period() }}
+        </span>
       </div>
     </div>
-
+    
     <div class="metric_value mt-1 mb-1">
       {{ metric() }}
     </div>
-
-
+    
     @if(trend()){
       <div class="flex flex-row items-center">
-      @if (trend()?.positive) {
-
-      <div class="flex items-center gap-1 text-xs text-green-400">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-trending-up h-3 w-3"
-          aria-hidden="true"
-        >
-          <path d="M16 7h6v6"></path>
-          <path d="m22 7-8.5 8.5-5-5L2 17"></path></svg
-        ><span> {{ trend()?.trend | textFormatter:5}}% </span>
+        @if (trend()?.positive) {
+          <div class="flex items-center gap-1 text-xs trend-positive-color">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-trending-up h-3 w-3"
+              aria-hidden="true"
+            >
+              <path d="M16 7h6v6"></path>
+              <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+            </svg>
+            <span>{{ trend()?.trend | textFormatter:5}}%</span>
+          </div>
+        } @else {
+          <div class="flex items-center gap-1 text-xs trend-negative-color">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-trending-down h-3 w-3"
+              aria-hidden="true"
+            >
+              <path d="M16 17h6v-6"></path>
+              <path d="m22 17-8.5-8.5-5 5L2 7"></path>
+            </svg>
+            <span>{{ trend()?.trend | textFormatter:5}}%</span>
+          </div>
+        }
       </div>
-
-      <span class="text-green-700"> </span>
-      } @else{
-
-      <div class="flex items-center gap-1 text-xs text-red-400">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="lucide lucide-trending-down h-3 w-3"
-          aria-hidden="true"
-        >
-          <path d="M16 17h6v-6"></path>
-          <path d="m22 17-8.5-8.5-5 5L2 7"></path></svg
-        ><span >{{ trend()?.trend |textFormatter:5}}%</span>
-      </div>
-      }
-    </div>
     }
-    
   </div>
 </div>
