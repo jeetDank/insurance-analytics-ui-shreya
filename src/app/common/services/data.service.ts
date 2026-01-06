@@ -428,7 +428,7 @@ export class DataService {
           return {
             companyName: this.formatCompanyName(company.company_name),
             period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
-            metric: this.formatMetricValueWithPrefixPostfix(metricData),
+            metric: `${metricData.prefix} ${metricData.value} ${metricData.postfix}` ,
             logo: quarter.logo,
             trend: {
               trend: metricData?.trend ? metricData?.trend : 'N/A',
