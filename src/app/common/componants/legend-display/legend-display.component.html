@@ -1,13 +1,10 @@
-<!-- <div class="text-sm font-semibold mb-3">
-  Total: $ {{ data.total ? data.total.toFixed(2) : 'N/A' }}B
-</div> -->
 <div class="flex flex-wrap justify-center gap-8 w-full">
   <!-- PARENTS -->
   @for (legend of data.legends; track legend.name) {
-  <div class="space-y-0.5 w-full sm:w-[300px] max-w-[450px] ">
+  <div class="space-y-0.5 w-full sm:w-[300px] max-w-[450px]">
     <!-- Parent Row -->
     <div
-      class="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-white/5 border-l-4"
+      class="flex items-center gap-2 px-2 py-1.5 rounded cursor-pointer hover:bg-white/5 border-l-4 legend-parent"
       [style.border-color]="legend.color"
     >
       <div
@@ -16,15 +13,15 @@
         [style.boxShadow]="legend.color + '60 0px 0px 8px'"
       ></div>
 
-      <span class="flex-1 text-[11px] font-semibold text-white/90">
+      <span class="flex-1 text-[11px] font-semibold legend-name">
         {{ legend.name }}
       </span>
 
-      <span class="text-[10px] font-semibold" [style.color]="legend.color">
+      <span class="text-[10px] font-semibold legend-percentage" [style.color]="legend.color">
         {{ round(legend.percentage) }}%
       </span>
 
-      <span class="text-[9px] text-white/60">
+      <span class="text-[9px] legend-amount">
         ${{ legend?.value ? legend.value.toFixed(2) : 'N/A' }}B
       </span>
     </div>
@@ -37,7 +34,7 @@
     >
       @for (child of legend.children; track child.name) {
       <div
-        class="flex items-center gap-2 px-2 py-1 rounded cursor-pointer hover:bg-white/5"
+        class="flex items-center gap-2 px-2 py-1 rounded cursor-pointer hover:bg-white/5 legend-child"
       >
         <div
           class="h-2 w-2 rounded-sm flex-shrink-0"
@@ -45,15 +42,15 @@
           [style.boxShadow]="child.color + '50 0px 0px 6px'"
         ></div>
 
-        <span class="flex-1 text-[10px] text-white/60">
+        <span class="flex-1 text-[10px] child-name">
           {{ child.name }}
         </span>
 
-        <span class="text-[9px] font-medium" [style.color]="child.color">
+        <span class="text-[9px] font-medium child-percentage" [style.color]="child.color">
           {{ round(child.percentage) }}%
         </span>
 
-        <span class="text-[9px] text-white/40">
+        <span class="text-[9px] child-amount">
           ${{ child.value ? child.value.toFixed(2) : 'N/A' }}B
         </span>
       </div>

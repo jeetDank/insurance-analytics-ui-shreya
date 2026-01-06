@@ -10,6 +10,7 @@ button:disabled {
   width: 250px;
 }
 
+// Default styles (will act as dark theme with data-theme="dark")
 .ambiguity-text-highlight {
   color: rgb(156, 163, 175);
   font-weight: 600;
@@ -29,6 +30,9 @@ button:disabled {
   background-color: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.05);
   color: rgba(255, 255, 255, 0.9);
+    border-radius: 18px;
+  border-width: 1px;
+  border-style: solid;
 }
 
 // Navigation buttons
@@ -62,8 +66,8 @@ button:disabled {
   cursor: not-allowed;
 }
 
-// Light theme
-:host-context(:not(.dark-theme)) {
+// Light theme - triggered when data-theme is not "dark"
+:host-context([data-theme]:not([data-theme="dark"])) {
   .ambiguity-text-primary {
     color: rgba(0, 0, 0, 0.9);
   }
@@ -85,14 +89,13 @@ button:disabled {
     background-color: rgba(0, 0, 0, 0.02);
     border-color: rgba(0, 0, 0, 0.08);
     color: rgba(0, 0, 0, 0.85);
-    
   }
 
   .suggestion-btn-selected {
     background-color: rgba(0, 0, 0, 0.06);
     border-color: rgba(0, 0, 0, 0.12);
     color: rgba(0, 0, 0, 0.9);
-     border-radius: 18px;
+      border-radius: 18px;
   border-width: 1px;
   border-style: solid;
   }
@@ -117,3 +120,8 @@ button:disabled {
     color: rgba(100, 116, 139, 0.5);
   }
 }
+
+// Alternative if you want to be more explicit about dark theme:
+// :host-context([data-theme="dark"]) {
+//   // Dark theme styles here (optional - they're already the default)
+// }

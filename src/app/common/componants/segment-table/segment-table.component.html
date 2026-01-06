@@ -4,13 +4,13 @@
       class="text-xs"
       style="border-bottom: 1px solid rgba(255, 255, 255, 0.04)"
     >
-      <th class="text-left py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
+      <th class="text-left py-2 px-3" >
         Segment
       </th>
-      <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
+      <th class="text-right py-2 px-3" >
         {{  getCleanName(segment_name) }}
       </th>
-      <th class="text-right py-2 px-3" style="color: rgba(255, 255, 255, 0.95)">
+      <th class="text-right py-2 px-3" >
         %
       </th>
     </tr>
@@ -28,7 +28,7 @@
           <td
             class="py-1.5 px-3 relative"
             [style.padding-left]="getPaddingLeft(row.level)"
-            [style.color]="row.isTopLevel ? 'rgba(255, 255, 255, 0.95)' : 'rgba(255, 255, 255, 0.55)'"
+            
             [style.font-weight]="row.isTopLevel ? '600' : '400'"
             [style.cursor]="row.hasChildren ? 'pointer' : 'default'"
             (click)="row.hasChildren ? toggleExpand($index) : null"
@@ -69,7 +69,7 @@
           </td>
           <td
             class="text-right py-1.5 px-3"
-            [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.55)'"
+            
             [style.font-weight]="row.isTopLevel ? '600' : '400'"
           >
             @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {
@@ -78,7 +78,7 @@
           </td>
           <td
             class="text-right py-1.5 px-3"
-            [style.color]="row.isTopLevel ? row.color : 'rgba(255, 255, 255, 0.44)'"
+           
             [style.font-weight]="row.isTopLevel ? '600' : '400'"
           >
             @if (row.item.value  && row.item.value !== '$0.00' && row.item.value !== '0.0%') {

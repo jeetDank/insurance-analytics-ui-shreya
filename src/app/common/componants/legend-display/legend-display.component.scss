@@ -1,0 +1,85 @@
+// Legends Component Text Styles
+// ============================================================================
+
+// Parent Legend Name
+.legend-name {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  font-size: 0.6875rem; // 11px
+  line-height: 1.5;
+  font-family: apple-font;
+  
+  // Dark theme adjustment
+  [data-theme="dark"] & {
+    color: var(--color-text-primary);
+  }
+}
+
+// Parent Legend Percentage (color is set inline from legend.color)
+.legend-percentage {
+  font-weight: 600;
+  font-size: 0.625rem; // 10px
+  line-height: 1.5;
+  font-family: apple-font;
+}
+
+// Parent Legend Amount
+.legend-amount {
+  color: var(--color-text-tertiary);
+  font-size: 0.5625rem; // 9px
+  font-weight: 400;
+  line-height: 1.5;
+  font-family: apple-font;
+  
+  [data-theme="dark"] & {
+    color: var(--color-text-timestamp);
+  }
+}
+
+// Child Legend Name
+.child-name {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  font-size: 0.625rem; // 10px
+  line-height: 1.5;
+  font-family: apple-font;
+  
+  [data-theme="dark"] & {
+    color: var(--color-text-secondary);
+  }
+}
+
+// Child Legend Percentage (color is set inline from child.color)
+.child-percentage {
+  font-weight: 500;
+  font-size: 0.5625rem; // 9px
+  line-height: 1.5;
+  font-family: apple-font;
+}
+
+// Child Legend Amount
+.child-amount {
+  color: var(--color-text-muted);
+  font-size: 0.5625rem; // 9px
+  font-weight: 400;
+  line-height: 1.5;
+  font-family: apple-font;
+  
+  [data-theme="dark"] & {
+    color: var(--color-text-timestamp);
+  }
+}
+
+// Hover states
+.legend-parent:hover,
+.legend-child:hover {
+  .legend-name,
+  .child-name {
+    opacity: 0.9;
+  }
+  
+  .legend-amount,
+  .child-amount {
+    opacity: 0.8;
+  }
+}
