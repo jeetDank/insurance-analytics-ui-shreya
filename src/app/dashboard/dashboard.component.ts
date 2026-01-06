@@ -554,16 +554,17 @@ export class DashboardComponent implements OnInit {
     this.applyTheme();
   }
 
-  private applyTheme(): void {
-     document.documentElement.classList.remove('dark-theme')
-    if (this.isDarkTheme) {
-      document.documentElement.classList.add('dark-theme');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-      localStorage.setItem('theme', 'light');
-    }
+private applyTheme(): void {
+  if (this.isDarkTheme) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('dark-theme'); // Optional: keep for backward compatibility
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.remove('dark-theme'); // Remove if using only data attribute
+    localStorage.setItem('theme', 'light');
   }
+}
 
   historicalQueries: any = [];
   filteredHistoricalQueries: any = [];

@@ -107,7 +107,7 @@
 button.active {
   background-color: var(--color-active-bg, #222);
   color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  // box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 button.inactive {
@@ -184,7 +184,7 @@ button.inactive:hover {
 
 .input-container {
   padding: 1rem;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -276,15 +276,17 @@ button.inactive:hover {
 
 .step-active {
   app-step::ng-deep .my-3 {
-    border-left-color: white !important;
+    border-left-color: var(--active-step-color, white) !important;
     border-left-width: 3px;
 
     h5,
     h6 {
-      color: white !important;
+      color: var(--active-step-color, white) !important;
     }
   }
 }
+
+
 
 @keyframes stepSlideIn {
   from {

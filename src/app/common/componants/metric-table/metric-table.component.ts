@@ -24,50 +24,49 @@ export interface TableCellContent {
 @Component({
   selector: 'app-metric-table',
   standalone: true,
-  imports: [CommonModule,TextFormatterPipe],
+  imports: [CommonModule, TextFormatterPipe],
   templateUrl: './metric-table.component.html',
   styleUrls: ['./metric-table.component.scss']
 })
 export class MetricTableComponent {
 
-  getRowBackground(index: number): string {
-  return index % 2 === 0 ? '#1f1f21' : '#131315';
-}
-getTrendColorClass(color?: string): string {
-  switch (color) {
-    case 'green':
-      return 'trend-color-green';
-    case 'red':
-      return 'trend-color-red';
-    case 'gray':
-    default:
-      return 'trend-color-gray';
-  }
-}
+  // REMOVED getRowBackground() - now handled by CSS classes
 
-quarterRenderer = (value: any): TableCellContent => ({
-  type: 'trend',
-  value: value?.value,
-  trend: {
-    direction: value?.change >= 0 ? 'up' : 'down',
-    value: value?.change !== null && 
-           value?.change !== undefined && 
-           !isNaN(value?.change) 
-      ? `${Math.abs(value.change).toFixed(1)}%`
-      : 'N/A',
-    color: value?.change >= 0
-      ? 'rgb(34,197,94)'
-      : 'rgb(239,68,68)'
+  getTrendColorClass(color?: string): string {
+    switch (color) {
+      case 'green':
+        return 'trend-color-green';
+      case 'red':
+        return 'trend-color-red';
+      case 'gray':
+      default:
+        return 'trend-color-gray';
+    }
   }
-});
+
+  quarterRenderer = (value: any): TableCellContent => ({
+    type: 'trend',
+    value: value?.value,
+    trend: {
+      direction: value?.change >= 0 ? 'up' : 'down',
+      value: value?.change !== null && 
+             value?.change !== undefined && 
+             !isNaN(value?.change) 
+        ? `${Math.abs(value.change).toFixed(1)}%`
+        : 'N/A',
+      color: value?.change >= 0
+        ? 'rgb(34,197,94)'
+        : 'rgb(239,68,68)'
+    }
+  });
+
   getTrendColor(color?: string, direction?: 'up' | 'down'): string {
-  if (color) return color;
+    if (color) return color;
 
-  return direction === 'up'
-    ? 'rgb(34, 197, 94)'   // green
-    : 'rgb(239, 68, 68)';  // red
-}
-
+    return direction === 'up'
+      ? 'rgb(34, 197, 94)'   // green
+      : 'rgb(239, 68, 68)';  // red
+  }
 
   /* ===== Inputs ===== */
 
@@ -128,8 +127,6 @@ quarterRenderer = (value: any): TableCellContent => ({
 
   /* ===== Helpers ===== */
 
-  
-
   getColumnAlignment(column: TableColumn): string {
     return `text-${column.align || 'left'}`;
   }
@@ -156,7 +153,6 @@ quarterRenderer = (value: any): TableCellContent => ({
   }
 
   /* ===== Cell Renderer ===== */
-
 
   getTrendIconClass(direction: 'up' | 'down'): string {
     return direction === 'up'

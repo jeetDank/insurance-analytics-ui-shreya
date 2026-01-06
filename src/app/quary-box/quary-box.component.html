@@ -152,7 +152,7 @@
           <textarea
             #msg
             rows="1"
-            class="chat-input"
+            class="chat-input overflow-y-auto"
             placeholder="Ask a question..."
             (keydown)="handleKeyDown($event, msg)"
             (input)="autoResize(msg)"

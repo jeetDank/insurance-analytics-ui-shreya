@@ -10,19 +10,6 @@ button:disabled {
   width: 250px;
 }
 
-// // Text colors
-// .ambiguity-text-primary {
-//   color: rgba(255, 255, 255, 0.9);
-// }
-
-// .ambiguity-text-secondary {
-//   color: rgba(255, 255, 255, 0.85);
-// }
-
-// .ambiguity-text-muted {
-//   color: rgba(255, 255, 255, 0.5);
-// }
-
 .ambiguity-text-highlight {
   color: rgb(156, 163, 175);
   font-weight: 600;
@@ -76,7 +63,7 @@ button:disabled {
 }
 
 // Light theme
-:root:not(.dark-theme) {
+:host-context(:not(.dark-theme)) {
   .ambiguity-text-primary {
     color: rgba(0, 0, 0, 0.9);
   }
@@ -98,12 +85,16 @@ button:disabled {
     background-color: rgba(0, 0, 0, 0.02);
     border-color: rgba(0, 0, 0, 0.08);
     color: rgba(0, 0, 0, 0.85);
+    
   }
 
   .suggestion-btn-selected {
     background-color: rgba(0, 0, 0, 0.06);
     border-color: rgba(0, 0, 0, 0.12);
     color: rgba(0, 0, 0, 0.9);
+     border-radius: 18px;
+  border-width: 1px;
+  border-style: solid;
   }
 
   .nav-btn-enabled {

@@ -1,11 +1,10 @@
 <table class="w-full mb-4">
   <thead>
-    <tr class="border-b border-white/5">
+    <tr class="border-b table-border">
       <th
         *ngFor="let column of columns"
-        class="px-6 py-4 text-xs font-medium"
+        class="px-6 py-4 text-xs font-medium table-header-text"
         [ngClass]="getColumnAlignment(column)"
-        [style.color]="getHeaderColor(column)"
       >
         {{ column.header }}
       </th>
@@ -16,7 +15,10 @@
     <tr
       *ngFor="let row of data; let i = index; let last = last"
       class="transition-colors"
-      [style.background-color]="getRowBackground(i)"
+      [ngClass]="{
+        'table-row-even': i % 2 === 0,
+        'table-row-odd': i % 2 !== 0
+      }"
     >
       <td
         *ngFor="let column of columns"
@@ -29,7 +31,7 @@
           [ngSwitch]="cell.type"
         >
           <!-- TEXT -->
-          <span *ngSwitchCase="'text'" [style.color]="getCellColor(column)">
+          <span *ngSwitchCase="'text'" class="table-cell-text">
             {{ cell.value }}
           </span>
 
@@ -44,9 +46,9 @@
             }"
           >
             <!-- Main value -->
-            <span class="text-white/90">
-              {{ cell.value  }}
-            </span>
+            <div class="table-cell-text">
+              {{ cell.value }}
+            </div>
 
             <!-- Arrow + % -->
             <div

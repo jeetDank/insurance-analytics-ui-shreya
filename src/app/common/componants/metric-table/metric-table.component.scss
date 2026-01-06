@@ -1,11 +1,51 @@
-
-
-
-th{
-    font-size: 16px;
-
+th {
+  font-size: 16px;
 }
 
-td{
-    font-size: 16px;
+td {
+  font-size: 16px;
+}
+
+/* Light theme (default) */
+.table-row-even {
+  background-color: rgba(0, 0, 0, 0.015);
+}
+
+.table-row-odd {
+  background-color: rgba(0, 0, 0, 0.005);
+}
+
+.table-border {
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.table-header-text {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.table-cell-text {
+  color: rgba(0, 0, 0, 0.9);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  .table-row-even {
+    background-color: #1f1f21;
+  }
+  
+  .table-row-odd {
+    background-color: #131315;
+  }
+  
+  .table-border {
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+  
+  .table-header-text {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  
+  .table-cell-text {
+    color: rgba(255, 255, 255, 0.9);
+  }
 }

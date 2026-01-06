@@ -3,54 +3,38 @@
 @use './styles/theme';
 @use "tailwindcss";
 
-
-
-
 // ============================================================================
 // GLOBAL TYPOGRAPHY STYLES
 // ============================================================================
 
-
 @font-face {
-      font-family: 'apple-font'; /* Choose a descriptive name */
-      src: url('assets/fonts/appleFont/SF-Pro.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-    }
-
-    @font-face {
-      font-family: 'space-mono';
-      src: url('assets/fonts/spaceMono/SpaceMono-Regular.ttf') format('truetype');
-      font-weight: normal;
-      font-style: normal;
-    }
-
-* {
-  
-  box-sizing: border-box;
-  // letter-spacing: 0.7px;
+  font-family: 'apple-font';
+  src: url('assets/fonts/appleFont/SF-Pro.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
 
-span i{
+@font-face {
+  font-family: 'space-mono';
+  src: url('assets/fonts/spaceMono/SpaceMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+span i {
   font-size: 18px !important;
 }
 
 // ============================================================================
-// THEME VARIABLES
+// THEME VARIABLES - USE DATA ATTRIBUTES FOR BETTER SPECIFICITY
 // ============================================================================
 
-// Default (Dark Theme)
+// Default (Light Theme)
 :root {
-  --color-background: #0a0a0c;
-  --color-text-primary: rgba(255, 255, 255, 0.95);
-  --color-text-secondary: rgba(255, 255, 255, 0.6);
-  --color-text-muted: rgba(255, 255, 255, 0.5);
-  --color-border: rgba(255, 255, 255, 0.1);
-  --color-card-bg: rgba(255, 255, 255, 0.04);
-}
-
-// Light Theme
-:root:not(.dark-theme) {
   // Text Colors
   --color-text-primary: rgba(0, 0, 0, 0.9);
   --color-text-secondary: rgba(0, 0, 0, 0.6);
@@ -58,6 +42,7 @@ span i{
   --color-text-helper: rgba(0, 0, 0, 0.5);
   --color-text-tertiary: rgba(0, 0, 0, 0.4);
   --color-text-timestamp: rgba(0, 0, 0, 0.3);
+  
   
   // Background Colors
   --color-background: #f5f5f5;
@@ -68,8 +53,8 @@ span i{
   --color-hover-bg: rgba(0, 0, 0, 0.05);
   --color-input-bg: rgba(0, 0, 0, 0.02);
   --color-header-bg: rgba(0, 0, 0, 0.03);
-  --color-even-row-bg: rgba(0, 0, 0, 0.015);
-  --color-odd-row-bg: rgba(0, 0, 0, 0.005);
+  --color-even-row-bg: rgba(0, 0, 0, 0.020);
+  --color-odd-row-bg: rgba(0, 0, 0, 0.056);
   --color-badge-bg: rgba(0, 0, 0, 0.05);
   --color-progress-bg: rgba(0, 0, 0, 0.08);
   --color-sample-prompt-bg: rgba(0, 0, 0, 0.02);
@@ -88,13 +73,53 @@ span i{
   --color-button-text: rgba(0, 0, 0, 0.85);
   --color-button-disabled-border: rgba(0, 0, 0, 0.08);
   --color-button-disabled-text: rgba(0, 0, 0, 0.4);
+
+   --active-step-color: rgb(0, 0, 0); 
+}
+
+// Dark Theme
+[data-theme="dark"] {
+  --color-background: #0a0a0c;
+  --color-text-primary: rgba(255, 255, 255, 0.95);
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+  --color-border: rgba(255, 255, 255, 0.1);
+  --color-card-bg: rgba(255, 255, 255, 0.04);
+  
+  
+  // Override light theme variables for dark mode
+  --color-text-helper: rgba(255, 255, 255, 0.5);
+  --color-text-tertiary: rgba(255, 255, 255, 0.4);
+  --color-text-timestamp: rgba(255, 255, 255, 0.3);
+  --color-user-message-bg: rgba(255, 255, 255, 0.08);
+  --color-ai-message-bg: rgba(255, 255, 255, 0.04);
+  --color-active-bg: rgba(255, 255, 255, 0.06);
+  --color-hover-bg: rgba(255, 255, 255, 0.05);
+  --color-input-bg: rgba(255, 255, 255, 0.02);
+  --color-header-bg: rgba(255, 255, 255, 0.03);
+  --color-even-row-bg: #1f1f21;
+  --color-odd-row-bg: #131315;
+  --color-badge-bg: rgba(255, 255, 255, 0.05);
+  --color-progress-bg: rgba(255, 255, 255, 0.08);
+  --color-sample-prompt-bg: rgba(255, 255, 255, 0.02);
+  --color-border-strong: rgba(255, 255, 255, 0.2);
+  --color-border-medium: rgba(255, 255, 255, 0.15);
+  --color-border-subtle: rgba(255, 255, 255, 0.08);
+  --color-input-border: rgba(255, 255, 255, 0.15);
+  --color-button-bg: rgba(255, 255, 255, 0.02);
+  --color-button-hover: rgba(255, 255, 255, 0.06);
+  --color-button-border: rgba(255, 255, 255, 0.15);
+  --color-button-text: rgba(255, 255, 255, 0.85);
+  --color-button-disabled-border: rgba(255, 255, 255, 0.08);
+  --color-button-disabled-text: rgba(255, 255, 255, 0.4);
+   --active-step-color: white;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background: var(--color-background, #0a0a0c);
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
+  background: var(--color-background);
+  color: var(--color-text-primary);
   font-size: 0.875rem;
   line-height: 1.5;
   font-family: apple-font;
@@ -102,112 +127,109 @@ body {
 
 // Dashboard Heading
 h1 {
-  font-size: 20px;      // 20px
+  font-size: 20px;
   font-weight: 500;
   line-height: 1.33;
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
-  // margin: 0 0 1rem 0;
+  color: var(--color-text-primary);
 }
 
 // Section Title
 h2 {
-  font-size: 1.125rem;    // 18px
+  font-size: 1.125rem;
   font-weight: 500;
   line-height: 1.44;
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
+  color: var(--color-text-primary);
   margin: 0 0 0.75rem 0;
 }
 
 // Regular paragraph text
 p {
-  font-size: 0.875rem;    // 14px
+  font-size: 0.875rem;
   font-weight: 400;
-  // line-height: 1.6;
-  color: var(--color-text-primary, #ffffff8c);
+  color: var(--color-text-primary);
 }
 
 // Small helper text
 small {
-  font-size: 0.75rem;     // 12px
+  font-size: 0.75rem;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--color-text-secondary, #6c6c6c);
+  color: var(--color-text-secondary);
   display: inline-block;
 }
 
 // Additional heading levels for consistency
 h3 {
-  font-size: 1rem;        // 16px
+  font-size: 1rem;
   font-weight: 500;
   line-height: 1.5;
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
+  color: var(--color-text-primary);
   margin: 0 0 0.5rem 0;
 }
 
 h4 {
-  font-size: 0.875rem;    // 14px
+  font-size: 0.875rem;
   font-weight: 500;
   line-height: 1.5;
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
-  margin:0;
+  color: var(--color-text-primary);
+  margin: 0;
 }
 
-h5{
-  font-size: 0.75rem;     // 12px
+h5 {
+  font-size: 0.75rem;
   font-weight: 300;
   line-height: 1.5;
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.55));
+  color: var(--color-text-secondary);
   margin: 0 0 0.3rem 0;
 }
 
-h6{
-  font-size: 11px;     // 11px
+h6 {
+  font-size: 11px;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--color-text-secondary, #5b5b5b);
+  color: var(--color-text-secondary);
   margin: 0 0 0.5rem 0;
 }
 
-
 // Links
 a {
-  color: var(--color-primary, #94a3b8);
+  color: var(--color-text-secondary);
   text-decoration: none;
   transition: color 0.2s ease;
   font-size: 14px;
   
   &:hover {
-    color: var(--color-accent, #cbd5e1);
+    opacity: 0.8;
   }
 }
 
 // Strong and emphasis
 strong, b {
   font-weight: 600;
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
+  color: var(--color-text-primary);
 }
 
 em, i {
   font-style: italic;
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.55));
+  color: var(--color-text-secondary);
 }
 
 // Code elements
 code {
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
   font-size: 0.875em;
-  background: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  background: var(--color-card-bg);
   padding: 0.2em 0.4em;
   border-radius: 4px;
-  color: var(--color-primary, #94a3b8);
+  color: var(--color-text-secondary);
 }
 
 pre {
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
   font-size: 0.875rem;
-  background: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  background: var(--color-card-bg);
   padding: 1rem;
-  border-radius: var(--border-radius, 20px);
+  border-radius: 4px;
   overflow-x: auto;
   line-height: 1.5;
   
@@ -225,7 +247,7 @@ ul, ol {
   li {
     font-size: 0.875rem;
     line-height: 1.6;
-    color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
+    color: var(--color-text-primary);
     margin-bottom: 0.5rem;
   }
 }
@@ -234,8 +256,8 @@ ul, ol {
 blockquote {
   margin: 1rem 0;
   padding: 1rem 1.5rem;
-  border-left: 4px solid var(--color-primary, #94a3b8);
-  background: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border-left: 4px solid var(--color-border);
+  background: var(--color-card-bg);
   font-style: italic;
   
   p {
@@ -246,72 +268,69 @@ blockquote {
 // Horizontal rule
 hr {
   border: none;
-  border-top: var(--border-width, 1px) solid var(--color-border, rgba(255, 255, 255, 0.04));
+  border-top: 1px solid var(--color-border);
   margin: 2rem 0;
 }
 
 // Selection
 ::selection {
-  background: var(--color-primary, #94a3b8);
-  color: var(--color-background, #0a0a0c);
+  background: var(--color-text-secondary);
+  color: var(--color-background);
 }
 
-.icon-box{
+.icon-box {
   padding: 10px;
-  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.06));
+  background-color: var(--color-card-bg);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  gap: 2;
+  gap: 2px;
   height: 56px;
   width: 56px;
 }
 
-.icon-color{
-  color: var(--color-text-secondary, #94a3b8);
+.icon-color {
+  color: var(--color-text-secondary);
 }
 
-.text-primary{
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.95));
+.text-primary {
+  color: var(--color-text-primary);
 }
 
-.text-secondary{
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.55));
+.text-secondary {
+  color: var(--color-text-secondary);
 }
 
-.text-muted{
-  color: var(--color-text-muted, rgba(255, 255, 255, 0.3));
+.text-muted {
+  color: var(--color-text-muted);
 }
 
-.sub-text{
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.4));
+.sub-text {
+  color: var(--color-text-secondary);
 }
 
-.font-grey2{
-  color: var(--color-border-subtle, rgba(255, 255, 255, 0.05));
+.font-grey2 {
+  color: var(--color-border-subtle);
 }
 
-.card_background{
-  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.08));
+.card_background {
+  background-color: var(--color-card-bg);
   width: 284px;
 }
 
-.system_background{
-  background-color: var(--color-input-bg, rgba(255, 255, 255, 0.04));
+.system_background {
+  background-color: var(--color-input-bg);
   width: 250px;
 }
 
-
-
-
-.text-danger{
-color: rgb(0, 193, 0);
-}
-.text-success{
-color: rgb(202, 2, 2);
+.text-danger {
+  color: rgb(0, 193, 0);
 }
 
+.text-success {
+  color: rgb(202, 2, 2);
+}
 
 // ============================================================================
 // CUSTOM SCROLLBAR
@@ -324,52 +343,36 @@ color: rgb(202, 2, 2);
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-background, #0a0a0c);
+  background: var(--color-background);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(128, 128, 128, 0.3);
+  background: var(--color-border);
   border-radius: 10px;
-  border: 2px solid var(--color-background, rgba(121, 121, 121, 0.3));
+  border: 2px solid var(--color-background);
   
   &:hover {
-    background: rgba(128, 128, 128, 0.5);
+    background: var(--color-border-strong);
   }
   
   &:active {
-    background: rgba(128, 128, 128, 0.7);
+    background: var(--color-border-medium);
   }
 }
 
 ::-webkit-scrollbar-corner {
-  background: var(--color-background, #0a0a0c);
+  background: var(--color-background);
 }
 
 // Firefox
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(128, 128, 128, 0.3) var(--color-background);
+  scrollbar-color: var(--color-border) var(--color-background);
 }
 
-// Light theme scrollbar
-:root:not(.dark-theme) {
-  ::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border: 2px solid var(--color-background);
-    
-    &:hover {
-      background: rgba(0, 0, 0, 0.3);
-    }
-    
-    &:active {
-      background: rgba(0, 0, 0, 0.4);
-    }
-  }
-}
-
-.card-background{
-  background-color: var(--color-card-bg, #1d1d1d);
+.card-background {
+  background-color: var(--color-card-bg);
 }
 
 .mat-mdc-form-field input,
@@ -377,84 +380,100 @@ color: rgb(202, 2, 2);
   font-size: 14px !important;
 }
 
-/* Also target textareas if you use them */
 .mat-mdc-form-field textarea {
   font-size: 14px !important;
 }
 
-/* Target the placeholder text */
 .mat-mdc-form-field .mat-mdc-input-element::placeholder {
   font-size: 14px !important;
 }
 
-
-
-.metric_value{
+.metric_value {
   font-size: 30px;
   font-weight: 600;
 }
 
-
-.font-16{
+.font-16 {
   font-size: 16px;
 }
 
-
-input::placeholder{
- color:#858586 !important;
+// Placeholder colors based on theme
+:root {
+  input::placeholder {
+    color: rgba(0, 0, 0, 0.4) !important;
+  }
+  
+  textarea::placeholder {
+    color: rgba(0, 0, 0, 0.4) !important;
+  }
 }
 
-textarea::placeholder{
-  color: #858586;
+[data-theme="dark"] {
+  input::placeholder {
+    color: #858586 !important;
+  }
+  
+  textarea::placeholder {
+    color: #858586 !important;
+  }
 }
 
-
-.font-space-mono{
-  font-family: space-mono !important; 
+.font-space-mono {
+  font-family: space-mono !important;
 }
 
+// Table specific styles that were missing
+.table-row-even {
+  background-color: var(--color-even-row-bg) !important;
+}
 
+.table-row-odd {
+  background-color: var(--color-odd-row-bg) !important;
+}
 
+.table-border {
+  border-color: var(--color-border) !important;
+}
 
+.table-header-text {
+  color: var(--color-text-secondary) !important;
+}
+
+.table-cell-text {
+  color: var(--color-text-primary) !important;
+}
 
 .tooltip {
   position: relative;
   display: inline-block;
 }
 
-/* Tooltip text */
 .tooltip .tooltiptext {
   visibility: hidden;
-  background-color: black;
-  color: white;
+  background-color: var(--color-card-bg);
+  color: var(--color-text-primary);
   text-align: center;
   padding: 8px 12px;
   border-radius: 6px;
   min-width: 100px;
   white-space: nowrap;
   font-family: apple-font;
-  /* Position the tooltip */
   position: absolute;
   z-index: 9999;
   bottom: -300%;
   left: 300%;
   transform: translateX(-50%);
-  
-  /* Optional: Add a slight shadow for depth */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  
-  /* Optional: Smooth transition */
   opacity: 0;
   transition: opacity 0.3s;
+  border: 1px solid var(--color-border);
 }
 
-/* Show the tooltip on hover */
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
 }
 
-/* Optional: Add a small arrow pointing down */
 .tooltip .tooltiptext::after {
   content: "";
   position: absolute;
@@ -463,17 +482,20 @@ textarea::placeholder{
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: black transparent transparent transparent;
+  border-color: var(--color-card-bg) transparent transparent transparent;
   z-index: 9999;
 }
 
-
-input{
+input {
   padding: 4px 12px;
   height: 36px;
-  // outline: none;
-}
-
-input:focus-visible{
-  //  outline: none;
+  background: var(--color-input-bg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-input-border);
+  border-radius: 4px;
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-border-strong);
+    outline-offset: 2px;
+  }
 }

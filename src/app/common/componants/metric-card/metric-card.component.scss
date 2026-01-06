@@ -1,67 +1,33 @@
 .card-style {
-    background: rgba(255, 255, 255, 0.016);
-    backdrop-filter: blur(16px);
-    border-color: rgba(255, 255, 255, 0.024);
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-border);
     border-radius: 18px;
-    border-width: 1px;
-    box-shadow: none;
     padding: 30px;
-    border-style: solid;
+    transition: all 0.2s ease;
     
     &:hover {
-        background: rgba(255, 255, 255, 0.03);
+        background: var(--color-hover-bg);
     }
 }
 
-// Light theme card
-:root:not(.dark-theme) {
-    .card-style {
-        background: #ffffff;
-        border-color: rgba(0, 0, 0, 0.1);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        
-        &:hover {
-            background: rgba(0, 0, 0, 0.02);
-        }
-    }
-}
-
-// Badge styles
 .period-badge {
-    background-color: rgba(156, 163, 175, 0.082);
-    border-color: rgba(156, 163, 175, 0.25);
-    color: rgba(255, 255, 255, 0.835);
-    border-style: solid;
+    background-color: var(--color-badge-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    display: inline-block;
 }
 
-:root:not(.dark-theme) {
-    .period-badge {
-        background-color: rgba(0, 0, 0, 0.05);
-        border-color: rgba(0, 0, 0, 0.15);
-        color: rgba(0, 0, 0, 0.85);
-    }
-}
-
-// Status bar
 .status-bar-left {
-    background: rgb(156, 163, 175);
+    background: var(--color-border);
 }
 
-// Trend colors
 .trend-positive-color {
-    color: rgb(74, 222, 128);
+    color: #16a34a; // Default green (works well in both themes)
 }
 
 .trend-negative-color {
-    color: rgb(248, 113, 113);
-}
-
-:root:not(.dark-theme) {
-    .trend-positive-color {
-        color: rgb(22, 163, 74);
-    }
-    
-    .trend-negative-color {
-        color: rgb(220, 38, 38);
-    }
+    color: #dc2626; // Default red (works well in both themes)
 }
