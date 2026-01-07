@@ -24,7 +24,7 @@ export interface TableCellContent {
 @Component({
   selector: 'app-metric-table',
   standalone: true,
-  imports: [CommonModule, TextFormatterPipe],
+  imports: [CommonModule],
   templateUrl: './metric-table.component.html',
   styleUrls: ['./metric-table.component.scss']
 })

@@ -65,6 +65,10 @@ export class InsuranceAnalyticsService {
   }
 
 
+  getFormulaList(){
+    return this.http.get(BASE_URL + apis.FETCH_FORMULAS);
+  }
+
 
   
 

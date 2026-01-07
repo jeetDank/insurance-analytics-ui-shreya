@@ -182,10 +182,10 @@
           <path d="m9 18 6-6-6-6"></path>
         </svg>
       </button>
-
+       @if(isDataAvailable) {
       <div class="content-wrapper">
         <!-- Content sections -->
-        @if(isDataAvailable) {
+       
 
         <!-- COMPARISON VIEW -->
         @if(isComparison) {
@@ -239,7 +239,9 @@
           </div>
         </div>
 
-        <div class="pill-container">
+        <div class="flex justify-end"> 
+
+          <div class="pill-container">
           <!-- Cards Option -->
           <button
             (click)="selectOption('cards')"
@@ -359,6 +361,10 @@
             <div>Table</div>
           </button>
         </div>
+
+        </div>
+
+        
 
         <!-- Cards View -->
         @if(currentTabComparison =='cards') {
@@ -651,7 +657,8 @@
           </div>
         </div>
 
-        <div class="pill-container">
+        <div class="flex justify-end">
+          <div class="pill-container">
           <button
             (click)="selectSegmentOption('cards')"
             [ngClass]="{
@@ -771,6 +778,7 @@
             </svg>
             <div>Table</div>
           </button>
+        </div>
         </div>
 
         @if(currentTabSegment == 'cards') {
@@ -981,7 +989,7 @@
               </p>
 
               @for(metric of quarter.metrics; track metric.metric_name) {
-              <div class="rounded-xl p-4">
+              <div class="segment-table rounded-xl p-4">
                 <app-segment-table
                   [segment_name]="metric.metric_name"
                   [data]="metric.tableData"
@@ -1066,9 +1074,9 @@
         </div>
         } 
         
-        }
+        
       </div>
-
+    }
       @if(isLoaderVisible && varianceAnalysisLoader == false) {
       <div class="loader-container">
         <app-loader-with-insights

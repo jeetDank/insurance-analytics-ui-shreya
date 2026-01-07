@@ -296,6 +296,7 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
         this.loaderVisible = res;
       },
     });
+    this.fetchFormulaList();
   }
 
   parseQuery(userQuery: string) {
@@ -436,6 +437,32 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
     this.updateCustomMetricView.emit(customCardData);
   }
 
+  fetchFormulaList() {
+    this._apiService.getFormulaList().subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          const formulas: any[] = res.formulas.map((formula: any) => {
+            return {
+              description: formula.formula,
+              metric: formula.metric_name,
+              metricViewName: formula.display_name,
+              value: 0,
+            };
+          });
+          if (formulas.length > 0) {
+            this.formulaSuggestions = formulas;
+            console.log(this.formulaSuggestions);
+            
+          } else {
+            this.formulaSuggestions = [];
+          }
+        } else {
+        }
+      },
+      error: (err) => {},
+    });
+  }
+
   startBatchAnalysis() {
     let payload = this._dataService.fetchBatchAnalysisPayload();
 
@@ -454,8 +481,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             summary: res.summary,
           };
           this._dataService.setAnalysisData(data);
-          this.formulaSuggestions =
-            this._dataService.fetchMetricsForFormulaComponent();
+          // this.formulaSuggestions =
+          //   this._dataService.fetchMetricsForFormulaComponent();
+
+          // console.log(this.formulaSuggestions);
 
           // here check if multiple periods are available if yes then
           // go for varience analysis other wise just show till batch analysis
@@ -467,6 +496,9 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
             this.recordProcessMsg(5);
             this.dataReady.emit(true);
             this.recordMsg('I have updated the dashboard.', true);
+            if (this.historicalConvo == null) {
+              this._dataService.addQueryToHistory(this.conversation);
+            }
             // this.startVarienceAnalysis();
           } else {
             if (this.historicalConvo == null) {
