@@ -552,6 +552,9 @@ export class DashboardComponent implements OnInit {
   toggleTheme(): void {
     this.isDarkTheme = !this.isDarkTheme;
     this.applyTheme();
+    if(this._dataService.API_DATA.ANALYSIS_DATA){
+      this.showData();
+    }
   }
 
 private applyTheme(): void {
@@ -817,7 +820,7 @@ private applyTheme(): void {
 
       console.log(this.cardView);
 
-      this.chartsData = this._dataService.generateChartConfigs(this.cardView);
+      this.chartsData = this._dataService.generateChartConfigs(this.cardView,!this.isDarkTheme);
 
       this.metricTableData = this._dataService.generateMetricTableData(
         this.cardView

@@ -615,7 +615,7 @@ export class DataService {
     );
   }
 
-  generateChartConfigs(metricsData: any[]): any {
+  generateChartConfigs(metricsData: any[], isLight: boolean = true): any {
     const results: any[] = [];
 
     // Helper function for common chart config
@@ -769,6 +769,49 @@ export class DataService {
       };
     }
 
+    // Theme-based color configurations
+    const themeConfig = {
+      // Dark theme (default)
+      dark: {
+        tooltip: {
+          backgroundColor: 'rgba(15, 15, 25, 0.95)',
+          borderColor: 'rgba(100, 100, 150, 0.3)',
+          textColor: '#e0e0ff',
+        },
+        axis: {
+          labelColor: '#c0c0ff',
+          lineColor: 'rgba(160, 160, 255, 0.4)',
+        },
+        legend: {
+          textColor: '#b0b0ff',
+        },
+        splitLine: {
+          color: 'rgba(80, 80, 120, 0.2)',
+        },
+      },
+      // Light theme
+      light: {
+        tooltip: {
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'rgba(200, 200, 200, 0.8)',
+          textColor: '#333333',
+        },
+        axis: {
+          labelColor: '#666666',
+          lineColor: 'rgba(100, 100, 100, 0.4)',
+        },
+        legend: {
+          textColor: '#333333',
+        },
+        splitLine: {
+          color: 'rgba(200, 200, 200, 0.4)',
+        },
+      }
+    };
+
+    // Select theme based on isLight parameter
+    const currentTheme = isLight ? themeConfig.light : themeConfig.dark;
+
     // Process each metric
     metricsData.forEach((metric) => {
       // Extract and sort periods dynamically
@@ -823,20 +866,20 @@ export class DataService {
           symbolSize: 8,
           lineStyle: {
             width: 4,
-            shadowColor: `${color}80`,
+            shadowColor: isLight ? `${color}40` : `${color}80`,
             shadowBlur: 10,
             shadowOffsetY: 3,
           },
           itemStyle: {
             color: color,
             borderWidth: 2,
-            borderColor: '#1a1a2e',
+            borderColor: isLight ? '#ffffff' : '#1a1a2e',
           },
           data: companiesData[company],
         };
       });
 
-      // Create BAR CHART series
+      // Create BAR CHART series - REMOVED SHADOWS for all themes
       const barSeries = companies.map((company, index) => {
         const colorConfig = getGradientColor(company, index);
         return {
@@ -847,15 +890,12 @@ export class DataService {
           itemStyle: {
             color: colorConfig.gradient,
             borderRadius: [6, 6, 0, 0],
-            shadowColor: colorConfig.shadow,
-            shadowBlur: 15,
-            shadowOffsetY: 3,
+            // Removed shadow properties for all themes
             borderWidth: 0,
           },
           emphasis: {
             itemStyle: {
-              shadowColor: colorConfig.shadowHover,
-              shadowBlur: 25,
+              // Removed shadow for hover state
             },
           },
           data: companiesData[company],
@@ -868,13 +908,13 @@ export class DataService {
 
         tooltip: {
           trigger: 'axis',
-          backgroundColor: 'rgba(15, 15, 25, 0.95)',
-          borderColor: 'rgba(100, 100, 150, 0.3)',
+          backgroundColor: currentTheme.tooltip.backgroundColor,
+          borderColor: currentTheme.tooltip.borderColor,
           borderWidth: 1,
           borderRadius: 12,
           padding: 12,
           textStyle: {
-            color: '#e0e0ff',
+            color: currentTheme.tooltip.textColor,
             fontSize: 12,
             fontWeight: 'normal',
           },
@@ -898,7 +938,7 @@ export class DataService {
           bottom: 10,
           textStyle: {
             fontSize: 13,
-            color: '#b0b0ff',
+            color: currentTheme.legend.textColor,
             fontWeight: '500',
           },
           itemGap: 25,
@@ -911,14 +951,14 @@ export class DataService {
           boundaryGap: false,
           data: periods,
           axisLabel: {
-            color: '#c0c0ff',
+            color: currentTheme.axis.labelColor,
             fontSize: 12,
             fontWeight: '500',
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(160, 160, 255, 0.4)',
+              color: currentTheme.axis.lineColor,
               width: 1.5,
             },
           },
@@ -930,20 +970,20 @@ export class DataService {
           axisLabel: {
             formatter: yAxisConfig.formatter,
             fontSize: 12,
-            color: '#c0c0ff',
+            color: currentTheme.axis.labelColor,
             fontWeight: '500',
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(160, 160, 255, 0.4)',
+              color: currentTheme.axis.lineColor,
               width: 1.5,
             },
           },
           splitLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(80, 80, 120, 0.2)',
+              color: currentTheme.splitLine.color,
               type: 'dashed',
               width: 1,
             },
@@ -961,13 +1001,13 @@ export class DataService {
 
         tooltip: {
           trigger: 'axis',
-          backgroundColor: 'rgba(15, 15, 25, 0.95)',
-          borderColor: 'rgba(100, 100, 150, 0.3)',
+          backgroundColor: currentTheme.tooltip.backgroundColor,
+          borderColor: currentTheme.tooltip.borderColor,
           borderWidth: 1,
           borderRadius: 12,
           padding: 12,
           textStyle: {
-            color: '#e0e0ff',
+            color: currentTheme.tooltip.textColor,
             fontSize: 12,
             fontWeight: 'normal',
           },
@@ -991,7 +1031,7 @@ export class DataService {
           bottom: 10,
           textStyle: {
             fontSize: 13,
-            color: '#b0b0ff',
+            color: currentTheme.legend.textColor,
             fontWeight: '500',
           },
           itemGap: 25,
@@ -1011,7 +1051,7 @@ export class DataService {
           type: 'category',
           data: periods,
           axisLabel: {
-            color: '#c0c0ff',
+            color: currentTheme.axis.labelColor,
             fontSize: 12,
             fontWeight: '500',
             interval: 0, // Show all labels
@@ -1019,7 +1059,7 @@ export class DataService {
           axisLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(160, 160, 255, 0.4)',
+              color: currentTheme.axis.lineColor,
               width: 1.5,
             },
           },
@@ -1035,20 +1075,20 @@ export class DataService {
           axisLabel: {
             formatter: yAxisConfig.formatter,
             fontSize: 12,
-            color: '#c0c0ff',
+            color: currentTheme.axis.labelColor,
             fontWeight: '500',
           },
           axisLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(160, 160, 255, 0.4)',
+              color: currentTheme.axis.lineColor,
               width: 1.5,
             },
           },
           splitLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(80, 80, 120, 0.2)',
+              color: currentTheme.splitLine.color,
               type: 'dashed',
             },
           },
