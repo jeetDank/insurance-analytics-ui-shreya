@@ -43,7 +43,24 @@ export class LoginComponent implements OnInit {
 
 
   }
+ isDarkTheme = true;
+  toggleTheme(): void {
+    this.isDarkTheme = !this.isDarkTheme;
+    this.applyTheme();
+   
+  }
 
+private applyTheme(): void {
+  if (this.isDarkTheme) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.documentElement.classList.add('dark-theme'); // Optional: keep for backward compatibility
+    localStorage.setItem('theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.documentElement.classList.remove('dark-theme'); // Remove if using only data attribute
+    localStorage.setItem('theme', 'light');
+  }
+}
   ngOnInit(): void {
 
    const username =  localStorage.getItem("username"); 
@@ -52,6 +69,7 @@ export class LoginComponent implements OnInit {
    if(username && password){
     this.router.navigateByUrl('/dashboard')
    }
+   this.applyTheme()
    
   }
 }

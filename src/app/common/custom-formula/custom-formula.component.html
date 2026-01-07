@@ -101,6 +101,7 @@
         <!-- Suggestions Dropdown -->
         @if(showSuggestions && filteredSuggestions.length > 0) {
         <div class="suggestions-dropdown">
+          <h5>*Double click to select the metric</h5>
           @for(suggestion of filteredSuggestions; track suggestion.metric) {
           <div
             class="suggestion-item"

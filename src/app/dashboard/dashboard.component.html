@@ -27,20 +27,14 @@
     <!-- App title/logo -->
     <div class="toolbar-title-wrapper">
       <h4 class="toolbar-title">Strategy Analytics</h4>
-      <h5 class="toolbar-subtitle">
-        Financial Intelligence Dashboard
-      </h5>
+      <h5 class="toolbar-subtitle">Financial Intelligence Dashboard</h5>
     </div>
 
     <!-- Spacer -->
     <span class="spacer"></span>
 
     <!-- History button -->
-    <button
-      (click)="toggleHistorySidebar()"
-      class="toolbar-btn"
-      type="button"
-    >
+    <button (click)="toggleHistorySidebar()" class="toolbar-btn" type="button">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -110,25 +104,15 @@
       >
         <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
       </svg>
-      <span class="toolbar-btn-text">{{ isDarkTheme ? 'Light' : 'Dark' }}</span>
+      <span class="toolbar-btn-text">{{ isDarkTheme ? "Light" : "Dark" }}</span>
     </button>
 
     <!-- Logout button -->
-    <button
-      (click)="logout()"
-      class="toolbar-btn"
-      type="button"
-    >
-      Logout
-    </button>
+    <button (click)="logout()" class="toolbar-btn" type="button">Logout</button>
   </mat-toolbar>
 
   <mat-drawer-container class="drawer-container" autosize>
-    <mat-drawer
-      [opened]="isSideNavOpened"
-      #drawer
-      mode="side"
-    >
+    <mat-drawer [opened]="isSideNavOpened" #drawer mode="side">
       <div class="drawer-content">
         <app-quary-box
           [historicalConvo]="historicalConvo"
@@ -182,10 +166,9 @@
           <path d="m9 18 6-6-6-6"></path>
         </svg>
       </button>
-       @if(isDataAvailable) {
+      @if(isDataAvailable) {
       <div class="content-wrapper">
         <!-- Content sections -->
-       
 
         <!-- COMPARISON VIEW -->
         @if(isComparison) {
@@ -213,10 +196,7 @@
               Metric List
             </button>
 
-            <button
-              (click)="exportToExcel()"
-              class="action-button-secondary"
-            >
+            <button (click)="exportToExcel()" class="action-button-secondary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -239,141 +219,134 @@
           </div>
         </div>
 
-        <div class="flex justify-end"> 
-
+        <div class="flex justify-end">
           <div class="pill-container">
-          <!-- Cards Option -->
-          <button
-            (click)="selectOption('cards')"
-            [ngClass]="{
-              active: isSelected('cards'),
-              inactive: !isSelected('cards')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-layout-grid h-4 w-4"
-              aria-hidden="true"
+            <!-- Cards Option -->
+            <button
+              (click)="selectOption('cards')"
+              [ngClass]="{
+                active: isSelected('cards'),
+                inactive: !isSelected('cards')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <rect width="7" height="7" x="3" y="3" rx="1"></rect>
-              <rect width="7" height="7" x="14" y="3" rx="1"></rect>
-              <rect width="7" height="7" x="14" y="14" rx="1"></rect>
-              <rect width="7" height="7" x="3" y="14" rx="1"></rect>
-            </svg>
-            <div>Cards</div>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-layout-grid h-4 w-4"
+                aria-hidden="true"
+              >
+                <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+                <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+                <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+                <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+              </svg>
+              <div>Cards</div>
+            </button>
 
-          <!-- Line Option -->
-          <button
-            *ngIf="isLineChartVisible"
-            (click)="selectOption('line')"
-            [ngClass]="{
-              active: isSelected('line'),
-              inactive: !isSelected('line')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-trending-up h-4 w-4"
-              aria-hidden="true"
+            <!-- Line Option -->
+            <button
+              *ngIf="isLineChartVisible"
+              (click)="selectOption('line')"
+              [ngClass]="{
+                active: isSelected('line'),
+                inactive: !isSelected('line')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <path d="M16 7h6v6"></path>
-              <path d="m22 7-8.5 8.5-5-5L2 17"></path>
-            </svg>
-            <div>Line</div>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-trending-up h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M16 7h6v6"></path>
+                <path d="m22 7-8.5 8.5-5-5L2 17"></path>
+              </svg>
+              <div>Line</div>
+            </button>
 
-          <!-- Bar Option -->
-          <button
-            (click)="selectOption('bar')"
-            [ngClass]="{
-              active: isSelected('bar'),
-              inactive: !isSelected('bar')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-chart-column h-4 w-4"
-              aria-hidden="true"
+            <!-- Bar Option -->
+            <button
+              (click)="selectOption('bar')"
+              [ngClass]="{
+                active: isSelected('bar'),
+                inactive: !isSelected('bar')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
-              <path d="M18 17V9"></path>
-              <path d="M13 17V5"></path>
-              <path d="M8 17v-3"></path>
-            </svg>
-            <div>Bar</div>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-chart-column h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                <path d="M18 17V9"></path>
+                <path d="M13 17V5"></path>
+                <path d="M8 17v-3"></path>
+              </svg>
+              <div>Bar</div>
+            </button>
 
-          <!-- Table Option -->
-          <button
-            (click)="selectOption('table')"
-            [ngClass]="{
-              active: isSelected('table'),
-              inactive: !isSelected('table')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-table h-4 w-4"
-              aria-hidden="true"
+            <!-- Table Option -->
+            <button
+              (click)="selectOption('table')"
+              [ngClass]="{
+                active: isSelected('table'),
+                inactive: !isSelected('table')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <path d="M12 3v18"></path>
-              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
-              <path d="M3 9h18"></path>
-              <path d="M3 15h18"></path>
-            </svg>
-            <div>Table</div>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-table h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M12 3v18"></path>
+                <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                <path d="M3 9h18"></path>
+                <path d="M3 15h18"></path>
+              </svg>
+              <div>Table</div>
+            </button>
+          </div>
         </div>
-
-        </div>
-
-        
 
         <!-- Cards View -->
         @if(currentTabComparison =='cards') {
 
         <div class="space-y-4">
-          <div
-            *ngIf="cardView.length == 0"
-            class="no-data-message"
-          >
+          <div *ngIf="cardView.length == 0" class="no-data-message">
             <p>No custom metrics are available right now.</p>
           </div>
           @for (item of customCardView; track $index) {
@@ -489,7 +462,8 @@
         }
 
         <!-- Line View -->
-        @if(currentTabComparison=='line') { @for(chart of chartsData; track $index) {
+        @if(currentTabComparison=='line') { @for(chart of chartsData; track
+        $index) {
         <div class="mt-4">
           <h2 class="metric-header mb-4">
             {{ chart.metric_name }}
@@ -526,7 +500,8 @@
         } }
 
         <!-- Bar View -->
-        @if(currentTabComparison=='bar') { @for(chart of chartsData; track $index) {
+        @if(currentTabComparison=='bar') { @for(chart of chartsData; track
+        $index) {
         <div>
           <h2 class="metric-header mb-4">
             {{ chart.metric_name }}
@@ -631,10 +606,7 @@
               Metric List
             </button>
 
-            <button
-              (click)="exportToExcel()"
-              class="action-button-secondary"
-            >
+            <button (click)="exportToExcel()" class="action-button-secondary">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -659,134 +631,131 @@
 
         <div class="flex justify-end">
           <div class="pill-container">
-          <button
-            (click)="selectSegmentOption('cards')"
-            [ngClass]="{
-              active: isSegmentSelected('cards'),
-              inactive: !isSegmentSelected('cards')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-layout-grid h-4 w-4"
-              aria-hidden="true"
+            <button
+              (click)="selectSegmentOption('cards')"
+              [ngClass]="{
+                active: isSegmentSelected('cards'),
+                inactive: !isSegmentSelected('cards')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <rect width="7" height="7" x="3" y="3" rx="1"></rect>
-              <rect width="7" height="7" x="14" y="3" rx="1"></rect>
-              <rect width="7" height="7" x="14" y="14" rx="1"></rect>
-              <rect width="7" height="7" x="3" y="14" rx="1"></rect>
-            </svg>
-            <div>Cards</div>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-layout-grid h-4 w-4"
+                aria-hidden="true"
+              >
+                <rect width="7" height="7" x="3" y="3" rx="1"></rect>
+                <rect width="7" height="7" x="14" y="3" rx="1"></rect>
+                <rect width="7" height="7" x="14" y="14" rx="1"></rect>
+                <rect width="7" height="7" x="3" y="14" rx="1"></rect>
+              </svg>
+              <div>Cards</div>
+            </button>
 
-          <!-- Stacked Option -->
-          <button
-            (click)="selectSegmentOption('stacked')"
-            [ngClass]="{
-              active: isSegmentSelected('stacked'),
-              inactive: !isSegmentSelected('stacked')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-layers h-4 w-4"
-              aria-hidden="true"
+            <!-- Stacked Option -->
+            <button
+              (click)="selectSegmentOption('stacked')"
+              [ngClass]="{
+                active: isSegmentSelected('stacked'),
+                inactive: !isSegmentSelected('stacked')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <path
-                d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"
-              ></path>
-              <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path>
-              <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path>
-            </svg>
-            <div>Stacked</div>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-layers h-4 w-4"
+                aria-hidden="true"
+              >
+                <path
+                  d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"
+                ></path>
+                <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"></path>
+                <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"></path>
+              </svg>
+              <div>Stacked</div>
+            </button>
 
-          <!-- Bar Option -->
-          <button
-            (click)="selectSegmentOption('bar')"
-            [ngClass]="{
-              active: isSegmentSelected('bar'),
-              inactive: !isSegmentSelected('bar')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-chart-column h-4 w-4"
-              aria-hidden="true"
+            <!-- Bar Option -->
+            <button
+              (click)="selectSegmentOption('bar')"
+              [ngClass]="{
+                active: isSegmentSelected('bar'),
+                inactive: !isSegmentSelected('bar')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
-              <path d="M18 17V9"></path>
-              <path d="M13 17V5"></path>
-              <path d="M8 17v-3"></path>
-            </svg>
-            <div>Bar</div>
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-chart-column h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M3 3v16a2 2 0 0 0 2 2h16"></path>
+                <path d="M18 17V9"></path>
+                <path d="M13 17V5"></path>
+                <path d="M8 17v-3"></path>
+              </svg>
+              <div>Bar</div>
+            </button>
 
-          <!-- Table Option -->
-          <button
-            (click)="selectSegmentOption('table')"
-            [ngClass]="{
-              active: isSegmentSelected('table'),
-              inactive: !isSegmentSelected('table')
-            }"
-            class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-table h-4 w-4"
-              aria-hidden="true"
+            <!-- Table Option -->
+            <button
+              (click)="selectSegmentOption('table')"
+              [ngClass]="{
+                active: isSegmentSelected('table'),
+                inactive: !isSegmentSelected('table')
+              }"
+              class="px-6 py-2 rounded-md font-medium transition-all duration-300 flex items-center gap-2"
             >
-              <path d="M12 3v18"></path>
-              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
-              <path d="M3 9h18"></path>
-              <path d="M3 15h18"></path>
-            </svg>
-            <div>Table</div>
-          </button>
-        </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-table h-4 w-4"
+                aria-hidden="true"
+              >
+                <path d="M12 3v18"></path>
+                <rect width="18" height="18" x="3" y="3" rx="2"></rect>
+                <path d="M3 9h18"></path>
+                <path d="M3 15h18"></path>
+              </svg>
+              <div>Table</div>
+            </button>
+          </div>
         </div>
 
         @if(currentTabSegment == 'cards') {
         <div class="space-y-4">
-          <div
-            *ngIf="customCardView.length == 0"
-            class="no-data-message"
-          >
+          <div *ngIf="customCardView.length == 0" class="no-data-message">
             <p>No custom metrics are available right now.</p>
           </div>
 
@@ -865,7 +834,10 @@
           <!-- Container for all charts -->
           <div class="chart-container">
             <!-- Two-column grid for charts with 2 or fewer segments (DEFAULT) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"
+              style="max-width: 7000px"
+            >
               @for (chart of segmentStackedOption; track $index) { @if
               ((chart.legends?.legends?.length || chart.config?.series?.length
               || 0) <= 2) {
@@ -879,25 +851,27 @@
                 <!-- Chart or No Data Message -->
                 @if (chart?.config?.series.length == 0) {
                 <div class="no-data-message">
-                  <p>
-                    Data for selected Quarter(s) not available
-                  </p>
+                  <p>Data for selected Quarter(s) not available</p>
                 </div>
                 } @else {
-                <div
-                  class="chart-wrapper"
-                  echarts
-                  [options]="chart.config"
-                  style="min-height: 400px; width: 100%"
-                ></div>
-                }
-
-                <!-- Legends below chart -->
-                <div class="mt-4">
+                <div class="chart-container-bg">
+                  <div
+                    class="chart-wrapper"
+                    echarts
+                    [options]="chart.config"
+                    style="min-height: 400px; width: 100%"
+                  ></div>
+                  <div class="mt-2 mb-2">
                   <app-legend-display
                     [data]="chart.legends"
                   ></app-legend-display>
                 </div>
+                </div>
+                
+
+                }
+
+                <!-- Legends below chart -->
               </div>
               } }
             </div>
@@ -917,25 +891,25 @@
                 <!-- Chart or No Data Message -->
                 @if (chart?.config?.series.length == 0) {
                 <div class="no-data-message" style="min-height: 400px">
-                  <p>
-                    Data for selected Quarter(s) not available
-                  </p>
+                  <p>Data for selected Quarter(s) not available</p>
                 </div>
                 } @else {
-                <div
-                  class="chart-wrapper"
-                  echarts
-                  [options]="chart.config"
-                  style="min-height: 400px; width: 100%"
-                ></div>
-                }
-
-                <!-- Legends below chart -->
-                <div class="mt-4">
+                <div class="chart-container-bg">
+                  <div
+                    class="chart-wrapper"
+                    echarts
+                    [options]="chart.config"
+                    style="min-height: 400px; width: 100%"
+                  ></div>
+                  <div class="mt-2 mb-2">
                   <app-legend-display
                     [data]="chart.legends"
                   ></app-legend-display>
                 </div>
+                </div>
+                }
+
+               
               </div>
               } }
             </div>
@@ -945,7 +919,8 @@
         }
 
         <!-- Bar View -->
-        @if(currentTabSegment == 'bar') { @if (commonSegmentsOption.length == 0) {
+        @if(currentTabSegment == 'bar') { @if (commonSegmentsOption.length == 0)
+        {
 
         <div class="no-data-message">
           <p>
@@ -1041,13 +1016,11 @@
         }
 
         <!-- Show insights when available -->
-        @if (this.insightsData.length != 0) {
-          @if(this.insightsAnalysis) {
-            <div class="insights-content">
-              <markdown [data]="insightsAnalysis"></markdown>
-            </div>
-          }
-        }
+        @if (this.insightsData.length != 0) { @if(this.insightsAnalysis) {
+        <div class="insights-content">
+          <markdown [data]="insightsAnalysis"></markdown>
+        </div>
+        } }
 
         <!-- Always show button when not loading -->
         @if(!varianceAnalysisLoader) {
@@ -1066,18 +1039,13 @@
               : "Generate AI Insights"
           }}
         </button>
-        } 
-        
-        @if(referenceData.length > 0) {
+        } @if(referenceData.length > 0) {
         <div class="mt-5">
           <app-references [refData]="referenceData"></app-references>
         </div>
-        } 
-        
-        
+        }
       </div>
-    }
-      @if(isLoaderVisible && varianceAnalysisLoader == false) {
+      } @if(isLoaderVisible && varianceAnalysisLoader == false) {
       <div class="loader-container">
         <app-loader-with-insights
           [loaderMessage]="liveProgressData.main_title"
@@ -1085,9 +1053,7 @@
           [stepWiseInfo]="liveProgressData.process"
         ></app-loader-with-insights>
       </div>
-      } 
-      
-      @if(!isDataAvailable && !isLoaderVisible) {
+      } @if(!isDataAvailable && !isLoaderVisible) {
 
       <div class="empty-state">
         <div class="empty-state-icons">
@@ -1158,12 +1124,11 @@
     <div class="history-header">
       <div>
         <h2 class="history-title">Dashboard History</h2>
-        <p class="history-subtitle">Search and load previously created dashboard</p>
+        <p class="history-subtitle">
+          Search and load previously created dashboard
+        </p>
       </div>
-      <button
-        (click)="closeHistorySidebar()"
-        class="history-close-btn"
-      >
+      <button (click)="closeHistorySidebar()" class="history-close-btn">
         <svg
           width="20"
           height="20"
@@ -1208,54 +1173,53 @@
 
     <!-- Query list -->
     @for(query of filteredHistoricalQueries; track $index) {
-      @if(query?.API_DATA?.ANALYSIS_DATA) {
-        <div class="history-query-item" (click)="loadHistoricalData(query)">
-          <h3 class="history-query-title">
-            {{ query?.API_DATA?.PARSED_QUERY?.raw_query }}
-          </h3>
-          <div class="history-query-date">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="lucide lucide-calendar h-3 w-3"
-              aria-hidden="true"
-            >
-              <path d="M8 2v4"></path>
-              <path d="M16 2v4"></path>
-              <rect width="18" height="18" x="3" y="4" rx="2"></rect>
-              <path d="M3 10h18"></path>
-            </svg>
-            <span class="history-query-date-text">
-              {{ query?.API_DATA?.PARSED_QUERY?.time_config?.reference_date }}
-            </span>
-          </div>
+    @if(query?.API_DATA?.ANALYSIS_DATA) {
+    <div class="history-query-item" (click)="loadHistoricalData(query)">
+      <h3 class="history-query-title">
+        {{ query?.API_DATA?.PARSED_QUERY?.raw_query }}
+      </h3>
+      <div class="history-query-date">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="lucide lucide-calendar h-3 w-3"
+          aria-hidden="true"
+        >
+          <path d="M8 2v4"></path>
+          <path d="M16 2v4"></path>
+          <rect width="18" height="18" x="3" y="4" rx="2"></rect>
+          <path d="M3 10h18"></path>
+        </svg>
+        <span class="history-query-date-text">
+          {{ query?.API_DATA?.PARSED_QUERY?.time_config?.reference_date }}
+        </span>
+      </div>
 
-          <!-- Requested metrics -->
-          <div class="history-query-metrics">
-            @for(metric of query?.API_DATA?.PARSED_QUERY?.metrics; track metric) {
-              <div class="history-metric-chip">
-                <h5>{{ metric }}</h5>
-              </div>
-            }
-          </div>
+      <!-- Requested metrics -->
+      <div class="history-query-metrics">
+        @for(metric of query?.API_DATA?.PARSED_QUERY?.metrics; track metric) {
+        <div class="history-metric-chip">
+          <h5>{{ metric }}</h5>
         </div>
-      }
-    }
+        }
+      </div>
+    </div>
+    } }
   </div>
 </div>
 }
 
 <!-- Add Metric Component -->
 @if(isAddMetricComponentVisible) {
-  <app-add-metric
-    [secMetrics]="availableMetrics"
-    (close)="closeAddMetricComponent()"
-  ></app-add-metric>
+<app-add-metric
+  [secMetrics]="availableMetrics"
+  (close)="closeAddMetricComponent()"
+></app-add-metric>
 }

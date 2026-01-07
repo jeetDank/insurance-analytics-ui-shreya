@@ -858,19 +858,16 @@ private applyTheme(): void {
         );
 
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
-        commonSegmentColumnData
+        commonSegmentColumnData,!this.isDarkTheme
       );
 
       const verticalSegmentbarData: any =
         this._dataService.fetchVerticalStackedBarChartData();
 
       this.segmentStackedOption =
-        this._dataService.generateVerticalSegmentCharts(verticalSegmentbarData);
+        this._dataService.generateVerticalSegmentCharts(verticalSegmentbarData,!this.isDarkTheme);
 
-      console.log('segment period,', this.segmentPeriods);
-      console.log('stacked bar chart data ,', this.segmentStackedOption);
-      console.log('vertical stacked bar option', verticalSegmentbarData);
-      console.log('verticalSegmentbarData', verticalSegmentbarData);
+      
 
       if (this._dataService.API_DATA.INSIGHTS_DATA) {
         const data  = this._dataService.generateInsights();

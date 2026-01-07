@@ -1966,7 +1966,7 @@ export class DataService {
       .join(' ');
   }
 
-  generateCommonSegmentCharts(commonSegments: any) {
+  generateCommonSegmentCharts(commonSegments: any, isLight: boolean = false) {
     const chartConfigs: any[] = [];
 
     // Helper function to format numbers with commas
@@ -1986,6 +1986,16 @@ export class DataService {
       '#8b5cf6', // purple
       '#ec4899', // pink
     ];
+
+    // Define color variables based on theme
+    const textColor = isLight ? '#333333' : '#d7d7d7ff';
+    const axisLabelColor = isLight ? '#555555' : '#d7d7d7ff';
+    const axisLineColor = isLight ? 'rgba(50, 50, 50, 0.3)' : 'rgba(100, 100, 150, 0.3)';
+    const tooltipBgColor = isLight ? 'rgba(245, 245, 255, 0.95)' : 'rgba(15, 15, 25, 0.95)';
+    const tooltipTextColor = isLight ? '#333333' : '#d7d7d7ff';
+    const tooltipBorderColor = isLight ? 'rgba(100, 100, 150, 0.2)' : 'rgba(100, 100, 150, 0.3)';
+    const labelColor = isLight ? '#333333' : '#d7d7d7ff';
+    const splitLineColor = isLight ? 'rgba(50, 50, 50, 0.1)' : 'rgba(100, 100, 150, 0.1)';
 
     // Group data by period
     const periodGroups: any = {};
@@ -2086,7 +2096,7 @@ export class DataService {
             label: {
               show: true,
               position: 'top',
-              color: '#d7d7d7ff',
+              color: labelColor,
               fontSize: 10,
               formatter: (params: any) => {
                 return params.value > 0
@@ -2104,7 +2114,7 @@ export class DataService {
           textStyle: {
             fontSize: 16,
             fontWeight: 600,
-            color: '#d7d7d7ff',
+            color: textColor,
           },
           left: 'center',
           top: 10,
@@ -2113,19 +2123,19 @@ export class DataService {
         tooltip: {
           trigger: 'axis',
           axisPointer: { type: 'shadow' },
-          backgroundColor: 'rgba(15, 15, 25, 0.95)',
-          borderColor: 'rgba(100, 100, 150, 0.3)',
+          backgroundColor: tooltipBgColor,
+          borderColor: tooltipBorderColor,
           borderWidth: 1,
           borderRadius: 12,
           padding: 12,
           textStyle: {
-            color: '#d7d7d7ff',
+            color: tooltipTextColor,
             fontSize: 12,
             fontWeight: 'normal',
           },
           formatter: (params: any) => {
             const segmentName = params[0].name;
-            let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${segmentName}</div>`;
+            let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px; color: ${tooltipTextColor};">${segmentName}</div>`;
 
             params.forEach((param: any) => {
               result += `
@@ -2134,10 +2144,10 @@ export class DataService {
                   <span style="display: inline-block; width: 10px; height: 10px; background: ${
                     param.color
                   }; border-radius: 50%; margin-right: 8px;"></span>
-                  <span>${param.seriesName}</span>
+                  <span style="color: ${tooltipTextColor};">${param.seriesName}</span>
                 </div>
                 <div style="text-align: right; margin-left: 12px;">
-                  <span style="font-weight: 600;">$${formatNumber(
+                  <span style="font-weight: 600; color: ${tooltipTextColor};">$${formatNumber(
                     param.value,
                     2
                   )}${suffix}</span>
@@ -2154,7 +2164,7 @@ export class DataService {
           data: companyNames,
           bottom: 10,
           textStyle: {
-            color: '#d7d7d7ff',
+            color: textColor,
             fontSize: 11,
           },
           itemWidth: 12,
@@ -2174,7 +2184,7 @@ export class DataService {
           data: segmentNames,
           axisLabel: {
             show: true,
-            color: '#d7d7d7ff',
+            color: axisLabelColor,
             fontSize: 11,
             interval: 0,
             rotate: segmentNames.length > 5 ? 45 : 0,
@@ -2182,7 +2192,7 @@ export class DataService {
           axisLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(100, 100, 150, 0.3)',
+              color: axisLineColor,
             },
           },
           axisTick: {
@@ -2194,7 +2204,7 @@ export class DataService {
           type: 'value',
           axisLabel: {
             show: true,
-            color: '#d7d7d7ff',
+            color: axisLabelColor,
             fontSize: 11,
             formatter: (value: number) => `$${formatNumber(value, 0)}${suffix}`,
           },
@@ -2207,7 +2217,7 @@ export class DataService {
           splitLine: {
             show: true,
             lineStyle: {
-              color: 'rgba(100, 100, 150, 0.1)',
+              color: splitLineColor,
               type: 'dashed',
             },
           },
@@ -2484,7 +2494,7 @@ export class DataService {
     }
   }
 
-  generateVerticalSegmentCharts(data: any[]) {
+  generateVerticalSegmentCharts(data: any[], isLight: boolean = false) {
     const chartConfigs: any[] = [];
 
     // Color palette
@@ -2502,6 +2512,16 @@ export class DataService {
       '#fb7185', // rose
       '#34d399', // emerald
     ];
+
+    // Define color variables based on theme
+    const textColor = isLight ? '#333333' : '#d7d7d7ff';
+    const axisLabelColor = isLight ? '#555555' : '#d7d7d7ff';
+    const axisLineColor = isLight ? 'rgba(50, 50, 50, 0.3)' : 'rgba(100, 100, 150, 0.3)';
+    const tooltipBgColor = isLight ? 'rgba(245, 245, 255, 0.95)' : 'rgba(15, 15, 25, 0.95)';
+    const tooltipTextColor = isLight ? '#333333' : '#d7d7d7ff';
+    const tooltipBorderColor = isLight ? 'rgba(100, 100, 150, 0.2)' : 'rgba(100, 100, 150, 0.3)';
+    const legendPageIconColor = isLight ? '#333333' : '#d7d7d7ff';
+    const legendPageIconInactiveColor = isLight ? 'rgba(100, 100, 150, 0.2)' : 'rgba(100, 100, 150, 0.3)';
 
     // Helper function to darken a hex color
     function darkenColor(hex: string, percent: number = 20): string {
@@ -2794,7 +2814,7 @@ export class DataService {
               textStyle: {
                 fontSize: 16,
                 fontWeight: 600,
-                color: '#d7d7d7ff',
+                color: textColor,
               },
               left: 'center',
               top: 10,
@@ -2802,13 +2822,13 @@ export class DataService {
 
             tooltip: {
               trigger: 'item',
-              backgroundColor: 'rgba(15, 15, 25, 0.95)',
-              borderColor: 'rgba(100, 100, 150, 0.3)',
+              backgroundColor: tooltipBgColor,
+              borderColor: tooltipBorderColor,
               borderWidth: 1,
               borderRadius: 12,
               padding: 12,
               textStyle: {
-                color: '#d7d7d7ff',
+                color: tooltipTextColor,
                 fontSize: 12,
                 fontWeight: 'normal',
               },
@@ -2826,9 +2846,9 @@ export class DataService {
                 const percentage =
                   categoryTotal !== 0 ? (value / categoryTotal) * 100 : 0;
 
-                let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">${this.getCleanName(
-                  categoryName
-                )}</div>`;
+                let result = `<div style="font-weight: 600; margin-bottom: 8px; font-size: 14px; color: ${
+                  isLight ? '#333333' : '#d7d7d7ff'
+                };">${this.getCleanName(categoryName)}</div>`;
 
                 result += `
                   <div style="display: flex; justify-content: space-between; align-items: center; margin: 6px 0;">
@@ -2836,15 +2856,19 @@ export class DataService {
                       <span style="display: inline-block; width: 10px; height: 10px; background: ${
                         params.color
                       }; border-radius: 50%; margin-right: 8px;"></span>
-                      <span>${seriesName}</span>
+                      <span style="color: ${
+                        isLight ? '#333333' : '#d7d7d7ff'
+                      };">${seriesName}</span>
                     </div>
                     <div style="text-align: right; margin-left: 12px;">
-                      <span style="font-weight: 600;">${
-                        value >= 0 ? '$' : '-$'
-                      }${Math.abs(value).toFixed(2)}B</span>
-                      <span style="color: #999; margin-left: 6px;">(${percentage.toFixed(
-                        1
-                      )}%)</span>
+                      <span style="font-weight: 600; color: ${
+                        isLight ? '#333333' : '#d7d7d7ff'
+                      };">${value >= 0 ? '$' : '-$'}${Math.abs(
+                  value
+                ).toFixed(2)}B</span>
+                      <span style="color: ${
+                        isLight ? '#666666' : '#999999'
+                      }; margin-left: 6px;">(${percentage.toFixed(1)}%)</span>
                     </div>
                   </div>
                 `;
@@ -2857,22 +2881,22 @@ export class DataService {
               data: legends.map((l) => l.name),
               bottom: 10,
               textStyle: {
-                color: '#d7d7d7ff',
+                color: textColor,
                 fontSize: 11,
               },
               type: 'scroll',
-              pageIconColor: '#d7d7d7ff',
-              pageIconInactiveColor: 'rgba(100, 100, 150, 0.3)',
+              pageIconColor: legendPageIconColor,
+              pageIconInactiveColor: legendPageIconInactiveColor,
               pageTextStyle: {
-                color: '#d7d7d7ff',
+                color: textColor,
               },
             },
 
             grid: {
               left: '3%',
-              right: '4%',
-              bottom: '15%',
-              top: '20%',
+              right: '3%',
+              bottom: '5%',
+              top: '3%',
               containLabel: true,
             },
 
@@ -2881,14 +2905,14 @@ export class DataService {
               data: categories,
               axisLabel: {
                 show: true,
-                color: '#d7d7d7ff',
+                color: axisLabelColor,
                 fontSize: 12,
                 interval: 0,
               },
               axisLine: {
                 show: true,
                 lineStyle: {
-                  color: 'rgba(100, 100, 150, 0.3)',
+                  color: axisLineColor,
                 },
               },
               axisTick: {
@@ -2901,6 +2925,7 @@ export class DataService {
               show: false,
               axisLabel: {
                 show: false,
+                color: axisLabelColor,
               },
               axisLine: {
                 show: false,
