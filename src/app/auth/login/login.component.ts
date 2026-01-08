@@ -18,7 +18,7 @@ export class LoginComponent implements OnInit {
   constructor(private router:Router){
 
     const curentTheme = localStorage.getItem("theme");
-    if(curentTheme && curentTheme == 'dark'){
+    if(curentTheme == 'dark'){
       this.isDarkTheme = true;
     }
     else{
