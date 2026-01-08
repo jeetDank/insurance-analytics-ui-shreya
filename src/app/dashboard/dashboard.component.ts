@@ -28,7 +28,7 @@ import { MetricTableComponent } from '../common/componants/metric-table/metric-t
 import { SegmentTableComponent } from '../common/componants/segment-table/segment-table.component';
 import { DataService } from '../common/services/data.service';
 import { LoaderService } from '../common/services/loader.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import {
   MatSnackBar,
   MatSnackBarHorizontalPosition,
@@ -84,7 +84,9 @@ echarts.use([
     AddMetricComponent,
     DropSnakeCasePipe,
     MatProgressSpinnerModule,
-    MarkdownModule
+    MarkdownModule,
+    TitleCasePipe
+
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -861,6 +863,8 @@ private applyTheme(): void {
       this.commonSegmentsOption = this._dataService.generateCommonSegmentCharts(
         commonSegmentColumnData,!this.isDarkTheme
       );
+      console.log(this.commonSegmentsOption);
+      
 
       const verticalSegmentbarData: any =
         this._dataService.fetchVerticalStackedBarChartData();

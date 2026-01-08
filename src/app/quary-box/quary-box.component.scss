@@ -198,6 +198,7 @@ button.inactive:hover {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0px -1px 0px var(--color-border-subtle);
 }
 
 .chat-input {

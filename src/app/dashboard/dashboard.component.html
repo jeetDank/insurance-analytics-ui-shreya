@@ -930,10 +930,10 @@
         </div>
         }
         <div class="space-y-4">
-          <div class="chart-container" style="min-height: 200px">
+          <div class="chart-container mt-3 mb-3" style="min-height: 200px">
             @for (chart of commonSegmentsOption; track $index) {
-            <div class="chart-title mt-2 mb-2">
-              <!-- {{ chart.segment_name }} - {{ chart.period }} -->
+            <div class="metric-header mt-2 mb-2">
+              {{ chart.metric | titlecase}}
             </div>
             <div
               class="chart-wrapper"
