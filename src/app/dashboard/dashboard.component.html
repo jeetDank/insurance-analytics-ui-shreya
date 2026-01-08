@@ -468,7 +468,7 @@
           <h2 class="metric-header mb-4">
             {{ chart.metric_name }}
 
-            <small class="metric-info-icon tooltip">
+            <small *ngIf="false" class="metric-info-icon tooltip">
               <span class="tooltiptext text-white/60">
                 {{ chart.tooltip }}
               </span>
@@ -506,7 +506,7 @@
           <h2 class="metric-header mb-4">
             {{ chart.metric_name }}
 
-            <small class="metric-info-icon tooltip">
+            <small *ngIf="false" class="metric-info-icon tooltip">
               <span class="tooltiptext text-white/60">
                 {{ chart.tooltip }}
               </span>
@@ -546,7 +546,7 @@
             <h2 class="metric-header mb-4">
               {{ table.metric_name }}
 
-              <small class="metric-info-icon tooltip">
+              <small *ngIf="false" class="metric-info-icon tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ table?.tooltip }}
                 </span>
@@ -765,7 +765,7 @@
             <h2 class="metric-header">
               {{ item.metricName }}
 
-              <small class="metric-info-icon tooltip">
+              <small  class="metric-info-icon tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ item.tooltip }}
                 </span>
@@ -1006,7 +1006,7 @@
             <path d="M22 4h-4"></path>
             <circle cx="4" cy="20" r="2"></circle>
           </svg>
-          <h2>AI-Powered Insights</h2>
+          <h2 style="margin:0">AI-Powered Insights</h2>
         </div>
 
         <!-- Show loader when loading -->

@@ -62,6 +62,7 @@ echarts.use([
 @Component({
   selector: 'app-dashboard',
   imports: [
+    CommonModule,
     MetricCardComponent,
     MatTabsModule,
     LoaderWithInsightsComponent,

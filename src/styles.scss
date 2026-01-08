@@ -121,6 +121,8 @@ span i {
    --active-step-color: white;
 }
 
+
+
 body {
   margin: 0;
   padding: 0;
@@ -480,17 +482,7 @@ hr {
   opacity: 1;
 }
 
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: var(--color-card-bg) transparent transparent transparent;
-  z-index: 9999;
-}
+
 
 input {
   padding: 4px 12px;

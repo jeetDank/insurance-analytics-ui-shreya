@@ -32,6 +32,15 @@
   }
 }
 
+
+
+:root {
+  @include mat.snack-bar-overrides((
+    container-color:var(--color-background),
+    supporting-text-color:var(--color-text-helper),
+  ));
+}
+
 // ============================================================================
 // LAYOUT COMPONENTS
 // ============================================================================
