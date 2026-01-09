@@ -14,7 +14,7 @@
       <div class="!text-sm flex-shrink-0">{{ ref.companyName }}</div>
       <div class="flex flex-row gap-4 flex-wrap items-center">
         @for (link of ref.quarterlyLinks; track $index) {
-        <a target="_blank" [href]="link.link" class="hover:underline">
+        <a target="_blank" [href]="link.link" style="text-decoration: underline;color: rgb(99, 99, 255);">
           <span class="text-xs">{{ link.linkFilingType }}</span>
           <span class="text-sm"> {{ link.linkPeriod }} </span>
         </a>

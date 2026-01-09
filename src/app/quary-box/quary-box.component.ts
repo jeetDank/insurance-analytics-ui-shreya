@@ -658,6 +658,10 @@ export class QuaryBoxComponent implements OnInit, AfterViewChecked, OnChanges {
 
   selectOption(option: string): void {
     this.currentTab = option;
+
+    if(option == 'formula'  && this.formulaSuggestions?.length == 0){
+      this.fetchFormulaList();
+    }
   }
 
   isSelected(option: string): boolean {
