@@ -41,7 +41,8 @@
     </div>
   </div>
 
-  <div class="search-container">
+  @if (formulaListView) {
+<div class="search-container">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -67,6 +68,9 @@
       placeholder="Search Formulas..."
     />
   </div>
+  }
+
+  
 
   @if(filteredList.length == 0 && formulaListView){
   <div class="empty-state">

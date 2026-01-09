@@ -1989,14 +1989,14 @@ export class DataService {
     ];
 
     // Define color variables based on theme
-    const textColor = isLight ? '#333333' : '#d7d7d7ff';
-    const axisLabelColor = isLight ? '#555555' : '#d7d7d7ff';
+    const textColor = isLight ? '#000000ff' : '#d7d7d7ff';
+    const axisLabelColor = isLight ? '#000000ff' : '#d7d7d7ff';
     const axisLineColor = isLight ? 'rgba(50, 50, 50, 0.3)' : 'rgba(100, 100, 150, 0.3)';
     const tooltipBgColor = isLight ? 'rgba(245, 245, 255, 0.95)' : 'rgba(15, 15, 25, 0.95)';
-    const tooltipTextColor = isLight ? '#333333' : '#d7d7d7ff';
-    const tooltipBorderColor = isLight ? 'rgba(100, 100, 150, 0.2)' : 'rgba(100, 100, 150, 0.3)';
-    const labelColor = isLight ? '#333333' : '#d7d7d7ff';
-    const splitLineColor = isLight ? 'rgba(50, 50, 50, 0.1)' : 'rgba(100, 100, 150, 0.1)';
+    const tooltipTextColor = isLight ? '#000000ff' : '#d7d7d7ff';
+    const tooltipBorderColor = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(100, 100, 150, 0.3)';
+    const labelColor = isLight ? '#000000ff' : '#d7d7d7ff';
+    const splitLineColor = isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(100, 100, 150, 0.1)';
 
     // Group data by period
     const periodGroups: any = {};
@@ -2515,13 +2515,13 @@ export class DataService {
     ];
 
     // Define color variables based on theme
-    const textColor = isLight ? '#333333' : '#d7d7d7ff';
-    const axisLabelColor = isLight ? '#555555' : '#d7d7d7ff';
+    const textColor = isLight ? '#000000ff' : '#d7d7d7ff';
+    const axisLabelColor = isLight ? '#000000ff' : '#d7d7d7ff';
     const axisLineColor = isLight ? 'rgba(50, 50, 50, 0.3)' : 'rgba(100, 100, 150, 0.3)';
     const tooltipBgColor = isLight ? 'rgba(245, 245, 255, 0.95)' : 'rgba(15, 15, 25, 0.95)';
-    const tooltipTextColor = isLight ? '#333333' : '#d7d7d7ff';
-    const tooltipBorderColor = isLight ? 'rgba(100, 100, 150, 0.2)' : 'rgba(100, 100, 150, 0.3)';
-    const legendPageIconColor = isLight ? '#333333' : '#d7d7d7ff';
+    const tooltipTextColor = isLight ? '#000000ff' : '#d7d7d7ff';
+    const tooltipBorderColor = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(100, 100, 150, 0.3)';
+    const legendPageIconColor = isLight ? '#000000ff' : '#d7d7d7ff';
     const legendPageIconInactiveColor = isLight ? 'rgba(100, 100, 150, 0.2)' : 'rgba(100, 100, 150, 0.3)';
 
     // Helper function to darken a hex color
