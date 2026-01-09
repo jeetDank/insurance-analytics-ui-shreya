@@ -1082,10 +1082,11 @@ private applyTheme(): void {
               verticalPosition: 'bottom',
               duration: 3000,
             });
-            if (this.historicalConvo == null) {
-              this._dataService.addQueryToHistory([]);
-            }
+           
           }
+
+          console.log(this._dataService.HistoryBucket$.value);
+          
         },
         error: (err) => {
           this.varianceAnalysisLoader = false;

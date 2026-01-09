@@ -60,10 +60,11 @@ export class DataService {
     }
 
     if(conversation.length == 0 ){
-      history.push({
-      conversation:this.HistoryBucket$.value.conversation,
-      API_DATA: { ...this.API_DATA },
-    });
+      history[history.length - 1].API_DATA =  { ...this.API_DATA };
+    //   history.push({
+    //   conversation:this.HistoryBucket$.value.conversation,
+    //   API_DATA: { ...this.API_DATA },
+    // });
     }else{
        history.push({
       conversation,
@@ -428,7 +429,7 @@ export class DataService {
           return {
             companyName: this.formatCompanyName(company.company_name),
             period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
-            metric: `${metricData.prefix} ${metricData.value} ${metricData.postfix}` ,
+            metric: `${metricData?.prefix ? metricData?.prefix : ''} ${metricData?.value ? metricData?.value : 'N/A'} ${metricData?.postfix ? metricData?.postfix : '' }` ,
             logo: quarter.logo,
             trend: {
               trend: metricData?.trend ? metricData?.trend : 'N/A',
