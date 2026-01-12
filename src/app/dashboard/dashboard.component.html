@@ -26,7 +26,9 @@
 
     <!-- App title/logo -->
     <div class="toolbar-title-wrapper">
-      <h4 class="toolbar-title" style="line-height: 1; font-size: 14px;">Strategy Analytics</h4>
+      <h4 class="toolbar-title" style="line-height: 1; font-size: 14px">
+        Strategy Analytics
+      </h4>
       <h5 class="toolbar-subtitle">Financial Intelligence Dashboard</h5>
     </div>
 
@@ -765,7 +767,7 @@
             <h2 class="metric-header">
               {{ item.metricName }}
 
-              <small  class="metric-info-icon tooltip">
+              <small class="metric-info-icon tooltip">
                 <span class="tooltiptext text-white/60">
                   {{ item.tooltip }}
                 </span>
@@ -862,12 +864,11 @@
                     style="min-height: 400px; width: 100%"
                   ></div>
                   <div class="mt-2 mb-2">
-                  <app-legend-display
-                    [data]="chart.legends"
-                  ></app-legend-display>
+                    <app-legend-display
+                      [data]="chart.legends"
+                    ></app-legend-display>
+                  </div>
                 </div>
-                </div>
-                
 
                 }
 
@@ -902,14 +903,12 @@
                     style="min-height: 400px; width: 100%"
                   ></div>
                   <div class="mt-2 mb-2">
-                  <app-legend-display
-                    [data]="chart.legends"
-                  ></app-legend-display>
-                </div>
+                    <app-legend-display
+                      [data]="chart.legends"
+                    ></app-legend-display>
+                  </div>
                 </div>
                 }
-
-               
               </div>
               } }
             </div>
@@ -933,7 +932,7 @@
           <div class="chart-container mt-3 mb-3" style="min-height: 200px">
             @for (chart of commonSegmentsOption; track $index) {
             <div class="metric-header mt-2 mb-2">
-              {{ chart.metric | titlecase}}
+              {{ chart.metric | titlecase }}
             </div>
             <div
               class="chart-wrapper"
@@ -1006,7 +1005,7 @@
             <path d="M22 4h-4"></path>
             <circle cx="4" cy="20" r="2"></circle>
           </svg>
-          <h2 style="margin:0">AI-Powered Insights</h2>
+          <h2 style="margin: 0">AI-Powered Insights</h2>
         </div>
 
         <!-- Show loader when loading -->
