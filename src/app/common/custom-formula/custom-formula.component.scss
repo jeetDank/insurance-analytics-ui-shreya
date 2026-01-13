@@ -3,8 +3,8 @@
 // ============================================================================
 
 .formula-container {
-  margin-top: 1.25rem;
-  padding: 1rem;
+  margin-top: 0rem;
+  padding: 0rem 1rem;
 }
 
 .formula-header {
@@ -50,7 +50,7 @@
   font-size: 0.75rem;
   color: var(--color-text-secondary, rgba(255, 255, 255, 0.5));
   flex-grow: 1;
-  margin-top: 0.5rem;
+  // margin-top: 0.5rem;
 }
 
 // ============================================================================
@@ -106,7 +106,7 @@
 .formula-form {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .form-input,
