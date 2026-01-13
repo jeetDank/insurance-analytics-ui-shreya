@@ -124,6 +124,7 @@
             </app-msg-bubble>
             } @else if(item.data != null){
             <app-msg-bubble
+             [isProcess]="true"
               [isSystemMsg]="item.systemMsg"
               [timestamp]="item.timestamp"
             >
