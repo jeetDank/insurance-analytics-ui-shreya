@@ -429,7 +429,7 @@ export class DataService {
           return {
             companyName: this.formatCompanyName(company.company_name),
             period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
-            metric: `${metricData?.prefix ? metricData?.prefix : ''} ${metricData?.value ? metricData?.value : 'N/A'} ${metricData?.postfix ? metricData?.postfix : '' }` ,
+            metric: `${metricData?.prefix ? metricData?.prefix : ''} ${metricData?.value ? metricData?.value.toFixed(4) : 'N/A'} ${metricData?.postfix ? metricData?.postfix : '' }` ,
             logo: quarter.logo,
             trend: {
               trend: metricData?.trend ? metricData?.trend : 'N/A',
