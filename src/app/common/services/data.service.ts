@@ -59,19 +59,18 @@ export class DataService {
       history.shift();
     }
 
-    if(conversation.length == 0 ){
-      history[history.length - 1].API_DATA =  { ...this.API_DATA };
-    //   history.push({
-    //   conversation:this.HistoryBucket$.value.conversation,
-    //   API_DATA: { ...this.API_DATA },
-    // });
-    }else{
-       history.push({
-      conversation,
-      API_DATA: { ...this.API_DATA },
-    });
+    if (conversation.length == 0) {
+      history[history.length - 1].API_DATA = { ...this.API_DATA };
+      //   history.push({
+      //   conversation:this.HistoryBucket$.value.conversation,
+      //   API_DATA: { ...this.API_DATA },
+      // });
+    } else {
+      history.push({
+        conversation,
+        API_DATA: { ...this.API_DATA },
+      });
     }
-    
 
     this.HistoryBucket$.next(history);
 
@@ -89,7 +88,6 @@ export class DataService {
   }
   setInsightsData(data: any) {
     this.API_DATA.INSIGHTS_DATA = data;
-    
   }
 
   clearData() {
@@ -246,7 +244,6 @@ export class DataService {
             period: qtr.context_info.period_label_text,
             logo: companyLogo, // Add logo to each quarter
             metrics: requested_metrics.reduce((acc: any, metric: any) => {
-              
               // if (
               //   metric.toLowerCase() == 'combined_ratio' ||
               //   metric.toLowerCase() == 'operating_margin'
@@ -333,12 +330,11 @@ export class DataService {
     }
 
     if (formatType === 'percentage') {
-      let calculated =  value * 100
-      if(calculated){
+      let calculated = value * 100;
+      if (calculated) {
         return `${calculated.toFixed(2)}%`;
-      }
-      else{
-        return 'N/A'
+      } else {
+        return 'N/A';
       }
     }
 
@@ -429,7 +425,14 @@ export class DataService {
           return {
             companyName: this.formatCompanyName(company.company_name),
             period: quarter.period !== 'QNaN NaN' ? quarter.period : 'N/A',
-            metric: `${metricData?.prefix ? metricData?.prefix : ''} ${metricData?.value ? metricData?.value.toFixed(4) : 'N/A'} ${metricData?.postfix ? metricData?.postfix : '' }` ,
+            metric: `${metricData?.prefix ? metricData?.prefix : ''} ${
+              typeof metricData?.value === 'number'
+                ? Number.isInteger(metricData.value)
+                  ? metricData.value
+                  : metricData.value.toFixed(4)
+                : 'N/A'
+            }
+ ${metricData?.postfix ? metricData?.postfix : ''}`,
             logo: quarter.logo,
             trend: {
               trend: metricData?.trend ? metricData?.trend : 'N/A',
@@ -752,19 +755,19 @@ export class DataService {
 
       if (sampleMetric.includes('%')) {
         return {
-          formatter: (value: number) => 
+          formatter: (value: number) =>
             isValidValue(value) ? `${value.toFixed(1)}%` : 'N/A',
           unit: '%',
         };
       } else if (sampleMetric.includes('B') || sampleMetric.includes('M')) {
         return {
-          formatter: (value: number) => 
+          formatter: (value: number) =>
             isValidValue(value) ? `$${value.toFixed(2)}B` : 'N/A',
           unit: 'B',
         };
       }
       return {
-        formatter: (value: number) => 
+        formatter: (value: number) =>
           isValidValue(value) ? value.toFixed(2) : 'N/A',
         unit: '',
       };
@@ -807,7 +810,7 @@ export class DataService {
         splitLine: {
           color: 'rgba(200, 200, 200, 0.4)',
         },
-      }
+      },
     };
 
     // Select theme based on isLight parameter
@@ -924,7 +927,7 @@ export class DataService {
             let result = `<strong>${params[0].axisValue}</strong><br/>`;
             params.forEach((item: any) => {
               if (item.value !== null && item.value !== undefined) {
-                const formattedValue = isValidValue(item.value) 
+                const formattedValue = isValidValue(item.value)
                   ? yAxisConfig.formatter(item.value)
                   : 'N/A';
                 result += `${item.marker} ${item.seriesName}: <strong>${formattedValue}</strong><br/>`;
@@ -1017,7 +1020,7 @@ export class DataService {
             let result = `<strong>${params[0].axisValue}</strong><br/>`;
             params.forEach((item: any) => {
               if (item.value !== null && item.value !== undefined) {
-                const formattedValue = isValidValue(item.value) 
+                const formattedValue = isValidValue(item.value)
                   ? yAxisConfig.formatter(item.value)
                   : 'N/A';
                 result += `${item.marker} ${item.seriesName}: <strong>${formattedValue}</strong><br/>`;
@@ -1133,19 +1136,20 @@ export class DataService {
   // }
 
   generateMetricTableData(cardData: any) {
- const quarterRenderer = (value: any): any => ({
-  type: 'trend',
-  value: value?.value,
-  trend: {
-    direction: value?.change >= 0 ? 'up' : 'down',
-    value: value?.change !== null && 
-           value?.change !== undefined && 
-           !isNaN(value?.change) 
-      ? `${Math.abs(value.change).toFixed(2)}%`
-      : 'N/A',
-    color: value?.change >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)',
-  },
-});
+    const quarterRenderer = (value: any): any => ({
+      type: 'trend',
+      value: value?.value,
+      trend: {
+        direction: value?.change >= 0 ? 'up' : 'down',
+        value:
+          value?.change !== null &&
+          value?.change !== undefined &&
+          !isNaN(value?.change)
+            ? `${Math.abs(value.change).toFixed(2)}%`
+            : 'N/A',
+        color: value?.change >= 0 ? 'rgb(34,197,94)' : 'rgb(239,68,68)',
+      },
+    });
 
     const tableData = cardData.map((data: any) => {
       const processedData = data.cards.map((card: any) => {
@@ -1275,48 +1279,50 @@ export class DataService {
     // filter((segment:string)=>segment.toLowerCase() != 'consolidated')
 
     // Convert children object to array
-    Object.keys(children).filter((segment:string)=>segment.toLowerCase() != 'consolidated').forEach((childKey) => {
-      const child = children[childKey];
+    Object.keys(children)
+      .filter((segment: string) => segment.toLowerCase() != 'consolidated')
+      .forEach((childKey) => {
+        const child = children[childKey];
 
-      // Check if this child has children using children_count
-      const hasChildren = child.children_count && child.children_count > 0;
+        // Check if this child has children using children_count
+        const hasChildren = child.children_count && child.children_count > 0;
 
-      // Handle dimension categories - keep their structure instead of flattening
-      if (child.is_dimension_category && child.value === null) {
-        // Create a parent entry for the category with its children properly nested
-        if (hasChildren) {
-          const categoryData: SegmentData = {
+        // Handle dimension categories - keep their structure instead of flattening
+        if (child.is_dimension_category && child.value === null) {
+          // Create a parent entry for the category with its children properly nested
+          if (hasChildren) {
+            const categoryData: SegmentData = {
+              metric_name: this.formatSegmentName(
+                child.name,
+                child.segment_name || childKey
+              ),
+              value: '$0.00',
+              percentage: '0.0%',
+              children: this.extractSegmentChildren(
+                child.children,
+                parentValue,
+                1
+              ),
+            };
+            childrenArray.push(categoryData);
+          }
+        } else {
+          // This is an actual segment with value
+          const segmentData: SegmentData = {
             metric_name: this.formatSegmentName(
               child.name,
               child.segment_name || childKey
             ),
-            value: '$0.00',
-            percentage: '0.0%',
-            children: this.extractSegmentChildren(
-              child.children,
-              parentValue,
-              1
-            ),
+            value: this.formatCurrencyValue(child.value),
+            percentage: this.calculatePercentage(child.value, parentValue),
+            // Use children_count to determine if we should recurse
+            children: hasChildren
+              ? this.extractSegmentChildren(child.children, child.value, 1)
+              : undefined,
           };
-          childrenArray.push(categoryData);
+          childrenArray.push(segmentData);
         }
-      } else {
-        // This is an actual segment with value
-        const segmentData: SegmentData = {
-          metric_name: this.formatSegmentName(
-            child.name,
-            child.segment_name || childKey
-          ),
-          value: this.formatCurrencyValue(child.value),
-          percentage: this.calculatePercentage(child.value, parentValue),
-          // Use children_count to determine if we should recurse
-          children: hasChildren
-            ? this.extractSegmentChildren(child.children, child.value, 1)
-            : undefined,
-        };
-        childrenArray.push(segmentData);
-      }
-    });
+      });
 
     return childrenArray;
   }
@@ -1600,7 +1606,10 @@ export class DataService {
       });
     }
 
-    return {data:insightsData,analysis:this.API_DATA.INSIGHTS_DATA.analysis} ;
+    return {
+      data: insightsData,
+      analysis: this.API_DATA.INSIGHTS_DATA.analysis,
+    };
   }
 
   getSegmentWiseChartData() {
@@ -1991,12 +2000,20 @@ export class DataService {
     // Define color variables based on theme
     const textColor = isLight ? '#000000ff' : '#d7d7d7ff';
     const axisLabelColor = isLight ? '#000000ff' : '#d7d7d7ff';
-    const axisLineColor = isLight ? 'rgba(50, 50, 50, 0.3)' : 'rgba(100, 100, 150, 0.3)';
-    const tooltipBgColor = isLight ? 'rgba(245, 245, 255, 0.95)' : 'rgba(15, 15, 25, 0.95)';
+    const axisLineColor = isLight
+      ? 'rgba(50, 50, 50, 0.3)'
+      : 'rgba(100, 100, 150, 0.3)';
+    const tooltipBgColor = isLight
+      ? 'rgba(245, 245, 255, 0.95)'
+      : 'rgba(15, 15, 25, 0.95)';
     const tooltipTextColor = isLight ? '#000000ff' : '#d7d7d7ff';
-    const tooltipBorderColor = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(100, 100, 150, 0.3)';
+    const tooltipBorderColor = isLight
+      ? 'rgba(0, 0, 0, 0.2)'
+      : 'rgba(100, 100, 150, 0.3)';
     const labelColor = isLight ? '#000000ff' : '#d7d7d7ff';
-    const splitLineColor = isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(100, 100, 150, 0.1)';
+    const splitLineColor = isLight
+      ? 'rgba(0, 0, 0, 0.1)'
+      : 'rgba(100, 100, 150, 0.1)';
 
     // Group data by period
     const periodGroups: any = {};
@@ -2145,13 +2162,15 @@ export class DataService {
                   <span style="display: inline-block; width: 10px; height: 10px; background: ${
                     param.color
                   }; border-radius: 50%; margin-right: 8px;"></span>
-                  <span style="color: ${tooltipTextColor};">${param.seriesName}</span>
+                  <span style="color: ${tooltipTextColor};">${
+                param.seriesName
+              }</span>
                 </div>
                 <div style="text-align: right; margin-left: 12px;">
                   <span style="font-weight: 600; color: ${tooltipTextColor};">$${formatNumber(
-                    param.value,
-                    2
-                  )}${suffix}</span>
+                param.value,
+                2
+              )}${suffix}</span>
                 </div>
               </div>
             `;
@@ -2392,16 +2411,13 @@ export class DataService {
       return null;
     }
 
-    
-   
-
     const metricsMap = new Map<
       string,
       {
         metric: string;
         value: number;
         metricViewName: string;
-        description:string;
+        description: string;
       }
     >();
 
@@ -2418,7 +2434,7 @@ export class DataService {
           metric: metricKey,
           value: metricData.value,
           metricViewName: metricData.name,
-          description: metricData.description
+          description: metricData.description,
         });
       }
     );
@@ -2517,12 +2533,20 @@ export class DataService {
     // Define color variables based on theme
     const textColor = isLight ? '#000000ff' : '#d7d7d7ff';
     const axisLabelColor = isLight ? '#000000ff' : '#d7d7d7ff';
-    const axisLineColor = isLight ? 'rgba(50, 50, 50, 0.3)' : 'rgba(100, 100, 150, 0.3)';
-    const tooltipBgColor = isLight ? 'rgba(245, 245, 255, 0.95)' : 'rgba(15, 15, 25, 0.95)';
+    const axisLineColor = isLight
+      ? 'rgba(50, 50, 50, 0.3)'
+      : 'rgba(100, 100, 150, 0.3)';
+    const tooltipBgColor = isLight
+      ? 'rgba(245, 245, 255, 0.95)'
+      : 'rgba(15, 15, 25, 0.95)';
     const tooltipTextColor = isLight ? '#000000ff' : '#d7d7d7ff';
-    const tooltipBorderColor = isLight ? 'rgba(0, 0, 0, 0.2)' : 'rgba(100, 100, 150, 0.3)';
+    const tooltipBorderColor = isLight
+      ? 'rgba(0, 0, 0, 0.2)'
+      : 'rgba(100, 100, 150, 0.3)';
     const legendPageIconColor = isLight ? '#000000ff' : '#d7d7d7ff';
-    const legendPageIconInactiveColor = isLight ? 'rgba(100, 100, 150, 0.2)' : 'rgba(100, 100, 150, 0.3)';
+    const legendPageIconInactiveColor = isLight
+      ? 'rgba(100, 100, 150, 0.2)'
+      : 'rgba(100, 100, 150, 0.3)';
 
     // Helper function to darken a hex color
     function darkenColor(hex: string, percent: number = 20): string {
@@ -2864,9 +2888,9 @@ export class DataService {
                     <div style="text-align: right; margin-left: 12px;">
                       <span style="font-weight: 600; color: ${
                         isLight ? '#333333' : '#d7d7d7ff'
-                      };">${value >= 0 ? '$' : '-$'}${Math.abs(
-                  value
-                ).toFixed(2)}B</span>
+                      };">${value >= 0 ? '$' : '-$'}${Math.abs(value).toFixed(
+                  2
+                )}B</span>
                       <span style="color: ${
                         isLight ? '#666666' : '#999999'
                       }; margin-left: 6px;">(${percentage.toFixed(1)}%)</span>
@@ -3046,13 +3070,13 @@ export class DataService {
                   calculatedValue,
                   formatType
                 );
-                
+
                 calculatedMetrics[formulaObj.name] = {
                   value: calculatedValue,
                   trend: null, // Custom formulas don't have trend data
                   format_type: formatType,
                   prefix: formulaObj.prefix ? formulaObj.prefix : '',
-                  postfix: formulaObj.postfix ? formulaObj.postfix : '' ,
+                  postfix: formulaObj.postfix ? formulaObj.postfix : '',
                 };
               } else {
                 calculatedMetrics[formulaObj.name] = null;
