@@ -1015,11 +1015,11 @@
         }
 
         <!-- Show insights when available -->
-        @if (this.insightsData.length != 0) { @if(this.insightsAnalysis) {
+         @if(this.insightsAnalysis) {
         <div class="insights-content">
           <markdown [data]="insightsAnalysis"></markdown>
         </div>
-        } }
+        } 
 
         <!-- Always show button when not loading -->
         @if(!varianceAnalysisLoader) {
@@ -1028,6 +1028,7 @@
         </p>
 
         <button
+          [disabled]=""
           (click)="startVarienceAnalysis()"
           class="action-button-primary"
           type="button"
